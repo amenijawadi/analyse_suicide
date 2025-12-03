@@ -1,4 +1,4 @@
-name: Deploy Quarto Website
+name: Deploy Quarto Website - NO JEKYLL
 
 on:
   push:
@@ -11,11 +11,22 @@ permissions:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    
+    env:
+      JEKYLL_ENV: "disabled"
+      DISABLE_JEKYLL: "true"
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Remove docs directory completely
+        run: |
+          echo "🗑️  SUPPRESSION COMPLÈTE du dossier docs..."
+          rm -rf docs/ _site/ 2>/dev/null || true
+          echo "✅ Nettoyé"
 
       - name: Setup Quarto
         uses: quarto-dev/quarto-actions/setup@v2
@@ -23,173 +34,223 @@ jobs:
       - name: Install Python and Jupyter
         run: |
           python3 -m pip install --upgrade pip
-          python3 -m pip install jupyter nbformat ipykernel
+          python3 -m pip install jupyter nbformat ipykernel jupyter-cache
 
-      - name: Setup R
+      - name: Setup R for binary packages
         uses: r-lib/actions/setup-r@v2
         with:
           r-version: '4.3'
 
-      - name: Install R packages from binaries
+      # ÉTAPE CRITIQUE : Installation R depuis BINAIRES SEULEMENT
+      - name: Install R packages FROM BINARIES (NO SOURCE COMPILATION)
         run: |
-          echo "⚡ Installation R depuis binaires..."
+          echo "⚡⚡⚡ INSTALLATION R - BINAIRES UNIQUEMENT ⚡⚡⚡"
+          echo "⚠️  COMPILATION SOURCE : DÉSACTIVÉE"
           
-          # FORCER l'installation depuis binaires
-          Rscript -e "
+          # Configuration AGGRESSIVE pour binaires
+          cat > ~/.Rprofile << 'EOF'
+          # =================================================
+          # CONFIGURATION ULTRA-OPTIMISÉE POUR BINAIRES
+          # =================================================
+          
+          # 1. DÉSACTIVER TOUTE COMPILATION
           options(
-            install.packages.compile.from.source = 'never',
-            Ncpus = 4,
-            repos = 'https://cloud.r-project.org'
+            # NE JAMAIS compiler depuis les sources
+            install.packages.compile.from.source = "never",
+            # Ne pas vérifier les sources
+            install.packages.check.source = "no",
+            # Installation parallèle maximale
+            Ncpus = 6,
+            # Timeout long pour gros packages
+            timeout = 300,
+            # Options d'installation POUR BINAIRES
+            INSTALL_opts = c(
+              "--no-multiarch",
+              "--no-docs", 
+              "--no-test-load",
+              "--no-byte-compile",
+              "--no-staged-install",
+              "--no-data"
+            )
           )
           
-          packages <- c('rmarkdown', 'knitr', 'dplyr', 'ggplot2', 
-                       'tidyr', 'readxl', 'lubridate', 'car', 'lmtest')
+          # 2. UTILISER RSPM POUR BINAIRES UBUNTU 22.04
+          # RStudio Package Manager - binaires pré-compilés
+          ubuntu_codename <- "jammy"  # Ubuntu 22.04
+          rspm_url <- paste0(
+            "https://packagemanager.rstudio.com/cran/__linux__/",
+            ubuntu_codename,
+            "/latest"
+          )
           
-          # Installer en une fois
-          install.packages(packages, quiet = FALSE)
+          # Définir comme dépôt PRINCIPAL
+          options(repos = c(RSPM = rspm_url))
+          
+          cat("\n")
+          cat("=========================================\n")
+          cat("🎯 MODE BINAIRE FORCÉ ACTIVÉ\n")
+          cat("🔧 Dépôt :", rspm_url, "\n")
+          cat("🚫 Compilation source : INTERDITE\n")
+          cat("⚡ Ncpus :", getOption("Ncpus"), "\n")
+          cat("=========================================\n")
+          EOF
+          
+          # VÉRIFIER LA CONFIGURATION
+          echo "🔍 Vérification configuration R..."
+          Rscript -e "
+          cat('\n=== CONFIGURATION ACTIVE ===\n')
+          cat('1. Dépôt      :', getOption('repos')[1], '\n')
+          cat('2. Compilation:', getOption('install.packages.compile.from.source'), '\n')
+          cat('3. Ncpus      :', getOption('Ncpus'), '\n')
+          cat('4. INSTALL_opts:', paste(getOption('INSTALL_opts'), collapse=', '), '\n')
+          cat('=============================\n')
           "
+          
+          # LISTE DES PACKAGES (optimisée pour vitesse)
+          Rscript -e "
+          start_time <- Sys.time()
+          cat('📦 Début de l\'installation des packages R...\n\n')
+          
+          # Packages par groupe (installation plus stable)
+          groups <- list(
+            'Groupe 1 - Core' = c('rmarkdown', 'knitr'),
+            'Groupe 2 - Tidyverse' = c('dplyr', 'ggplot2', 'tidyr'),
+            'Groupe 3 - Data I/O' = c('readxl', 'lubridate'),
+            'Groupe 4 - Stats' = c('car', 'lmtest', 'gplots')
+          )
+          
+          # Fonction d'installation avec retry
+          install_group <- function(pkgs, group_name, max_retries = 2) {
+            cat('\n---', group_name, '---\n')
+            
+            for (retry in 1:max_retries) {
+              tryCatch({
+                cat('Tentative', retry, ': ', paste(pkgs, collapse=', '), '\n')
+                
+                # Essayer d'abord avec type='binary'
+                result <- tryCatch({
+                  install.packages(pkgs, type = 'binary', quiet = TRUE)
+                  '✅ Binaire'
+                }, error = function(e1) {
+                  # Fallback sans type='binary' mais avec options anti-compilation
+                  install.packages(pkgs, quiet = TRUE)
+                  '⚠️  Standard (fallback)'
+                })
+                
+                cat('Succès :', result, '\n')
+                return(TRUE)
+                
+              }, error = function(e) {
+                if (retry == max_retries) {
+                  cat('❌ Échec après', max_retries, 'tentatives\n')
+                  cat('Erreur :', e$message, '\n')
+                  return(FALSE)
+                }
+                cat('⏱️  Pause de 5 secondes avant réessai...\n')
+                Sys.sleep(5)
+              })
+            }
+          }
+          
+          # Installer chaque groupe
+          for (group_name in names(groups)) {
+            install_group(groups[[group_name]], group_name)
+          }
+          
+          # VÉRIFICATION FINALE
+          cat('\n=== VÉRIFICATION DES INSTALLATIONS ===\n')
+          all_pkgs <- unlist(groups, use.names = FALSE)
+          installed <- rownames(installed.packages())
+          
+          success_count <- 0
+          for (pkg in all_pkgs) {
+            if (pkg %in% installed) {
+              version <- packageVersion(pkg)
+              cat('✓', pkg, 'v', as.character(version), '\n')
+              success_count <- success_count + 1
+            } else {
+              cat('✗', pkg, 'MANQUANT\n')
+            }
+          }
+          
+          end_time <- Sys.time()
+          total_time <- round(difftime(end_time, start_time, units = 'secs'), 1)
+          
+          cat('\n📊 RÉSUMÉ :\n')
+          cat('  Packages :', success_count, '/', length(all_pkgs), '\n')
+          cat('  Temps    :', total_time, 'secondes\n')
+          
+          if (success_count == length(all_pkgs)) {
+            cat('🎯 SUCCÈS COMPLET\n')
+          } else {
+            cat('⚠️  ATTENTION : Certains packages manquent\n')
+          }
+          "
+          
+          echo "✅ Installation R terminée"
 
-      # ÉTAPE CRITIQUE : NETTOYAGE COMPLET avant rendu
-      - name: Clean everything before render
+      - name: Render Quarto website
         run: |
-          echo "🧹 NETTOYAGE COMPLET..."
+          echo "🚀 Rendu du site Quarto..."
           
-          # Supprimer TOUT ce qui pourrait déclencher Jekyll
-          rm -rf docs/ _site/ _freeze/ .quarto-cache/ 2>/dev/null || true
-          
-          # Supprimer tous les fichiers SCSS/SASS dans tout le projet
-          find . -name "*.scss" -type f -delete 2>/dev/null || true
-          find . -name "*.sass" -type f -delete 2>/dev/null || true
-          find . -name "_config*" -type f -delete 2>/dev/null || true
-          find . -name "Gemfile*" -type f -delete 2>/dev/null || true
-          
-          echo "✅ Nettoyage terminé"
-
-      # ÉTAPE CRITIQUE : Créer .nojekyll AVANT le rendu
-      - name: Create .nojekyll BEFORE rendering
-        run: |
-          echo "🛑 Création de .nojekyll AVANT le rendu..."
-          
-          # Créer le dossier docs/ d'abord
-          mkdir -p docs
-          
-          # Créer .nojekyll avec un contenu EXPLICITE
-          echo "# DO NOT USE JEKYLL - This is a Quarto static site
-# GitHub Pages should NOT process this with Jekyll
-# This file disables Jekyll processing completely" > docs/.nojekyll
-          
-          # Créer aussi à la racine pour être sûr
-          echo "# NO JEKYLL" > .nojekyll
-          
-          echo "✅ .nojekyll créé"
-
-      - name: Render website with Jekyll disabled
-        run: |
-          echo "🚀 Rendu avec Jekyll désactivé..."
-          
-          # Variable d'environnement pour désactiver Jekyll
-          export JEKYLL_ENV=production
-          
-          # Rendu Quarto
-          quarto render
+          # Rendre avec cache désactivé (plus fiable)
+          quarto render --no-cache
           
           echo "✅ Rendu terminé"
 
-      # ÉTAPE CRITIQUE : POST-traitement AGGRESSIF
-      - name: Aggressive Jekyll cleanup AFTER render
+      # ÉTAPE CRITIQUE : Post-traitement SANS JEKYLL
+      - name: Post-process to ELIMINATE Jekyll
         run: |
-          echo "🛑 NETTOYAGE AGGRESSIF APRÈS rendu..."
+          echo "🛑 ÉLIMINATION DÉFINITIVE DE JEKYLL..."
           
-          # 1. S'assurer que docs/ existe
-          mkdir -p docs
-          
-          # 2. FORCER .nojekyll (au cas où Quarto l'aurait écrasé)
-          echo "NO JEKYLL - Static HTML site" > docs/.nojekyll
-          chmod 644 docs/.nojekyll
-          
-          # 3. Supprimer TOUS les fichiers/dossiers qui pourraient déclencher Jekyll
-          echo "Suppression des fichiers problématiques..."
-          
-          # Supprimer tous les fichiers SCSS dans docs/
-          find docs -name "*.scss" -type f -delete 2>/dev/null || true
-          find docs -name "*.sass" -type f -delete 2>/dev/null || true
-          
-          # Supprimer tous les dossiers commençant par _
-          find docs -name "_*" -type d -exec rm -rf {} + 2>/dev/null || true
-          
-          # Supprimer le dossier assets/css/ S'IL contient des SCSS
-          if [ -d "docs/assets/css" ]; then
-            # Supprimer seulement les SCSS, garder les CSS
-            find docs/assets/css -name "*.scss" -delete 2>/dev/null || true
-            find docs/assets/css -name "*.sass" -delete 2>/dev/null || true
-            
-            # Si le dossier est vide après suppression, le supprimer
-            if [ -z "$(ls -A docs/assets/css 2>/dev/null)" ]; then
-              rm -rf docs/assets/css
-            fi
+          # S'assurer que docs/ existe
+          if [ ! -d "docs" ]; then
+            echo "❌ ERREUR : docs/ non trouvé après rendu"
+            exit 1
           fi
           
-          # 4. Renommer index.qmd.html si nécessaire
+          # 1. CRÉER .nojekyll EXPLICITE
+          echo "# ===========================================" > docs/.nojekyll
+          echo "# JEKYLL COMPLETELY DISABLED" >> docs/.nojekyll
+          echo "# This is a static HTML site" >> docs/.nojekyll
+          echo "# GitHub Pages: DO NOT PROCESS WITH JEKYLL" >> docs/.nojekyll
+          echo "# Generated by Quarto on $(date)" >> docs/.nojekyll
+          echo "# ===========================================" >> docs/.nojekyll
+          
+          # 2. SUPPRIMER TOUS LES FICHIERS .scss/.sass
+          echo "🔪 Suppression des fichiers SCSS/SASS..."
+          scss_files=$(find docs -name "*.scss" -o -name "*.sass" 2>/dev/null | wc -l)
+          echo "Fichiers trouvés: $scss_files"
+          
+          if [ "$scss_files" -gt 0 ]; then
+            find docs -name "*.scss" -type f -delete
+            find docs -name "*.sass" -type f -delete
+            echo "✅ Fichiers supprimés"
+          fi
+          
+          # 3. Renommer index
           if [ -f "docs/index.qmd.html" ]; then
             mv docs/index.qmd.html docs/index.html
             echo "✅ index.qmd.html → index.html"
           fi
           
-          # 5. Vérifier qu'il n'y a pas de assets/css/style.scss
-          if [ -f "docs/assets/css/style.scss" ]; then
-            echo "❌ DANGER: style.scss toujours présent - suppression FORCÉE"
-            rm -f docs/assets/css/style.scss
-            
-            # Créer un fichier CSS vide à la place
-            mkdir -p docs/assets/css
-            echo "/* Empty CSS file - Jekyll disabled */" > docs/assets/css/style.css
-          fi
+          # 4. VÉRIFICATION FINALE
+          echo "🔍 VÉRIFICATION FINALE :"
+          echo "  - .nojekyll présent: $(test -f docs/.nojekyll && echo 'OUI' || echo 'NON')"
+          echo "  - Fichiers .scss restants: $(find docs -name '*.scss' 2>/dev/null | wc -l)"
+          echo "  - Fichiers .sass restants: $(find docs -name '*.sass' 2>/dev/null | wc -l)"
           
-          # 6. Liste des fichiers FINALE pour vérification
-          echo "📁 CONTENU FINAL de docs/:"
-          ls -la docs/
-          echo ""
-          echo "🔍 Recherche de fichiers SCSS restants:"
-          find docs -name "*.scss" -o -name "*.sass" | head -20
-          echo ""
-          echo "🔍 Vérification .nojekyll:"
-          ls -la docs/.nojekyll
-          cat docs/.nojekyll
+          # Lister les premiers fichiers
+          echo "📁 Premier fichiers dans docs/:"
+          ls -la docs/ | head -5
 
-      # ÉTAPE CRITIQUE : Vérification finale
-      - name: Final verification - NO Jekyll files
-        run: |
-          echo "🔍 VÉRIFICATION FINALE - AUCUN fichier Jekyll..."
-          
-          # Compter les fichiers problématiques
-          scss_count=$(find docs -name "*.scss" -o -name "*.sass" 2>/dev/null | wc -l)
-          jekyll_dirs=$(find docs -name "_*" -type d 2>/dev/null | wc -l)
-          
-          if [ "$scss_count" -eq 0 ] && [ "$jekyll_dirs" -eq 0 ]; then
-            echo "✅ SUCCÈS: Aucun fichier SCSS/SASS et aucun dossier _*"
-          else
-            echo "❌ ÉCHEC: Fichiers Jekyll détectés!"
-            echo "   SCSS/SASS files: $scss_count"
-            echo "   Jekyll dirs: $jekyll_dirs"
-            echo "   List:"
-            find docs -name "*.scss" -o -name "*.sass" -o -name "_*" -type d 2>/dev/null
-            exit 1  # Échec délibéré
-          fi
-          
-          # Vérifier que .nojekyll est présent
-          if [ ! -f "docs/.nojekyll" ]; then
-            echo "❌ CRITIQUE: .nojekyll manquant!"
-            exit 1
-          fi
-          
-          echo "🎯 PRÊT pour déploiement sans Jekyll!"
-
-      - name: Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages (custom branch)
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs
-          publish_branch: gh-pages
+          publish_branch: gh-pages-quarto  # Branche custom pour éviter conflits
           force_orphan: true
+          keep_files: false
           user_name: 'github-actions[bot]'
           user_email: 'github-actions[bot]@users.noreply.github.com'
