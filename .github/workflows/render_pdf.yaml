@@ -19,32 +19,32 @@ jobs:
     - name: Setup Quarto
       uses: quarto-dev/quarto-actions/setup@v2
     
-    - name: Setup TinyTeX
-      uses: r-lib/actions/setup-tinytex@v2
-    
-    - name: Install LaTeX packages
+    # NE PAS installer TinyTeX ici - l'utiliser depuis le cache
+    - name: Check if TinyTeX is available
       run: |
-        tlmgr install \
-          geometry \
-          hyperref \
-          fancyhdr \
-          sectsty \
-          microtype \
-          booktabs \
-          array \
-          pdfpages \
-          wrapfig \
-          float \
-          caption \
-          subcaption
+        if command -v pdflatex &> /dev/null; then
+          echo "✅ pdflatex est disponible"
+          pdflatex --version
+        else
+          echo "⚠️ pdflatex non trouvé, installation minimale..."
+          # Installation minimale
+          wget -qO- "https://yihui.org/tinytex/install-unx.sh" | sh -s -- --admin --no-path
+          export PATH="$HOME/.TinyTeX/bin/x86_64-linux:$PATH"
+        fi
     
-    - name: Render PDFs
+    - name: Render PDFs directly
       run: |
-        # Rendre les PDFs spécifiques
+        # Rendre les PDFs
+        echo "📄 Génération des PDFs..."
+        
+        # Vérifier que pdflatex est disponible
+        which pdflatex || exit 1
+        
         for file in qmd/*.qmd; do
           if [[ -f "$file" ]]; then
             echo "Rendu de $file en PDF..."
-            quarto render "$file" --to pdf || echo "Échec du rendu PDF pour $file"
+            quarto render "$file" --to pdf --no-cache || \
+            echo "⚠️ Échec partiel pour $file"
           fi
         done
     
