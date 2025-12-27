@@ -6,9 +6,9 @@ project:
     - "qmd/*.qmd"
 
 website:
-  title: "Elements of Data Analysis and Statistics - Lab Exercises"
-  site-url: "https://nevermind78.github.io/capstone_R/"
-  repo-url: "https://github.com/nevermind78/capstone_R"
+  title: "Analyse Statistique des Données Mondiales de Suicide "
+  site-url: "https://amenijawadi.github.io/analyse_suicide/"
+  repo-url: "https://github.com/amenijawadi/analyse_suicide"
   
   repo-actions: [edit, issue]
   sidebar:
@@ -17,7 +17,7 @@ website:
     contents:
       - section: Projects
         contents:
-          - qmd/01-pivot-tables-with-libreoffice.qmd
+          - qmd/01_exploration.qmd
           - qmd/03-discharge-elbe.qmd
           - qmd/04-distributions-leaves.qmd
           - qmd/05-distributions-fruits-tidyverse.qmd
@@ -25,9 +25,6 @@ website:
       - section: Presentations
         contents:
           - qmd/06-classical-tests.qmd
-      - section: other
-        contents:
-          - qmd/other.qmd
 
 format:
   html:

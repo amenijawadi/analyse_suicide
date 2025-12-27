@@ -1,0 +1,185 @@
+---
+title: "Chapitre 1 : Exploration des Données"
+format:
+  html:
+    code-fold: true
+---
+
+# Exploration Initiale des Données
+
+```{r setup, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(skimr)
+library(knitr)
+library(DT)
+library(scales)
+
+# Configuration graphique
+theme_set(theme_minimal(base_size = 12))
+```
+
+## Importation des Données
+```{r import_data}
+# Charger les données
+data <- read_csv("data/suicide_data.csv", 
+                 show_col_types = FALSE)
+
+# Afficher la structure
+glimpse(data)
+```
+
+## Aperçu du Dataset
+```{r overview}
+# Tableau interactif des premières lignes
+datatable(head(data, 100), 
+          options = list(pageLength = 10, scrollX = TRUE),
+          caption = "Extrait des données de suicide (100 premières lignes)")
+```
+
+## Statistiques Descriptives Complètes
+```{r descriptive_stats}
+# Résumé détaillé
+skim(data)
+```
+
+## Structure des Variables
+
+### 1. Variable `country` (Pays)
+```{r countries}
+# Nombre de pays
+n_countries <- data %>% 
+  distinct(country) %>% 
+  nrow()
+
+cat("Nombre total de pays :", n_countries, "\n")
+
+# Top 10 pays par nombre d'observations
+data %>% 
+  count(country, sort = TRUE) %>% 
+  head(10) %>% 
+  kable(col.names = c("Pays", "Observations"),
+        caption = "Top 10 des pays avec le plus d'observations")
+```
+
+### 2. Variable `year` (Année)
+```{r years}
+# Période couverte
+cat("Période :", min(data$year, na.rm = TRUE), "-", 
+    max(data$year, na.rm = TRUE), "\n")
+
+# Distribution par année
+data %>% 
+  count(year) %>% 
+  ggplot(aes(x = year, y = n)) +
+  geom_line(color = "steelblue", size = 1) +
+  geom_point(color = "darkblue") +
+  labs(title = "Nombre d'observations par année",
+       x = "Année",
+       y = "Nombre d'observations") +
+  scale_x_continuous(breaks = seq(1980, 2015, 5))
+```
+
+### 3. Variable `sex` (Sexe)
+```{r sex}
+# Distribution
+data %>% 
+  count(sex) %>% 
+  mutate(pourcentage = n / sum(n) * 100) %>% 
+  ggplot(aes(x = sex, y = n, fill = sex)) +
+  geom_col() +
+  geom_text(aes(label = paste0(round(pourcentage, 1), "%")), 
+            vjust = -0.5) +
+  scale_fill_manual(values = c("female" = "#E91E63", "male" = "#2196F3")) +
+  labs(title = "Répartition par sexe",
+       x = "Sexe",
+       y = "Nombre d'observations") +
+  theme(legend.position = "none")
+```
+
+### 4. Variable `age` (Tranches d'âge)
+```{r age_groups}
+# Distribution
+data %>% 
+  count(age) %>% 
+  mutate(age = fct_reorder(age, n)) %>% 
+  ggplot(aes(x = age, y = n, fill = age)) +
+  geom_col() +
+  coord_flip() +
+  labs(title = "Répartition par tranche d'âge",
+       x = "Tranche d'âge",
+       y = "Nombre d'observations") +
+  theme(legend.position = "none") +
+  scale_fill_viridis_d()
+```
+
+### 5. Variable `suicides_no` (Nombre de suicides)
+```{r suicides}
+# Statistiques descriptives
+data %>% 
+  filter(!is.na(suicides_no)) %>% 
+  summarise(
+    Minimum = min(suicides_no),
+    Q1 = quantile(suicides_no, 0.25),
+    Médiane = median(suicides_no),
+    Moyenne = mean(suicides_no),
+    Q3 = quantile(suicides_no, 0.75),
+    Maximum = max(suicides_no),
+    `Écart-type` = sd(suicides_no)
+  ) %>% 
+  pivot_longer(everything(), names_to = "Statistique", values_to = "Valeur") %>% 
+  kable(digits = 2, caption = "Statistiques sur le nombre de suicides")
+
+
+```
+
+### 6. Variable `population`
+```{r population}
+# Statistiques
+data %>% 
+  filter(!is.na(population)) %>% 
+  summarise(
+    Minimum = min(population),
+    Q1 = quantile(population, 0.25),
+    Médiane = median(population),
+    Moyenne = mean(population),
+    Q3 = quantile(population, 0.75),
+    Maximum = max(population),
+    `Écart-type` = sd(population)
+  ) %>% 
+  pivot_longer(everything(), names_to = "Statistique", values_to = "Valeur") %>% 
+  kable(digits = 0, caption = "Statistiques sur la population", 
+        format.args = list(big.mark = " "))
+```
+
+## Valeurs Manquantes
+```{r missing_values}
+# Tableau des valeurs manquantes
+data %>% 
+  summarise(across(everything(), ~sum(is.na(.)))) %>% 
+  pivot_longer(everything(), names_to = "Variable", values_to = "NA_count") %>% 
+  mutate(Pourcentage = round(NA_count / nrow(data) * 100, 2)) %>% 
+  kable(caption = "Valeurs manquantes par variable")
+
+# Visualisation
+data %>% 
+  summarise(across(everything(), ~sum(is.na(.)))) %>% 
+  pivot_longer(everything(), names_to = "Variable", values_to = "NA_count") %>% 
+  mutate(Pourcentage = NA_count / nrow(data) * 100) %>% 
+  ggplot(aes(x = reorder(Variable, Pourcentage), y = Pourcentage)) +
+  geom_col(fill = "darkred", alpha = 0.7) +
+  coord_flip() +
+  labs(title = "Pourcentage de valeurs manquantes",
+       x = "Variable",
+       y = "% de valeurs manquantes")
+```
+
+## Conclusions de l'Exploration
+
+**Points clés identifiés :**
+
+1.  **Volume** : 43 776 observations sur 35 ans
+2.  **Valeurs manquantes** : `suicides_no` (5.15%) et `population` (12.47%)
+3.  **Distribution** : Données disponibles pour `r n_countries` pays
+4.  **Sexe** : Répartition équilibrée entre hommes et femmes
+5.  **Période** : Couverture continue de 1980 à 2015
+
