@@ -18,7 +18,7 @@ website:
       - section: Projects
         contents:
           - qmd/01_exploration.qmd
-          - qmd/03-discharge-elbe.qmd
+          - qmd/02_nettoyage.qmd
           - qmd/04-distributions-leaves.qmd
           - qmd/05-distributions-fruits-tidyverse.qmd
           - qmd/test_stat.qmd

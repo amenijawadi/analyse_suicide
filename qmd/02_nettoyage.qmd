@@ -1,0 +1,169 @@
+---
+title: "Chapitre 2 : Nettoyage et Transformation"
+format:
+  html:
+    code-fold: true
+---
+
+# Nettoyage et Préparation des Données
+
+```{r setup, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(lubridate)
+library(forcats)
+library(knitr)
+
+# Charger les données brutes
+data_raw <- read_csv("data/suicide_data.csv", show_col_types = FALSE)
+```
+
+## Analyse des Valeurs Manquantes
+```{r na_analysis}
+# Pattern des valeurs manquantes
+cat("Observations avec suicides_no manquant :", 
+    sum(is.na(data_raw$suicides_no)), "\n")
+cat("Observations avec population manquante :", 
+    sum(is.na(data_raw$population)), "\n")
+cat("Observations avec les DEUX manquantes  :", 
+    sum(is.na(data_raw$suicides_no) & is.na(data_raw$population)), "\n")
+```
+
+## Stratégie de Nettoyage
+```{r cleaning_strategy}
+# Supprimer les lignes où suicides_no OU population est manquant
+data_clean <- data_raw %>% 
+  filter(!is.na(suicides_no), !is.na(population))
+
+# Supprimer les doublons exacts
+data_clean <- data_clean %>% distinct()
+
+cat("Données initiales :", nrow(data_raw), "lignes\n")
+cat("Données nettoyées :", nrow(data_clean), "lignes\n")
+cat("Lignes supprimées :", nrow(data_raw) - nrow(data_clean), 
+    "(", round((nrow(data_raw) - nrow(data_clean))/nrow(data_raw)*100, 2), "%)\n")
+```
+
+## Transformation des Variables
+
+### Conversion de `sex` en facteur
+```{r sex_factor}
+data_clean <- data_clean %>% 
+  mutate(sex = factor(sex, levels = c("male", "female"),
+                      labels = c("Homme", "Femme")))
+
+# Vérification
+table(data_clean$sex) %>% kable(col.names = c("Sexe", "Fréquence"))
+```
+
+### Ordre logique pour `age`
+```{r age_factor}
+# Définir l'ordre des tranches d'âge
+age_order <- c("5-14 years", "15-24 years", "25-34 years", 
+               "35-54 years", "55-74 years", "75+ years")
+
+data_clean <- data_clean %>% 
+  mutate(age = factor(age, levels = age_order,
+                      labels = c("5-14 ans", "15-24 ans", "25-34 ans",
+                                 "35-54 ans", "55-74 ans", "75+ ans")))
+
+# Vérification
+table(data_clean$age) %>% kable(col.names = c("Tranche d'âge", "Fréquence"))
+```
+
+### Création de variables dérivées
+```{r derived_variables}
+data_clean <- data_clean %>% 
+  mutate(
+    # Taux de suicide pour 100 000 habitants
+    taux_suicide_100k = (suicides_no / population) * 100000,
+    
+    # Période (décennie)
+    decennie = case_when(
+      year >= 1980 & year < 1990 ~ "1980-1989",
+      year >= 1990 & year < 2000 ~ "1990-1999",
+      year >= 2000 & year < 2010 ~ "2000-2009",
+      year >= 2010 & year <= 2015 ~ "2010-2015"
+    ) %>% factor()
+  )
+
+# Aperçu des nouvelles variables
+data_clean %>% 
+  select(country, year, sex, age, suicides_no, population, 
+         taux_suicide_100k, decennie) %>% 
+  head(10) %>% 
+  kable(digits = 2)
+```
+
+## Détection des Valeurs Aberrantes
+
+### Méthode IQR pour le taux de suicide
+```{r outliers_detection}
+# Calculer les seuils
+Q1 <- quantile(data_clean$taux_suicide_100k, 0.25, na.rm = TRUE)
+Q3 <- quantile(data_clean$taux_suicide_100k, 0.75, na.rm = TRUE)
+IQR_val <- Q3 - Q1
+seuil_inf <- Q1 - 1.5 * IQR_val
+seuil_sup <- Q3 + 1.5 * IQR_val
+
+# Identifier les outliers
+outliers <- data_clean %>% 
+  filter(taux_suicide_100k < seuil_inf | taux_suicide_100k > seuil_sup)
+
+cat("Seuil inférieur :", round(seuil_inf, 2), "\n")
+cat("Seuil supérieur :", round(seuil_sup, 2), "\n")
+cat("Nombre d'outliers :", nrow(outliers), 
+    "(", round(nrow(outliers)/nrow(data_clean)*100, 2), "%)\n")
+
+# Visualisation avec boxplot
+data_clean %>% 
+  ggplot(aes(y = taux_suicide_100k)) +
+  geom_boxplot(fill = "lightblue", outlier.color = "red", outlier.alpha = 0.5) +
+  labs(title = "Distribution du taux de suicide pour 100k habitants",
+       y = "Taux pour 100 000 habitants") +
+  theme_minimal()
+```
+
+### Top 10 des valeurs extrêmes
+```{r top_outliers}
+data_clean %>% 
+  arrange(desc(taux_suicide_100k)) %>% 
+  select(country, year, sex, age, suicides_no, population, taux_suicide_100k) %>% 
+  head(10) %>% 
+  kable(digits = 2, caption = "Top 10 des taux de suicide les plus élevés")
+```
+
+## Validation Finale
+```{r validation}
+# Vérifier qu'il n'y a plus de NA
+cat("Valeurs manquantes après nettoyage :\n")
+colSums(is.na(data_clean)) %>% print()
+
+# Résumé final
+cat("\n=== RÉSUMÉ DU DATASET NETTOYÉ ===\n")
+cat("Nombre d'observations :", nrow(data_clean), "\n")
+cat("Nombre de variables :", ncol(data_clean), "\n")
+cat("Pays uniques :", n_distinct(data_clean$country), "\n")
+cat("Années couvertes :", min(data_clean$year), "-", max(data_clean$year), "\n")
+```
+
+## Export des Données Nettoyées
+```{r export}
+# Sauvegarder le dataset propre
+write_csv(data_clean, "data/suicide_data_clean.csv")
+saveRDS(data_clean, "data/suicide_data_clean.rds")
+
+cat("Données nettoyées exportées avec succès !\n")
+```
+
+## Conclusions du Nettoyage
+
+**Transformations effectuées :**
+
+1. Suppression des valeurs manquantes (7.48% des données)
+2. Suppression des doublons exacts
+3. Conversion de `sex` et `age` en facteurs ordonnés
+4. Création du **taux de suicide pour 100k habitants**
+5. Ajout de variables temporelles (décennie)
+6. Détection des valeurs aberrantes (méthode IQR)
+
+**Dataset final prêt pour l'analyse !**
