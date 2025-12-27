@@ -1,21 +1,68 @@
 ---
-title: "Template Project For Elements of Applied Statistics "
-subtitle: "Template and Ideas"
+title: "Analyse Statistique des Données Mondiales de Suicide (1980-2015)"
+subtitle: "Étude statistique approfondie avec R"
+author: "Jaouadi Amani"
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+    theme: cosmo
+    css: styles.css
+    resources: 
+      - img/
 ---
 
-## Introduction
+# Présentation
 
-This website contains a collection of template for capstone's Statistics with **R**. The aim is to provide insight in fundamental principles and 
-a broad overview and to enable students to select and understand specific books and online material to dig in deeper in the diverse and fascinating field of statistics.
+**Jaouadi Amani**  
+Étudiante en Data Science et Intelligence Artificielle  
 
+**Email** : amani.jaouadi@polytechnicien.tn  
+**GitHub** : https://github.com/amenijawadi/analyse_suicide
 
+---
 
-## Related Pages
+# Contexte et problématique
 
-* [**Lecture slides**]()
-* [**Datasets**]()
-* [Source code \ github]()
+![](img/idees-suicidaires.jpg){width=70%}
 
-## Author
+Le **suicide** représente un problème majeur de santé publique à l’échelle mondiale.  
+Selon l’Organisation Mondiale de la Santé (OMS) :
 
-Abdallah Khemais
+- Plus de **800 000 personnes** se suicident chaque année.
+- Le suicide est la **2ᵉ cause de décès** chez les 15–29 ans.
+- Pour chaque suicide, il y a **20 tentatives**.
+- Les taux varient selon les **pays, l’âge, le sexe et le temps**.
+
+---
+
+# Objectifs de l’analyse
+
+## Objectif général
+
+Réaliser une **analyse épidémiologique multidimensionnelle** des données mondiales de suicide (1980–2015) afin d’identifier les facteurs de risque, les tendances temporelles et les disparités démographiques et géographiques.
+
+## Objectifs spécifiques
+
+###  Exploration descriptive et qualité des données
+→ Comprendre la structure du jeu de données et vérifier sa qualité.
+
+###  Analyse temporelle (1980–2015)
+→ Étudier l’évolution des taux de suicide dans le temps.
+
+###  Analyse différentielle par sexe
+→ Comparer les comportements suicidaires entre les hommes et les femmes.
+
+### Analyse par tranche d’âge
+→ Identifier les groupes d’âge les plus vulnérables.
+
+### Analyse géographique et clustering
+→ Mettre en évidence les disparités géographiques.
+
+---
+
+# Auteur
+
+**Jaouadi Amani**
