@@ -1,0 +1,212 @@
+---
+title: "Chapitre 4 : Analyse par Sexe"
+format:
+  html:
+    code-fold: true
+---
+
+# Comparaison Homme-Femme
+
+```{r setup, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(scales)
+library(plotly)
+library(knitr)
+library(ggridges)
+library(patchwork)
+
+data <- readRDS("data/suicide_data_clean.rds")
+theme_set(theme_minimal(base_size = 12))
+```
+
+## Vue d'Ensemble par Sexe
+
+### Statistiques descriptives globales
+```{r stats_global_sex}
+stats_sex <- data %>% 
+  group_by(sex) %>% 
+  summarise(
+    `Nombre total de suicides` = sum(suicides_no),
+    `Population totale` = sum(population),
+    `Taux moyen (100k)` = (sum(suicides_no) / sum(population)) * 100000,
+    `Taux médian (100k)` = median(taux_suicide_100k),
+    `Taux min` = min(taux_suicide_100k),
+    `Taux max` = max(taux_suicide_100k),
+    `Écart-type` = sd(taux_suicide_100k),
+    .groups = "drop"
+  )
+
+kable(stats_sex, digits = 2, format.args = list(big.mark = " "),
+      caption = "Statistiques par sexe (1980-2015)")
+
+# Ratio homme/femme
+ratio_hf <- stats_sex$`Nombre total de suicides`[stats_sex$sex == "Homme"] / 
+            stats_sex$`Nombre total de suicides`[stats_sex$sex == "Femme"]
+
+cat("→ Les hommes représentent", round(ratio_hf / (ratio_hf + 1) * 100, 1), 
+    "% du total des suicides\n")
+```
+
+### Répartition visuelle
+```{r visual_repartition}
+data %>% 
+  group_by(sex) %>% 
+  summarise(total = sum(suicides_no), .groups = "drop") %>% 
+  mutate(pourcentage = total / sum(total) * 100) %>% 
+  ggplot(aes(x = "", y = total, fill = sex)) +
+  geom_col(width = 1, color = "white", size = 2) +
+  coord_polar(theta = "y") +
+  geom_text(aes(label = paste0(round(pourcentage, 1), "%\n", 
+                                format(total, big.mark = " "))),
+            position = position_stack(vjust = 0.5),
+            size = 6, fontface = "bold") +
+  scale_fill_manual(values = c("Homme" = "#2196F3", "Femme" = "#E91E63")) +
+  labs(title = "Répartition des suicides par sexe",
+       subtitle = "Total mondial 1980-2015",
+       fill = "Sexe") +
+  theme_void() +
+  theme(legend.position = "bottom",
+        plot.title = element_text(hjust = 0.5, size = 16, face = "bold"),
+        plot.subtitle = element_text(hjust = 0.5, size = 12))
+```
+
+## Évolution Temporelle par Sexe
+
+### Nombre de suicides annuel
+```{r evolution_sex}
+trend_sex <- data %>% 
+  group_by(year, sex) %>% 
+  summarise(
+    total_suicides = sum(suicides_no),
+    total_population = sum(population),
+    taux = (total_suicides / total_population) * 100000,
+    .groups = "drop"
+  )
+
+# Graphique nombre absolu
+p1 <- ggplot(trend_sex, aes(x = year, y = total_suicides, color = sex)) +
+  geom_line(size = 1.2) +
+  geom_point(size = 2) +
+  scale_color_manual(values = c("Homme" = "#2196F3", "Femme" = "#E91E63")) +
+  scale_y_continuous(labels = comma) +
+  scale_x_continuous(breaks = seq(1980, 2015, 5)) +
+  labs(title = "Évolution du nombre de suicides par sexe",
+       x = "Année",
+       y = "Nombre de suicides",
+       color = "Sexe") +
+  theme_minimal()
+
+ggplotly(p1)
+```
+
+
+### Ratio Homme/Femme dans le temps
+```{r ratio_temporel}
+ratio_temporel <- trend_sex %>% 
+  select(year, sex, total_suicides) %>% 
+  pivot_wider(names_from = sex, values_from = total_suicides) %>% 
+  mutate(ratio_HF = Homme / Femme)
+
+ggplot(ratio_temporel, aes(x = year, y = ratio_HF)) +
+  geom_line(color = "darkviolet", size = 1.2) +
+  geom_point(color = "darkviolet", size = 2) +
+  geom_hline(yintercept = mean(ratio_temporel$ratio_HF), 
+             linetype = "dashed", color = "red") +
+  annotate("text", x = 2010, y = mean(ratio_temporel$ratio_HF) + 0.1,
+           label = paste("Moyenne:", round(mean(ratio_temporel$ratio_HF), 2)),
+           color = "red") +
+  scale_x_continuous(breaks = seq(1980, 2015, 5)) +
+  labs(title = "Évolution du ratio Homme/Femme",
+       subtitle = "Nombre de suicides d'hommes pour 1 suicide de femme",
+       x = "Année",
+       y = "Ratio H/F") +
+  theme_minimal()
+```
+
+
+
+## Analyse par Tranche d'Âge et Sexe
+
+### Taux moyen par âge et sexe
+```{r age_sex_interaction}
+data %>% 
+  group_by(sex, age) %>% 
+  summarise(
+    taux_moyen = mean(taux_suicide_100k),
+    .groups = "drop"
+  ) %>% 
+  ggplot(aes(x = age, y = taux_moyen, fill = sex)) +
+  geom_col(position = "dodge", alpha = 0.8) +
+  scale_fill_manual(values = c("Homme" = "#2196F3", "Femme" = "#E91E63")) +
+  labs(title = "Taux de suicide moyen par âge et sexe",
+       x = "Tranche d'âge",
+       y = "Taux moyen pour 100k habitants",
+       fill = "Sexe") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+
+## Tests Statistiques
+
+### Test t de Student : Hommes vs Femmes
+```{r t_test}
+# Test sur les taux
+taux_hommes <- data %>% filter(sex == "Homme") %>% pull(taux_suicide_100k)
+taux_femmes <- data %>% filter(sex == "Femme") %>% pull(taux_suicide_100k)
+
+t_test_result <- t.test(taux_hommes, taux_femmes)
+
+cat("=== TEST T DE STUDENT ===\n")
+cat("Moyenne Hommes :", round(mean(taux_hommes), 2), "\n")
+cat("Moyenne Femmes :", round(mean(taux_femmes), 2), "\n")
+cat("Différence :", round(mean(taux_hommes) - mean(taux_femmes), 2), "\n")
+cat("t-statistic :", round(t_test_result$statistic, 3), "\n")
+cat("p-value :", format.pval(t_test_result$p.value), "\n")
+cat("Conclusion : Différence", 
+    ifelse(t_test_result$p.value < 0.001, "HAUTEMENT", ""),
+    "significative (p < 0.001) ✓\n")
+```
+
+
+## Analyse Géographique par Sexe
+
+### Top 10 pays avec plus grande différence H-F
+```{r top_diff_countries}
+diff_pays <- data %>% 
+  group_by(country, sex) %>% 
+  summarise(taux_moyen = mean(taux_suicide_100k), .groups = "drop") %>% 
+  pivot_wider(names_from = sex, values_from = taux_moyen) %>% 
+  mutate(
+    diff_HF = Homme - Femme,
+    ratio_HF = Homme / Femme
+  ) %>% 
+  arrange(desc(diff_HF))
+
+# Top 10
+kable(head(diff_pays, 10), digits = 2,
+      caption = "Top 10 pays avec la plus grande différence Homme-Femme")
+
+
+```
+
+## Conclusions de l'Analyse par Sexe
+```{r summary_sex}
+# Calculs pour le résumé
+total_h <- sum(data$suicides_no[data$sex == "Homme"])
+total_f <- sum(data$suicides_no[data$sex == "Femme"])
+taux_moy_h <- mean(data$taux_suicide_100k[data$sex == "Homme"])
+taux_moy_f <- mean(data$taux_suicide_100k[data$sex == "Femme"])
+```
+
+**Points clés identifiés :**
+
+1. **Ratio global** : `r round(ratio_hf, 2)` hommes pour 1 femme
+
+2.  **Hommes** : 
+   - Total : `r format(total_h, big.mark = " ")` suicides
+   - Taux moyen : `r round(taux_moy_h, 2)` pour 100k habitants
+
+3.  **Femmes** :
+   - Total : `r format(total_f, big.mark = " ")` suicides
+   - Taux moyen : `r round(taux_moy_f,2)` pour 100k habitants

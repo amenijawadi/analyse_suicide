@@ -1,0 +1,274 @@
+---
+title: "Chapitre 3 : Analyse Temporelle "
+format:
+  html:
+    code-fold: true
+---
+
+# Évolution Temporelle des Suicides
+
+```{r setup, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(scales)
+library(plotly)
+library(knitr)
+library(forecast)
+library(zoo)
+
+# Charger les données nettoyées
+data <- readRDS("data/suicide_data_clean.rds")
+
+theme_set(theme_minimal(base_size = 12))
+```
+
+## Tendance Globale 1980-2015
+
+
+
+
+### Évolution du taux de suicide (pour 100k habitants)
+```{r trend_rate}
+trend_yearly <- data %>% 
+  group_by(year) %>% 
+  summarise(
+    total_suicides = sum(suicides_no),
+    total_population = sum(population),
+    taux_moyen = (total_suicides / total_population) * 100000,
+    .groups = "drop"
+  )
+
+p2 <- ggplot(trend_yearly, aes(x = year, y = taux_moyen)) +
+  geom_area(fill = "coral", alpha = 0.3) +
+  geom_line(color = "darkred", size = 1.2) +
+  geom_point(color = "darkred", size = 2) +
+  scale_x_continuous(breaks = seq(1980, 2015, 5)) +
+  labs(title = "Évolution du taux de suicide mondial",
+       subtitle = "Pour 100 000 habitants",
+       x = "Année",
+       y = "Taux pour 100k habitants") +
+  theme_minimal()
+
+ggplotly(p2)
+```
+
+
+
+### Statistiques descriptives par décennie
+```{r stats_decennie}
+data %>% 
+  group_by(decennie) %>% 
+  summarise(
+    `Nombre de suicides` = sum(suicides_no),
+    `Population totale` = sum(population),
+    `Taux moyen (100k)` = (sum(suicides_no) / sum(population)) * 100000,
+    `Taux min` = min(taux_suicide_100k),
+    `Taux max` = max(taux_suicide_100k),
+    .groups = "drop"
+  ) %>% 
+  kable(digits = 2, format.args = list(big.mark = " "),
+        caption = "Statistiques par décennie")
+```
+
+## Analyse des Variations Annuelles
+
+### Taux de croissance annuel
+```{r growth_rate}
+trend_yearly <- trend_yearly %>% 
+  mutate(
+    variation_pct = (total_suicides - lag(total_suicides)) / lag(total_suicides) * 100,
+    variation_abs = total_suicides - lag(total_suicides)
+  )
+
+# Graphique des variations
+ggplot(trend_yearly %>% filter(!is.na(variation_pct)), 
+       aes(x = year, y = variation_pct)) +
+  geom_col(aes(fill = variation_pct > 0), alpha = 0.7) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  scale_fill_manual(values = c("TRUE" = "darkred", "FALSE" = "darkgreen"),
+                    labels = c("Diminution", "Augmentation")) +
+  scale_x_continuous(breaks = seq(1980, 2015, 5)) +
+  labs(title = "Variation annuelle du nombre de suicides",
+       subtitle = "Taux de croissance par rapport à l'année précédente",
+       x = "Année",
+       y = "Variation (%)",
+       fill = "Type") +
+  theme_minimal()
+```
+
+
+**Analyse par périodes :**
+
+🔴 Début des années 1980
+
+On observe des augmentations très fortes, avec des pics supérieurs à +50 %.
+
+Cela indique une forte instabilité du phénomène au début de la période (possibles changements sociaux, économiques ou qualité des données).
+
+🟢 Milieu des années 1980
+
+Une chute importante (environ -30 %), suivie d’une stabilisation.
+
+Cela suggère une réduction notable du nombre de suicides après les pics initiaux.
+
+🟢 Années 1990 – début 2000
+
+Les variations sont faibles, proches de 0 %.
+
+Alternance de petites hausses et baisses → stabilité relative du phénomène.
+
+🟢 Années 2005 – 2014
+
+Tendance globalement négative (plus de barres vertes).
+
+Cela traduit une diminution progressive du nombre de suicides.
+
+
+
+**Conclusion:**
+
+Le phénomène est très instable au début de la période.
+
+Il devient plus stable à partir des années 1990.
+
+Une tendance à la baisse est visible dans les années récentes.
+
+
+
+
+
+### Identification des années critiques
+```{r critical_years}
+# Années avec plus forte hausse
+top_hausses <- trend_yearly %>% 
+  filter(!is.na(variation_pct)) %>% 
+  arrange(desc(variation_pct)) %>% 
+  head(5) %>% 
+  select(year, total_suicides, variation_pct, variation_abs)
+
+# Années avec plus forte baisse
+top_baisses <- trend_yearly %>% 
+  filter(!is.na(variation_pct)) %>% 
+  arrange(variation_pct) %>% 
+  head(5) %>% 
+  select(year, total_suicides, variation_pct, variation_abs)
+
+cat("=== TOP 5 HAUSSES ===\n")
+print(kable(top_hausses, digits = 2, 
+            col.names = c("Année", "Total suicides", "Variation %", "Variation absolue")))
+
+cat("\n=== TOP 5 BAISSES ===\n")
+print(kable(top_baisses, digits = 2,
+            col.names = c("Année", "Total suicides", "Variation %", "Variation absolue")))
+```
+
+
+Le tableau des top 5 hausses montre les années où le nombre de suicides a connu les plus fortes augmentations .
+En 1980 et 1985 enregistrent des hausses importantes de +65 % et +58 %, soit respectivement 60 610 et 72 851 suicides . Ces années peuvent correspondre à des événements sociaux, économiques ou politiques ayant pu influencer le taux de suicide.
+
+Le tableau des top 5 baisses met en évidence les années où le nombre de suicides a le plus diminué. La plus forte baisse est observée en 2016 avec un recul de 92 % (soit 191 389 suicides en moins), suivie de 1983 et 2015. Ces années représentent des périodes critiques où des facteurs protecteurs, des interventions ou des changements démographiques ont pu réduire drastiquement le nombre de suicides.
+
+En résumé, l’identification de ces années critiques permet de repérer les tendances exceptionnelles dans la série temporelle et de cibler les périodes nécessitant une analyse plus approfondie.
+
+## Comparaison par Périodes
+
+### Analyse pré-2000 vs post-2000
+```{r pre_post_2000}
+data_comparison <- data %>% 
+  mutate(periode = if_else(year < 2000, "1980-1999", "2000-2015")) %>% 
+  group_by(periode) %>% 
+  summarise(
+    `Nombre total` = sum(suicides_no),
+    `Population` = sum(population),
+    `Taux moyen (100k)` = (sum(suicides_no) / sum(population)) * 100000,
+    `Nombre d'années` = n_distinct(year),
+    `Moyenne annuelle` = sum(suicides_no) / n_distinct(year),
+    .groups = "drop"
+  )
+
+kable(data_comparison, digits = 2, format.args = list(big.mark = " "),
+      caption = "Comparaison pré-2000 vs post-2000")
+
+# Message explicatif sous le tableau
+cat("\n**Interprétation :**\n")
+cat("- Le nombre total de suicides est légèrement plus bas après 2000.\n")
+cat("- Le taux moyen pour 100k habitants a diminué de 13,99 à 12,17.\n")
+cat("  → proportionnellement, moins de suicides par population.\n")
+cat("- La moyenne annuelle est plus élevée après 2000, car la population a augmenté.\n\n")
+
+
+# Test de significativité
+t_test_result <- data %>% 
+  mutate(periode = if_else(year < 2000, "Pre2000", "Post2000")) %>% 
+  group_by(year, periode) %>% 
+  summarise(taux_annuel = sum(suicides_no) / sum(population) * 100000, .groups = "drop") %>% 
+  {t.test(taux_annuel ~ periode, data = .)}
+
+cat("\n=== Test t de Student ===\n")
+cat("t =", round(t_test_result$statistic, 3), "\n")
+cat("p-value =", format.pval(t_test_result$p.value, digits = 3), "\n")
+cat("Différence significative :", 
+    ifelse(t_test_result$p.value < 0.05, "OUI ✓", "NON ✗"), "\n")
+
+
+```
+
+Le t-test compare la moyenne annuelle des taux de suicide par 100k habitants entre les deux périodes pour voir si la différence est statistiquement significative.
+ Résultats du test : t = -5.018
+  → La statistique t négative signifie que le taux moyen post-2000 est plus bas que le taux pré-2000. p-value = 1.6e-05 → Très petite valeur, bien en dessous de 0.05, ce qui signifie que la différence n’est pas due au hasard. 
+ Différence significative : OUI ✓
+  → On peut conclure qu’il y a une différence statistiquement significative entre les taux de suicide pré-2000 et post-2000.
+
+## Évolution par Décennie
+```{r evolution_decennie}
+data %>% 
+  group_by(decennie) %>% 
+  summarise(
+    total = sum(suicides_no),
+    taux = (sum(suicides_no) / sum(population)) * 100000,
+    .groups = "drop"
+  ) %>% 
+  ggplot(aes(x = decennie, y = taux, fill = decennie)) +
+  geom_col(alpha = 0.8) +
+  geom_text(aes(label = round(taux, 1)), vjust = -0.5, size = 4) +
+  scale_fill_brewer(palette = "Set2") +
+  labs(title = "Taux de suicide par décennie",
+       x = "Décennie",
+       y = "Taux pour 100k habitants") +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+
+
+## Conclusions de l'Analyse Temporelle
+```{r summary_temporal}
+# Calculs pour le résumé
+variation_totale <- ((tail(trend_yearly$total_suicides, 1) - 
+                      head(trend_yearly$total_suicides, 1)) / 
+                     head(trend_yearly$total_suicides, 1)) * 100
+
+taux_1980 <- trend_yearly$taux_moyen[trend_yearly$year == 1980]
+taux_2015 <- trend_yearly$taux_moyen[trend_yearly$year == 2015]
+variation_taux <- taux_2015 - taux_1980
+
+annee_max <- trend_yearly$year[which.max(trend_yearly$total_suicides)]
+annee_min <- trend_yearly$year[which.min(trend_yearly$total_suicides)]
+```
+
+**Points clés identifiés :**
+
+1.  **Tendance générale** : Variation de `r round(variation_totale, 1)`% entre 1980 et 2015
+
+2.  **Pic historique** : Année `r annee_max` avec `r format(max(trend_yearly$total_suicides), big.mark = " ")` suicides
+
+3.  **Point bas** : Année `r annee_min` avec `r format(min(trend_yearly$total_suicides), big.mark = " ")` suicides
+
+4.  **Évolution du taux** : 
+   - 1980 : `r round(taux_1980, 2)` pour 100k habitants
+   - 2015 : `r round(taux_2015, 2)` pour 100k habitants
+   - Variation : `r round(variation_taux, 2)` points
+
+5.  **Périodes critiques** : 
+   - Décennie la plus touchée : `r data %>% group_by(decennie) %>% summarise(total = sum(suicides_no)) %>% arrange(desc(total)) %>% slice(1) %>% pull(decennie)`
+
+

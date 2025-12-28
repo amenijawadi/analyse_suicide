@@ -17,14 +17,22 @@ website:
     contents:
       - section: Projects
         contents:
-          - qmd/01_exploration.qmd
-          - qmd/02_nettoyage.qmd
-          - qmd/04-distributions-leaves.qmd
-          - qmd/05-distributions-fruits-tidyverse.qmd
-          - qmd/test_stat.qmd
+          - text: "Exploration des Données"
+            file: qmd/01_exploration.qmd
+          - text: "Nettoyage des Données"
+            file: qmd/02_nettoyage.qmd
+          - text: "Analyse Temporelle"
+            file: qmd/03_analyse_temporelle.qmd
+          - text: "Analyse par sexe"
+            file: qmd/04_analyse_sexe.qmd
+          - text: "Distributions Fruits"
+            file: qmd/05-distributions-fruits-tidyverse.qmd
+          - text: "Tests Statistiques"
+            file: qmd/test_stat.qmd
       - section: Presentations
         contents:
-          - qmd/06-classical-tests.qmd
+          - text: "Tests Classiques"
+            file: qmd/06-classical-tests.qmd
 
 format:
   html:
