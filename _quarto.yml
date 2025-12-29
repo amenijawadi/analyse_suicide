@@ -25,14 +25,14 @@ website:
             file: qmd/03_analyse_temporelle.qmd
           - text: "Analyse par sexe"
             file: qmd/04_analyse_sexe.qmd
-          - text: "Distributions Fruits"
-            file: qmd/05-distributions-fruits-tidyverse.qmd
-          - text: "Tests Statistiques"
-            file: qmd/test_stat.qmd
+          - text: "Analyse par Age"
+            file: qmd/05_analyse_age.qmd
+          - text: "Analyse Géographique"
+            file: qmd/06_analyse_geographique.qmd              
       - section: Presentations
         contents:
-          - text: "Tests Classiques"
-            file: qmd/06-classical-tests.qmd
+          - text: "Présentation Finale"
+            file: qmd/presentaton.qmd
 
 format:
   html:

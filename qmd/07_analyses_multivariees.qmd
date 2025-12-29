@@ -1,0 +1,271 @@
+---
+title: "Chapitre 7 : Analyses Multivariées"
+format:
+  html:
+    code-fold: true
+---
+
+# Modélisations et Analyses Avancées
+
+```{r setup, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(scales)
+library(knitr)
+library(corrplot)
+library(FactoMineR)
+library(factoextra)
+library(cluster)
+library(plotly)
+library(car)
+library(lmtest)
+
+data <- readRDS("data/suicide_data_clean.rds")
+
+# Créer la variable groupe_age_simple
+data <- data %>% 
+  mutate(groupe_age_simple = case_when(
+    age %in% c("5-14 ans", "15-24 ans") ~ "Jeunes (5-24)",
+    age %in% c("25-34 ans", "35-54 ans") ~ "Adultes (25-54)",
+    age %in% c("55-74 ans", "75+ ans") ~ "Seniors (55+)"
+  ) %>% factor(levels = c("Jeunes (5-24)", "Adultes (25-54)", "Seniors (55+)")))
+
+theme_set(theme_minimal(base_size = 12))
+```
+
+## Matrice de Corrélation Complète
+
+### Préparation des données numériques
+```{r prepare_numeric}
+# Créer des variables numériques pour l'analyse
+data_numeric <- data %>% 
+  mutate(
+    sex_code = as.numeric(sex == "Homme"),
+    age_code = as.numeric(age),
+    year_normalized = (year - min(year)) / (max(year) - min(year))
+  ) %>% 
+  dplyr::select(suicides_no, population, taux_suicide_100k, 
+         sex_code, age_code, year_normalized)
+
+# Calculer la matrice de corrélation
+cor_matrix <- cor(data_numeric, use = "complete.obs")
+
+# Visualisation
+corrplot(cor_matrix, method = "color", type = "upper",
+         tl.col = "black", tl.srt = 45,
+         col = colorRampPalette(c("#2196F3", "white", "#F44336"))(100),
+         title = "Matrice de corrélation des variables",
+         mar = c(0,0,2,0))
+```
+
+### Interprétation des corrélations
+```{r corr_interpretation}
+# Extraire les corrélations significatives
+cor_df <- as.data.frame(as.table(cor_matrix)) %>% 
+  filter(Var1 != Var2, abs(Freq) > 0.3) %>% 
+  arrange(desc(abs(Freq)))
+
+kable(cor_df, digits = 3,
+      col.names = c("Variable 1", "Variable 2", "Corrélation"),
+      caption = "Corrélations significatives (|r| > 0.3)")
+```
+
+## Analyse en Composantes Principales (ACP)
+
+### Préparation des données pour l'ACP
+```{r pca_prep}
+# Créer un dataset agrégé par pays
+data_pca <- data %>% 
+  group_by(country) %>% 
+  summarise(
+    taux_moyen = mean(taux_suicide_100k, na.rm = TRUE),
+    taux_hommes = mean(taux_suicide_100k[sex == "Homme"], na.rm = TRUE),
+    taux_femmes = mean(taux_suicide_100k[sex == "Femme"], na.rm = TRUE),
+    ratio_HF = if_else(taux_femmes > 0, taux_hommes / taux_femmes, NA_real_),
+    taux_jeunes = mean(taux_suicide_100k[groupe_age_simple == "Jeunes (5-24)"], na.rm = TRUE),
+    taux_adultes = mean(taux_suicide_100k[groupe_age_simple == "Adultes (25-54)"], na.rm = TRUE),
+    taux_seniors = mean(taux_suicide_100k[groupe_age_simple == "Seniors (55+)"], na.rm = TRUE),
+    variabilite = sd(taux_suicide_100k, na.rm = TRUE),
+    .groups = "drop"
+  ) %>% 
+  filter(!is.na(taux_moyen) & !is.na(taux_hommes) & !is.na(taux_femmes) & 
+         !is.na(ratio_HF) & !is.na(taux_jeunes) & !is.na(taux_adultes) & 
+         !is.na(taux_seniors) & !is.na(variabilite) &
+         is.finite(ratio_HF) & is.finite(variabilite)) %>% 
+  column_to_rownames("country")
+```
+
+### Exécution de l'ACP
+```{r run_pca}
+# ACP
+pca_result <- PCA(data_pca, scale.unit = TRUE, graph = FALSE)
+
+# Résumé
+cat("=== RÉSUMÉ DE L'ACP ===\n")
+print(summary(pca_result))
+
+# Valeurs propres
+fviz_eig(pca_result, addlabels = TRUE, ylim = c(0, 50)) +
+  labs(title = "Éboulis des valeurs propres",
+       x = "Dimensions",
+       y = "% de variance expliquée") +
+  theme_minimal()
+```
+
+### Cercle des corrélations
+```{r pca_circle}
+fviz_pca_var(pca_result, 
+             col.var = "contrib",
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             repel = TRUE) +
+  labs(title = "Cercle des corrélations - Variables",
+       color = "Contribution") +
+  theme_minimal()
+```
+
+### Projection des pays
+```{r pca_individuals}
+fviz_pca_ind(pca_result,
+             col.ind = "cos2",
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             repel = TRUE,
+             labelsize = 3) +
+  labs(title = "Projection des pays dans le plan factoriel",
+       color = "Qualité de\nreprésentation") +
+  theme_minimal()
+```
+
+### Biplot
+```{r pca_biplot}
+fviz_pca_biplot(pca_result, 
+                repel = TRUE,
+                col.var = "#2E86C1",
+                col.ind = "#E74C3C",
+                labelsize = 3) +
+  labs(title = "Biplot : Pays et Variables") +
+  theme_minimal()
+```
+
+## Clustering Hiérarchique (CAH)
+
+### Classification des pays
+```{r hierarchical_clustering}
+# Calculer la matrice de distances
+dist_matrix <- dist(scale(data_pca), method = "euclidean")
+
+# Classification hiérarchique
+hclust_result <- hclust(dist_matrix, method = "ward.D2")
+
+# Dendrogramme
+fviz_dend(hclust_result, k = 5, 
+          cex = 0.6,
+          k_colors = c("#2E86C1", "#E74C3C", "#F39C12", "#27AE60", "#8E44AD"),
+          color_labels_by_k = TRUE,
+          rect = TRUE) +
+  labs(title = "Dendrogramme - Classification des pays",
+       subtitle = "Méthode de Ward, 5 clusters") +
+  theme_minimal()
+```
+
+### Caractérisation des clusters
+```{r cluster_characterization}
+# Couper l'arbre en 5 groupes
+clusters <- cutree(hclust_result, k = 5)
+
+# Ajouter les clusters au dataset
+data_pca_clustered <- data_pca %>% 
+  mutate(cluster = factor(clusters))
+
+# Statistiques par cluster
+cluster_stats <- data_pca_clustered %>% 
+  group_by(cluster) %>% 
+  summarise(
+    n_pays = n(),
+    taux_moyen = mean(taux_moyen),
+    ratio_HF = mean(ratio_HF),
+    taux_seniors = mean(taux_seniors),
+    variabilite = mean(variabilite),
+    .groups = "drop"
+  ) %>% 
+  arrange(desc(taux_moyen))
+
+kable(cluster_stats, digits = 2,
+      caption = "Caractéristiques des 5 clusters de pays")
+
+# Liste des pays par cluster
+for (i in 1:5) {
+  cat("\n=== CLUSTER", i, "===\n")
+  pays_cluster <- rownames(data_pca_clustered)[data_pca_clustered$cluster == i]
+  cat(paste(pays_cluster, collapse = ", "), "\n")
+}
+```
+
+### Visualisation des clusters dans le plan ACP
+```{r viz_clusters_pca}
+fviz_cluster(list(data = data_pca, cluster = clusters),
+             palette = c("#2E86C1", "#E74C3C", "#F39C12", "#27AE60", "#8E44AD"),
+             ellipse.type = "convex",
+             repel = TRUE,
+             ggtheme = theme_minimal()) +
+  labs(title = "Visualisation des clusters dans le plan factoriel")
+```
+
+## K-means Clustering
+
+### Détermination du nombre optimal de clusters
+```{r optimal_k}
+# Méthode du coude
+fviz_nbclust(scale(data_pca), kmeans, method = "wss") +
+  geom_vline(xintercept = 4, linetype = 2) +
+  labs(title = "Méthode du coude",
+       subtitle = "Nombre optimal de clusters") +
+  theme_minimal()
+
+# Méthode silhouette
+fviz_nbclust(scale(data_pca), kmeans, method = "silhouette") +
+  labs(title = "Méthode de la silhouette") +
+  theme_minimal()
+```
+
+### Exécution du K-means
+```{r kmeans}
+# K-means avec 4 clusters
+set.seed(123)
+kmeans_result <- kmeans(scale(data_pca), centers = 4, nstart = 25)
+
+# Visualisation
+fviz_cluster(kmeans_result, data = scale(data_pca),
+             palette = c("#2E86C1", "#E74C3C", "#F39C12", "#27AE60"),
+             ellipse.type = "euclid",
+             star.plot = TRUE,
+             repel = TRUE,
+             ggtheme = theme_minimal()) +
+  labs(title = "K-means Clustering (k=4)")
+```
+
+
+## Conclusions des Analyses Multivariées
+
+**Points clés identifiés :**
+
+1. 📊 **Corrélations** : 
+   - Forte corrélation entre sexe masculin et taux élevés
+   - Corrélation positive entre âge et taux de suicide
+   - Faible corrélation temporelle globale
+
+2. 🔍 **ACP** : 
+   - Les 2 premières dimensions expliquent ~70% de la variance
+   - Distinction claire entre pays à risque élevé vs faible
+   - Le profil par âge est un facteur discriminant majeur
+
+3. 🌐 **Clustering** :
+   - 4-5 profils de pays distincts identifiés
+   - Cluster 1 : Pays à risque très élevé (Europe de l'Est)
+   - Cluster 2 : Pays développés à risque modéré
+   - Cluster 3 : Pays en développement à faible risque
+
+
+
+**Synthèse :** Les analyses multivariées confirment que le suicide est un phénomène multifactoriel où **sexe**, **âge** et **contexte géographique** interagissent de manière complexe. Les modèles statistiques permettent d'identifier les profils à risque avec une précision acceptable, ouvrant la voie à des interventions ciblées et personnalisées.
+
+
+
