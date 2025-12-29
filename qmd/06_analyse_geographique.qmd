@@ -1,0 +1,354 @@
+---
+title: "Chapitre 6 : Analyse Géographique"
+format:
+  html:
+    code-fold: true
+---
+
+# Analyse par Pays et Régions
+
+```{r setup, message=FALSE, warning=FALSE}
+# Installer les packages manquants si nécessaire
+if (!require("fields")) install.packages("fields", repos = "https://cran.rstudio.com/")
+if (!require("rworldmap")) install.packages("rworldmap", repos = "https://cran.rstudio.com/")
+
+library(tidyverse)
+library(scales)
+library(plotly)
+library(knitr)
+library(DT)
+library(ggrepel)
+library(maps)
+library(rworldmap)
+
+data <- readRDS("data/suicide_data_clean.rds")
+theme_set(theme_minimal(base_size = 12))
+```
+
+## Vue d'Ensemble Mondiale
+
+### Nombre de pays dans l'analyse
+```{r overview_countries}
+n_pays <- n_distinct(data$country)
+n_observations_par_pays <- data %>% 
+  count(country) %>% 
+  summarise(
+    minimum = min(n),
+    mediane = median(n),
+    moyenne = mean(n),
+    maximum = max(n)
+  )
+
+cat(" Nombre total de pays analysés :", n_pays, "\n\n")
+cat("**Observations par pays** :\n")
+cat("  - Minimum :", n_observations_par_pays$minimum, "\n")
+cat("  - Médiane :", n_observations_par_pays$mediane, "\n")
+cat("  - Moyenne :", round(n_observations_par_pays$moyenne, 1), "\n")
+cat("  - Maximum :", n_observations_par_pays$maximum, "\n")
+```
+
+### Couverture temporelle par pays
+```{r temporal_coverage}
+coverage <- data %>% 
+  group_by(country) %>% 
+  summarise(
+    annee_debut = min(year),
+    annee_fin = max(year),
+    nb_annees = n_distinct(year),
+    completude = (nb_annees / 36) * 100,
+    .groups = "drop"
+  ) %>% 
+  arrange(desc(completude))
+
+# Statistiques de couverture
+cat("Couverture temporelle :\n")
+cat("  - Pays avec couverture complète (36 ans) :", 
+    sum(coverage$nb_annees == 36), "\n")
+cat("  - Pays avec > 80% de couverture :", 
+    sum(coverage$completude > 80), "\n")
+cat("  - Pays avec < 50% de couverture :", 
+    sum(coverage$completude < 50), "\n")
+
+
+```
+
+## Classement des Pays par Taux de Suicide
+
+### Top 20 pays avec les taux les plus élevés
+```{r top20_pays}
+top20_pays <- data %>% 
+  group_by(country) %>% 
+  summarise(
+    total_suicides = sum(suicides_no),
+    total_population = sum(population),
+    taux_moyen = (total_suicides / total_population) * 100000,
+    .groups = "drop"
+  ) %>% 
+  arrange(desc(taux_moyen)) %>% 
+  head(20)
+
+kable(top20_pays, 
+      digits = 2,
+      format.args = list(big.mark = " "),
+      col.names = c("Pays", "Total suicides", "Population totale", "Taux moyen (100k)"),
+      caption = "Top 20 des pays avec les taux de suicide les plus élevés")
+
+# Visualisation
+ggplot(top20_pays, aes(x = reorder(country, taux_moyen), y = taux_moyen)) +
+  geom_segment(aes(x = reorder(country, taux_moyen), 
+                   xend = reorder(country, taux_moyen),
+                   y = 0, yend = taux_moyen),
+               color = "grey50", size = 1) +
+  geom_point(size = 4, color = "#F44336") +
+  coord_flip() +
+  labs(title = "Top 20 des pays avec les taux de suicide les plus élevés",
+       subtitle = "Taux moyen 1980-2015 pour 100 000 habitants",
+       x = NULL,
+       y = "Taux pour 100k habitants") +
+  theme_minimal() +
+  theme(axis.text.y = element_text(size = 10, face = "bold"))
+```
+
+### Bottom 20 pays avec les taux les plus faibles
+```{r bottom20_pays}
+bottom20_pays <- data %>% 
+  group_by(country) %>% 
+  summarise(
+    total_suicides = sum(suicides_no),
+    total_population = sum(population),
+    taux_moyen = (total_suicides / total_population) * 100000,
+    .groups = "drop"
+  ) %>% 
+  arrange(taux_moyen) %>% 
+  head(20)
+
+kable(bottom20_pays, 
+      digits = 2,
+      format.args = list(big.mark = " "),
+      col.names = c("Pays", "Total suicides", "Population totale", "Taux moyen (100k)"),
+      caption = "Top 20 des pays avec les taux de suicide les plus faibles")
+
+# Visualisation
+ggplot(bottom20_pays, aes(x = reorder(country, -taux_moyen), y = taux_moyen)) +
+  geom_segment(aes(x = reorder(country, -taux_moyen), 
+                   xend = reorder(country, -taux_moyen),
+                   y = 0, yend = taux_moyen),
+               color = "grey50", size = 1) +
+  geom_point(size = 4, color = "#4CAF50") +
+  coord_flip() +
+  labs(title = "Top 20 des pays avec les taux de suicide les plus faibles",
+       subtitle = "Taux moyen 1980-2015 pour 100 000 habitants",
+       x = NULL,
+       y = "Taux pour 100k habitants") +
+  theme_minimal() +
+  theme(axis.text.y = element_text(size = 10, face = "bold"))
+```
+
+## Comparaison par Continents/Régions
+
+### Création de groupes géographiques
+```{r regions}
+# Définir les régions (simplifiées)
+data_regions <- data %>% 
+  mutate(
+    region = case_when(
+      country %in% c("France", "Germany", "United Kingdom", "Italy", "Spain", 
+                     "Poland", "Netherlands", "Belgium", "Greece", "Portugal",
+                     "Austria", "Switzerland", "Sweden", "Norway", "Finland",
+                     "Denmark", "Ireland", "Czech Republic", "Hungary", "Romania",
+                     "Bulgaria", "Croatia", "Serbia", "Slovakia", "Slovenia") ~ "Europe",
+      
+      country %in% c("United States", "Canada", "Mexico", "Costa Rica", "Panama",
+                     "Cuba", "Puerto Rico") ~ "Amérique du Nord",
+      
+      country %in% c("Brazil", "Argentina", "Chile", "Colombia", "Venezuela",
+                     "Peru", "Ecuador", "Uruguay", "Paraguay") ~ "Amérique du Sud",
+      
+      country %in% c("China", "Japan", "South Korea", "India", "Thailand",
+                     "Philippines", "Singapore", "Malaysia", "Indonesia",
+                     "Vietnam", "Sri Lanka", "Myanmar") ~ "Asie",
+      
+      country %in% c("Australia", "New Zealand") ~ "Océanie",
+      
+      country %in% c("South Africa", "Mauritius", "Seychelles") ~ "Afrique",
+      
+      country %in% c("Russia", "Ukraine", "Belarus", "Kazakhstan", "Azerbaijan",
+                     "Armenia", "Georgia", "Kyrgyzstan", "Uzbekistan") ~ "Europe de l'Est/Asie Centrale",
+      
+      country %in% c("Israel", "Kuwait", "Qatar", "Bahrain", "United Arab Emirates",
+                     "Turkey") ~ "Moyen-Orient",
+      
+      TRUE ~ "Autre"
+    )
+  )
+
+# Statistiques par région
+stats_regions <- data_regions %>% 
+  group_by(region) %>% 
+  summarise(
+    nb_pays = n_distinct(country),
+    total_suicides = sum(suicides_no),
+    population = sum(population),
+    taux_moyen = (total_suicides / population) * 100000,
+    .groups = "drop"
+  ) %>% 
+  arrange(desc(taux_moyen))
+
+kable(stats_regions, 
+      digits = 2,
+      format.args = list(big.mark = " "),
+      caption = "Statistiques par région géographique")
+```
+
+### Visualisation par région
+```{r viz_regions}
+# Graphique en barres
+ggplot(stats_regions, aes(x = reorder(region, taux_moyen), y = taux_moyen, fill = region)) +
+  geom_col(alpha = 0.8) +
+  geom_text(aes(label = round(taux_moyen, 1)), hjust = -0.2, size = 4, fontface = "bold") +
+  coord_flip() +
+  scale_fill_brewer(palette = "Set3") +
+  labs(title = "Taux de suicide moyen par région du monde",
+       x = NULL,
+       y = "Taux pour 100k habitants") +
+  theme_minimal() +
+  theme(legend.position = "none",
+        axis.text.y = element_text(size = 11, face = "bold"))
+
+
+```
+
+## Carte Mondiale des Taux de Suicide
+
+### Préparation des données cartographiques
+```{r world_map_data}
+# Calculer les taux moyens par pays
+map_data <- data %>% 
+  group_by(country) %>% 
+  summarise(
+    taux_moyen = (sum(suicides_no) / sum(population)) * 100000,
+    .groups = "drop"
+  )
+
+# Harmoniser les noms de pays pour jointure avec la carte
+map_data <- map_data %>% 
+  mutate(country_map = case_when(
+    country == "United States" ~ "USA",
+    country == "United Kingdom" ~ "UK",
+    country == "Russia" ~ "Russian Federation",
+    country == "South Korea" ~ "South Korea",
+    TRUE ~ country
+  ))
+
+# Joindre avec les données mondiales
+world_map <- map_data("world")
+world_data <- world_map %>% 
+  left_join(map_data, by = c("region" = "country_map"))
+```
+
+### Carte choroplèthe mondiale
+```{r choropleth_map}
+ggplot(world_data, aes(x = long, y = lat, group = group, fill = taux_moyen)) +
+  geom_polygon(color = "white", size = 0.1) +
+  scale_fill_gradient2(
+    low = "#2E7D32",
+    mid = "#FFC107", 
+    high = "#C62828",
+    midpoint = 15,
+    na.value = "grey90",
+    name = "Taux\n(100k hab.)"
+  ) +
+  labs(title = "Carte mondiale des taux de suicide",
+       subtitle = "Moyenne 1980-2015 pour 100 000 habitants",
+       x = NULL,
+       y = NULL) +
+  theme_void() +
+  theme(
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+    plot.subtitle = element_text(size = 12, hjust = 0.5),
+    legend.position = "right"
+  )
+```
+
+## Analyse des Disparités Géographiques
+
+
+
+### Comparaison pays développés vs en développement
+```{r developed_vs_developing}
+# Classification simplifiée (à adapter selon vos critères)
+data_dev <- data %>% 
+  mutate(
+    developpement = case_when(
+      country %in% c("United States", "Canada", "United Kingdom", "France", 
+                     "Germany", "Italy", "Spain", "Japan", "Australia", 
+                     "Netherlands", "Belgium", "Switzerland", "Sweden", 
+                     "Norway", "Finland", "Denmark", "Austria", "New Zealand",
+                     "South Korea", "Singapore", "Israel") ~ "Développés",
+      TRUE ~ "En développement"
+    )
+  )
+
+# Comparaison
+comparison_dev <- data_dev %>% 
+  group_by(developpement) %>% 
+  summarise(
+    nb_pays = n_distinct(country),
+    taux_moyen = mean(taux_suicide_100k),
+    taux_median = median(taux_suicide_100k),
+    ecart_type = sd(taux_suicide_100k),
+    .groups = "drop"
+  )
+
+kable(comparison_dev, digits = 2,
+      caption = "Comparaison pays développés vs en développement")
+
+# Boxplot comparatif
+ggplot(data_dev, aes(x = developpement, y = taux_suicide_100k, fill = developpement)) +
+  geom_boxplot(outlier.alpha = 0.3) +
+  geom_violin(alpha = 0.3) +
+  scale_y_log10() +
+  scale_fill_manual(values = c("Développés" = "#2196F3", "En développement" = "#FF9800")) +
+  labs(title = "Distribution des taux : Pays développés vs En développement",
+       x = NULL,
+       y = "Taux pour 100k habitants (log10)") +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+
+
+
+## Conclusions de l'Analyse Géographique
+```{r summary_geo}
+# Statistiques finales
+pays_max <- top20_pays %>% slice(1) %>% pull(country)
+taux_max_pays <- top20_pays %>% slice(1) %>% pull(taux_moyen)
+pays_min <- bottom20_pays %>% slice(1) %>% pull(country)
+taux_min_pays <- bottom20_pays %>% slice(1) %>% pull(taux_moyen)
+region_max <- stats_regions %>% slice(1) %>% pull(region)
+```
+
+**Points clés identifiés :**
+
+1. 🌍 **Couverture géographique** : `r n_pays` pays analysés sur tous les continents
+
+2. 🔴 **Pays le plus touché** : **`r pays_max`** avec un taux moyen de `r round(taux_max_pays, 2)` pour 100k habitants
+
+3. 🟢 **Pays le moins touché** : **`r pays_min`** avec un taux moyen de `r round(taux_min_pays, 2)` pour 100k habitants
+
+4. 🗺️ **Région la plus touchée** : **`r region_max`** présente les taux moyens les plus élevés
+
+5. 📈 **Tendances divergentes** : 
+   - Certains pays montrent des hausses préoccupantes
+   - D'autres affichent des baisses encourageantes
+   - Les politiques nationales jouent un rôle déterminant
+
+6. 🌐 **Facteurs géographiques** : Les taux varient considérablement selon :
+   - Le niveau de développement économique
+   - Les facteurs culturels et religieux
+   - Les systèmes de santé mentale
+   - La qualité des données de surveillance
+
+
+**Interprétation :** L'analyse géographique révèle d'importantes disparités mondiales. Les pays d'Europe de l'Est et certaines régions d'Asie présentent historiquement les taux les plus élevés. Les différences observées reflètent des réalités socio-économiques, culturelles et sanitaires complexes qui nécessitent des approches de prévention adaptées à chaque contexte national.
