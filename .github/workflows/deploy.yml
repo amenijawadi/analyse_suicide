@@ -138,10 +138,11 @@ jobs:
           # Packages par groupe (installation plus stable)
           groups <- list(
             'Groupe 1 - Core' = c('rmarkdown', 'knitr'),
-            'Groupe 2 - Tidyverse' = c('dplyr', 'ggplot2', 'tidyr'),
+            'Groupe 2 - Tidyverse' = c('tidyverse', 'scales', 'plotly'),
             'Groupe 3 - Data I/O' = c('readxl', 'lubridate'),
-            'Groupe 4 - Stats' = c('car', 'lmtest', 'gplots')
-          )
+            'Groupe 4 - Stats' = c('car', 'lmtest', 'gplots'),
+            'Groupe 5 - Multivariate' = c('corrplot', 'FactoMineR', 'factoextra', 'cluster', 'MASS', 'effectsize')
+            )
           
           # Fonction d'installation avec retry
           install_group <- function(pkgs, group_name, max_retries = 2) {
