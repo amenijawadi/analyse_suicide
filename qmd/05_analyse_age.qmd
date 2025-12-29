@@ -1,0 +1,251 @@
+---
+title: "Chapitre 5 : Analyse par Tranche d'Âge"
+format:
+  html:
+    code-fold: true
+---
+
+# Analyse par Groupes d'Âge
+
+```{r setup, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(scales)
+library(plotly)
+library(knitr)
+library(ggalluvial)
+library(viridis)
+
+data <- readRDS("data/suicide_data_clean.rds")
+theme_set(theme_minimal(base_size = 12))
+```
+
+## Vue d'Ensemble par Âge
+
+### Statistiques descriptives
+```{r stats_age}
+stats_age <- data %>% 
+  group_by(age) %>% 
+  summarise(
+    `Nombre total` = sum(suicides_no),
+    `Population` = sum(population),
+    `Taux moyen (100k)` = (sum(suicides_no) / sum(population)) * 100000,
+    `Taux médian` = median(taux_suicide_100k),
+    `Écart-type` = sd(taux_suicide_100k),
+    `Observations` = n(),
+    .groups = "drop"
+  )
+
+kable(stats_age, digits = 2, format.args = list(big.mark = " "),
+      caption = "Statistiques par tranche d'âge")
+```
+Les statistiques sont calculées à partir des données cumulées de tous les pays sur la période 1980–2015. Le nombre total correspond à la somme des suicides par tranche d’âge, et la population à la somme des populations annuelles. Le taux moyen est donc un taux global sur l’ensemble de la période, exprimé pour 100 000 habitants. Les résultats montrent une augmentation nette du taux de suicide avec l’âge : il est très faible chez les 5–14 ans, augmente chez les jeunes adultes, et atteint son niveau le plus élevé chez les personnes âgées, en particulier dans la tranche 75 ans et plus, où la variabilité est également la plus forte.
+
+
+### Répartition des suicides par âge
+```{r repartition_age}
+data %>% 
+  group_by(age) %>% 
+  summarise(total = sum(suicides_no), .groups = "drop") %>% 
+  mutate(pourcentage = total / sum(total) * 100) %>% 
+  ggplot(aes(x = age, y = total, fill = age)) +
+  geom_col(alpha = 0.8) +
+  geom_text(aes(label = paste0(round(pourcentage, 1), "%")),
+            vjust = -0.5, size = 4) +
+  scale_y_continuous(labels = comma) +
+  scale_fill_viridis_d(option = "plasma") +
+  labs(title = "Répartition des suicides par tranche d'âge",
+       subtitle = "Total mondial 1980-2015",
+       x = "Tranche d'âge",
+       y = "Nombre de suicides") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "none")
+```
+
+
+Ce graphique représente le nombre total de suicides par tranche d’âge sur l’ensemble de la période étudiée. Les pourcentages indiquent la part de chaque tranche d’âge dans le total mondial des suicides.
+
+
+## Profils de Risque par Âge
+
+### Taux de suicide par tranche d'âge
+```{r taux_age}
+p <- data %>% 
+  group_by(age) %>% 
+  summarise(taux = mean(taux_suicide_100k), .groups = "drop") %>% 
+  ggplot(aes(x = age, y = taux, group = 1)) +
+  geom_line(color = "darkred", size = 1.5) +
+  geom_point(size = 4, color = "darkred") +
+  geom_area(alpha = 0.3, fill = "red") +
+  labs(title = "Profil du risque suicidaire par âge",
+       subtitle = "Taux moyen pour 100 000 habitants",
+       x = "Tranche d'âge",
+       y = "Taux pour 100k habitants") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggplotly(p)
+```
+
+### Comparaison avec groupe simplifié
+```{r groupes_simplifies}
+data <- data %>% 
+  mutate(groupe_age_simple = case_when(
+    age %in% c("5-14 ans", "15-24 ans") ~ "Jeunes (5-24)",
+    age %in% c("25-34 ans", "35-54 ans") ~ "Adultes (25-54)",
+    age %in% c("55-74 ans", "75+ ans") ~ "Seniors (55+)"
+  ) %>% factor(levels = c("Jeunes (5-24)", "Adultes (25-54)", "Seniors (55+)")))
+
+data %>% 
+  group_by(groupe_age_simple) %>% 
+  summarise(
+    total = sum(suicides_no),
+    taux = (sum(suicides_no) / sum(population)) * 100000,
+    .groups = "drop"
+  ) %>% 
+  ggplot(aes(x = groupe_age_simple, y = taux, fill = groupe_age_simple)) +
+  geom_col(alpha = 0.8, width = 0.7) +
+  geom_text(aes(label = round(taux, 1)), vjust = -0.5, size = 5, fontface = "bold") +
+  scale_fill_manual(values = c("Jeunes (5-24)" = "#4CAF50",
+                                "Adultes (25-54)" = "#FF9800",
+                                "Seniors (55+)" = "#F44336")) +
+  labs(title = "Taux de suicide par grand groupe d'âge",
+       x = "Groupe d'âge",
+       y = "Taux pour 100k habitants") +
+  theme_minimal() +
+  theme(legend.position = "none",
+        axis.text.x = element_text(size = 12, face = "bold"))
+```
+
+
+
+
+## Analyse Croisée Âge × Sexe
+
+### Heatmap interactive
+```{r heatmap_age_sex}
+data %>% 
+  group_by(age, sex) %>% 
+  summarise(taux = mean(taux_suicide_100k), .groups = "drop") %>% 
+  ggplot(aes(x = sex, y = age, fill = taux)) +
+  geom_tile(color = "white", size = 2) +
+  geom_text(aes(label = round(taux, 1)), 
+            color = "white", fontface = "bold", size = 6) +
+  scale_fill_gradient2(low = "#2196F3", mid = "#FFC107", high = "#F44336",
+                       midpoint = 25) +
+  labs(title = "Taux moyen de suicide : Âge × Sexe",
+       x = "Sexe",
+       y = "Tranche d'âge",
+       fill = "Taux (100k)") +
+  theme_minimal() +
+  theme(axis.text = element_text(size = 12, face = "bold"),
+        plot.title = element_text(size = 16, face = "bold"))
+```
+
+### Profils par sexe et âge
+```{r profils_sex_age}
+data %>% 
+  group_by(age, sex) %>% 
+  summarise(taux = mean(taux_suicide_100k), .groups = "drop") %>% 
+  ggplot(aes(x = age, y = taux, color = sex, group = sex)) +
+  geom_line(size = 1.5) +
+  geom_point(size = 4) +
+  scale_color_manual(values = c("Homme" = "#2196F3", "Femme" = "#E91E63")) +
+  labs(title = "Profils de risque par âge et sexe",
+       x = "Tranche d'âge",
+       y = "Taux moyen pour 100k habitants",
+       color = "Sexe") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "top")
+```
+
+## Analyse par Décennie et Âge
+
+### Évolution des profils d'âge
+```{r decennie_age}
+data %>% 
+  group_by(decennie, age) %>% 
+  summarise(taux = mean(taux_suicide_100k), .groups = "drop") %>% 
+  ggplot(aes(x = age, y = taux, fill = decennie)) +
+  geom_col(position = "dodge", alpha = 0.8) +
+  scale_fill_brewer(palette = "Set2") +
+  labs(title = "Évolution des taux par âge selon les décennies",
+       x = "Tranche d'âge",
+       y = "Taux moyen pour 100k habitants",
+       fill = "Décennie") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+
+
+## Analyse des Extrêmes par Âge
+
+### Top 10 observations par tranche d'âge
+```{r extremes_age}
+top_per_age <- data %>% 
+  group_by(age) %>% 
+  arrange(desc(taux_suicide_100k)) %>% 
+  slice(1:3) %>% 
+  select(age, country, year, sex, taux_suicide_100k) %>% 
+  ungroup()
+
+kable(top_per_age, digits = 2,
+      caption = "Top 3 taux les plus élevés par tranche d'âge")
+```
+
+### Pays à risque par tranche d'âge
+```{r risk_countries_age}
+data %>% 
+  group_by(country, age) %>% 
+  summarise(taux_moyen = mean(taux_suicide_100k), .groups = "drop") %>% 
+  group_by(age) %>% 
+  arrange(desc(taux_moyen)) %>% 
+  slice(1:5) %>% 
+  ggplot(aes(x = reorder(country, taux_moyen), y = taux_moyen, fill = age)) +
+  geom_col() +
+  coord_flip() +
+  facet_wrap(~age, scales = "free_y") +
+  scale_fill_viridis_d(option = "plasma") +
+  labs(title = "Top 5 pays à risque par tranche d'âge",
+       x = "Pays",
+       y = "Taux moyen pour 100k habitants") +
+  theme_minimal() +
+  theme(legend.position = "none",
+        strip.text = element_text(face = "bold"))
+```
+
+## Conclusions de l'Analyse par Âge
+```{r summary_age}
+# Identifie le groupe le plus touché
+age_plus_touche <- stats_age %>% 
+  arrange(desc(`Taux moyen (100k)`)) %>% 
+  slice(1) %>% 
+  pull(age)
+
+age_moins_touche <- stats_age %>% 
+  arrange(`Taux moyen (100k)`) %>% 
+  slice(1) %>% 
+  pull(age)
+
+taux_max <- max(stats_age$`Taux moyen (100k)`)
+taux_min <- min(stats_age$`Taux moyen (100k)`)
+```
+
+**Points clés identifiés :**
+
+1.  **Groupe le plus à risque** : `r age_plus_touche` (taux : `r round(taux_max, 2)` pour 100k)
+
+2. **Groupe le moins à risque** : `r age_moins_touche` (taux : `r round(taux_min, 2)` pour 100k)
+
+3.  **Gradient d'âge** : Le risque augmente **progressivement avec l'âge**, atteignant son maximum chez les seniors
+
+4.  **Seniors (55+ ans)** : Représentent le groupe le plus vulnérable avec des taux significativement supérieurs
+
+5.  **Jeunes (5-14 ans)** : Taux les plus faibles, mais toute occurrence reste préoccupante
+
+7.  **Différences H/F** : L'écart entre hommes et femmes s'accentue avec l'âge
+
+
+**Interprétation :** L'âge est un facteur de risque majeur et croissant. Les politiques de prévention doivent être adaptées à chaque groupe d'âge, avec une attention particulière aux seniors qui cumulent vulnérabilités biologiques, sociales et psychologiques.
