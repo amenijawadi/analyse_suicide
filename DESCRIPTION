@@ -31,4 +31,8 @@ Imports:
     rworldmap,
     future.apply,
     gplots,
-    corrplot
+    corrplot,
+    FactoMineR,
+    downlit,
+    xml2
+
