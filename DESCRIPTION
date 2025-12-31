@@ -29,4 +29,5 @@ Imports:
     ggrepel,
     maps,
     rworldmap,
-    future.apply
+    future.apply,
+    gplots
