@@ -30,4 +30,5 @@ Imports:
     maps,
     rworldmap,
     future.apply,
-    gplots
+    gplots,
+    corrplot
