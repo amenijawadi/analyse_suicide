@@ -1,0 +1,32 @@
+Type: Project
+Package: analyse_suicide
+Title: Analyse Statistique des Suicides
+Version: 0.1.0
+Imports:
+    knitr,
+    rmarkdown,
+    tidyverse,
+    ggplot2,
+    dplyr,
+    readr,
+    tidyr,
+    lubridate,
+    forcats,
+    stringr,
+    purrr,
+    tibble,
+    DT,
+    scales,
+    skimr,
+    forecast,
+    plotly,
+    zoo,
+    ggridges,
+    patchwork,
+    ggalluvial,
+    viridis,
+    fields,
+    ggrepel,
+    maps,
+    rworldmap,
+    future.apply
