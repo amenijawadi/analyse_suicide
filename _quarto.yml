@@ -32,7 +32,7 @@ website:
       - section: Presentations
         contents:
           - text: "Présentation Finale"
-            file: qmd/presentaton.qmd
+            file: qmd/presentation.qmd
 
 format:
   html:
