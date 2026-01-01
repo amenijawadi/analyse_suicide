@@ -34,5 +34,6 @@ Imports:
     corrplot,
     FactoMineR,
     downlit,
-    xml2
+    xml2,
+    factoextra
 
