@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.26">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Chapitre 5 : Analyse par Tranche d’Âge – Analyse Statistique des Données Mondiales de Suicide </title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-30ae6b2e5328ac7375bd033934d6d19c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light"><script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script><link href="../site_libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
+<script src="../site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script><script src="../site_libs/plotly-binding-4.11.0/plotly.js"></script><script src="../site_libs/typedarray-0.1/typedarray.min.js"></script><script src="../site_libs/jquery-3.5.1/jquery.min.js"></script><link href="../site_libs/crosstalk-1.2.2/css/crosstalk.min.css" rel="stylesheet">
+<script src="../site_libs/crosstalk-1.2.2/js/crosstalk.min.js"></script><link href="../site_libs/plotly-htmlwidgets-css-2.11.1/plotly-htmlwidgets.css" rel="stylesheet">
+<script src="../site_libs/plotly-main-2.11.1/plotly-latest.min.js"></script><link rel="stylesheet" href="../thpe.css">
+</head>
+<body class="nav-sidebar docked quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav"><div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../qmd/01_exploration.html">Projects</a></li><li class="breadcrumb-item"><a href="../qmd/05_analyse_age.html">Analyse par Age</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Analyse Statistique des Données Mondiales de Suicide</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+<li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Projects</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../qmd/01_exploration.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Exploration des Données</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../qmd/02_nettoyage.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Nettoyage des Données</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../qmd/03_analyse_temporelle.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Analyse Temporelle</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../qmd/04_analyse_sexe.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Analyse par sexe</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../qmd/05_analyse_age.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Analyse par Age</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../qmd/06_analyse_geographique.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Analyse Géographique</span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Presentations</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../qmd/presentation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Présentation Finale</span></a>
+  </div>
+</li>
+      </ul>
+</li>
+    </ul>
+</div>
+</nav><div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">On this page</h2>
+   
+  <ul>
+<li>
+<a href="#analyse-par-groupes-d%C3%A2ge" id="toc-analyse-par-groupes-dâge" class="nav-link active" data-scroll-target="#analyse-par-groupes-d%C3%A2ge"><span class="header-section-number">1</span> Analyse par Groupes d’Âge</a>
+  <ul class="collapse">
+<li>
+<a href="#vue-densemble-par-%C3%A2ge" id="toc-vue-densemble-par-âge" class="nav-link" data-scroll-target="#vue-densemble-par-%C3%A2ge"><span class="header-section-number">1.1</span> Vue d’Ensemble par Âge</a>
+  <ul class="collapse">
+<li><a href="#statistiques-descriptives" id="toc-statistiques-descriptives" class="nav-link" data-scroll-target="#statistiques-descriptives"><span class="header-section-number">1.1.1</span> Statistiques descriptives</a></li>
+  <li><a href="#r%C3%A9partition-des-suicides-par-%C3%A2ge" id="toc-répartition-des-suicides-par-âge" class="nav-link" data-scroll-target="#r%C3%A9partition-des-suicides-par-%C3%A2ge"><span class="header-section-number">1.1.2</span> Répartition des suicides par âge</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#profils-de-risque-par-%C3%A2ge" id="toc-profils-de-risque-par-âge" class="nav-link" data-scroll-target="#profils-de-risque-par-%C3%A2ge"><span class="header-section-number">1.2</span> Profils de Risque par Âge</a>
+  <ul class="collapse">
+<li><a href="#taux-de-suicide-par-tranche-d%C3%A2ge" id="toc-taux-de-suicide-par-tranche-dâge" class="nav-link" data-scroll-target="#taux-de-suicide-par-tranche-d%C3%A2ge"><span class="header-section-number">1.2.1</span> Taux de suicide par tranche d’âge</a></li>
+  <li><a href="#comparaison-avec-groupe-simplifi%C3%A9" id="toc-comparaison-avec-groupe-simplifié" class="nav-link" data-scroll-target="#comparaison-avec-groupe-simplifi%C3%A9"><span class="header-section-number">1.2.2</span> Comparaison avec groupe simplifié</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#analyse-crois%C3%A9e-%C3%A2ge-sexe" id="toc-analyse-croisée-âge-sexe" class="nav-link" data-scroll-target="#analyse-crois%C3%A9e-%C3%A2ge-sexe"><span class="header-section-number">1.3</span> Analyse Croisée Âge × Sexe</a>
+  <ul class="collapse">
+<li><a href="#heatmap-interactive" id="toc-heatmap-interactive" class="nav-link" data-scroll-target="#heatmap-interactive"><span class="header-section-number">1.3.1</span> Heatmap interactive</a></li>
+  <li><a href="#profils-par-sexe-et-%C3%A2ge" id="toc-profils-par-sexe-et-âge" class="nav-link" data-scroll-target="#profils-par-sexe-et-%C3%A2ge"><span class="header-section-number">1.3.2</span> Profils par sexe et âge</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#analyse-par-d%C3%A9cennie-et-%C3%A2ge" id="toc-analyse-par-décennie-et-âge" class="nav-link" data-scroll-target="#analyse-par-d%C3%A9cennie-et-%C3%A2ge"><span class="header-section-number">1.4</span> Analyse par Décennie et Âge</a>
+  <ul class="collapse">
+<li><a href="#%C3%A9volution-des-profils-d%C3%A2ge" id="toc-évolution-des-profils-dâge" class="nav-link" data-scroll-target="#%C3%A9volution-des-profils-d%C3%A2ge"><span class="header-section-number">1.4.1</span> Évolution des profils d’âge</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#analyse-des-extr%C3%AAmes-par-%C3%A2ge" id="toc-analyse-des-extrêmes-par-âge" class="nav-link" data-scroll-target="#analyse-des-extr%C3%AAmes-par-%C3%A2ge"><span class="header-section-number">1.5</span> Analyse des Extrêmes par Âge</a>
+  <ul class="collapse">
+<li><a href="#top-10-observations-par-tranche-d%C3%A2ge" id="toc-top-10-observations-par-tranche-dâge" class="nav-link" data-scroll-target="#top-10-observations-par-tranche-d%C3%A2ge"><span class="header-section-number">1.5.1</span> Top 10 observations par tranche d’âge</a></li>
+  <li><a href="#pays-%C3%A0-risque-par-tranche-d%C3%A2ge" id="toc-pays-à-risque-par-tranche-dâge" class="nav-link" data-scroll-target="#pays-%C3%A0-risque-par-tranche-d%C3%A2ge"><span class="header-section-number">1.5.2</span> Pays à risque par tranche d’âge</a></li>
+  </ul>
+</li>
+  <li><a href="#conclusions-de-lanalyse-par-%C3%A2ge" id="toc-conclusions-de-lanalyse-par-âge" class="nav-link" data-scroll-target="#conclusions-de-lanalyse-par-%C3%A2ge"><span class="header-section-number">1.6</span> Conclusions de l’Analyse par Âge</a></li>
+  </ul>
+</li>
+  </ul><div class="toc-actions"><ul><li><a href="https://github.com/amenijawadi/analyse_suicide/edit/main/qmd/05_analyse_age.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/amenijawadi/analyse_suicide/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../qmd/01_exploration.html">Projects</a></li><li class="breadcrumb-item"><a href="../qmd/05_analyse_age.html">Analyse par Age</a></li></ol></nav><div class="quarto-title">
+<h1 class="title">Chapitre 5 : Analyse par Tranche d’Âge</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header><section id="analyse-par-groupes-dâge" class="level1" data-number="1"><h1 data-number="1">
+<span class="header-section-number">1</span> Analyse par Groupes d’Âge</h1>
+<section id="vue-densemble-par-âge" class="level2" data-number="1.1"><h2 data-number="1.1" class="anchored" data-anchor-id="vue-densemble-par-âge">
+<span class="header-section-number">1.1</span> Vue d’Ensemble par Âge</h2>
+<section id="statistiques-descriptives" class="level3" data-number="1.1.1"><h3 data-number="1.1.1" class="anchored" data-anchor-id="statistiques-descriptives">
+<span class="header-section-number">1.1.1</span> Statistiques descriptives</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Statistiques par tranche d’âge</caption>
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 16%">
+<col style="width: 19%">
+<col style="width: 13%">
+<col style="width: 11%">
+<col style="width: 14%">
+</colgroup>
+<thead><tr class="header">
+<th style="text-align: left;">age</th>
+<th style="text-align: right;">Nombre total</th>
+<th style="text-align: right;">Population</th>
+<th style="text-align: right;">Taux moyen (100k)</th>
+<th style="text-align: right;">Taux médian</th>
+<th style="text-align: right;">Écart-type</th>
+<th style="text-align: right;">Observations</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">5-14 ans</td>
+<td style="text-align: right;">62 320</td>
+<td style="text-align: right;">10 451 016 008</td>
+<td style="text-align: right;">0.60</td>
+<td style="text-align: right;">0.31</td>
+<td style="text-align: right;">1.12</td>
+<td style="text-align: right;">6 010</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">15-24 ans</td>
+<td style="text-align: right;">975 700</td>
+<td style="text-align: right;">10 587 850 825</td>
+<td style="text-align: right;">9.22</td>
+<td style="text-align: right;">5.63</td>
+<td style="text-align: right;">9.71</td>
+<td style="text-align: right;">6 010</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">25-34 ans</td>
+<td style="text-align: right;">1 360 780</td>
+<td style="text-align: right;">10 180 794 953</td>
+<td style="text-align: right;">13.37</td>
+<td style="text-align: right;">7.34</td>
+<td style="text-align: right;">14.65</td>
+<td style="text-align: right;">6 010</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">35-54 ans</td>
+<td style="text-align: right;">2 887 740</td>
+<td style="text-align: right;">16 822 867 999</td>
+<td style="text-align: right;">17.17</td>
+<td style="text-align: right;">9.29</td>
+<td style="text-align: right;">18.72</td>
+<td style="text-align: right;">6 010</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">55-74 ans</td>
+<td style="text-align: right;">1 955 150</td>
+<td style="text-align: right;">10 250 167 417</td>
+<td style="text-align: right;">19.07</td>
+<td style="text-align: right;">10.92</td>
+<td style="text-align: right;">19.17</td>
+<td style="text-align: right;">6 010</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">75+ ans</td>
+<td style="text-align: right;">756 777</td>
+<td style="text-align: right;">3 009 148 664</td>
+<td style="text-align: right;">25.15</td>
+<td style="text-align: right;">13.07</td>
+<td style="text-align: right;">31.84</td>
+<td style="text-align: right;">6 010</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Les statistiques sont calculées à partir des données cumulées de tous les pays sur la période 1980–2015. Le nombre total correspond à la somme des suicides par tranche d’âge, et la population à la somme des populations annuelles. Le taux moyen est donc un taux global sur l’ensemble de la période, exprimé pour 100 000 habitants. Les résultats montrent une augmentation nette du taux de suicide avec l’âge : il est très faible chez les 5–14 ans, augmente chez les jeunes adultes, et atteint son niveau le plus élevé chez les personnes âgées, en particulier dans la tranche 75 ans et plus, où la variabilité est également la plus forte.</p>
+</section><section id="répartition-des-suicides-par-âge" class="level3" data-number="1.1.2"><h3 data-number="1.1.2" class="anchored" data-anchor-id="répartition-des-suicides-par-âge">
+<span class="header-section-number">1.1.2</span> Répartition des suicides par âge</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="05_analyse_age_files/figure-html/repartition_age-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Ce graphique représente le nombre total de suicides par tranche d’âge sur l’ensemble de la période étudiée. Les pourcentages indiquent la part de chaque tranche d’âge dans le total mondial des suicides, sans tenir compte de la population.</p>
+</section></section><section id="profils-de-risque-par-âge" class="level2" data-number="1.2"><h2 data-number="1.2" class="anchored" data-anchor-id="profils-de-risque-par-âge">
+<span class="header-section-number">1.2</span> Profils de Risque par Âge</h2>
+<section id="taux-de-suicide-par-tranche-dâge" class="level3" data-number="1.2.1"><h3 data-number="1.2.1" class="anchored" data-anchor-id="taux-de-suicide-par-tranche-dâge">
+<span class="header-section-number">1.2.1</span> Taux de suicide par tranche d’âge</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div class="plotly html-widget html-fill-item" id="htmlwidget-42e34eeab48862e7a095" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-42e34eeab48862e7a095">{"x":{"data":[{"x":[1,2,3,4,5,6],"y":[0.63095442594162687,8.80755740754228,12.437820628564907,15.412890385190154,16.805175553027979,25.016163936160343],"text":["age: 5-14 ans<br />taux:  0.6309544","age: 15-24 ans<br />taux:  8.8075574","age: 25-34 ans<br />taux: 12.4378206","age: 35-54 ans<br />taux: 15.4128904","age: 55-74 ans<br />taux: 16.8051756","age: 75+ ans<br />taux: 25.0161639"],"type":"scatter","mode":"lines+markers","line":{"width":5.6692913385826778,"color":"rgba(139,0,0,1)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","marker":{"autocolorscale":false,"color":"rgba(139,0,0,1)","opacity":1,"size":15.118110236220474,"symbol":"circle","line":{"width":1.8897637795275593,"color":"rgba(139,0,0,1)"}},"frame":null},{"x":[1,2,3,4,5,6,6,6,5,4,3,2,1,1],"y":[0,0,0,0,0,0,0,25.016163936160343,16.805175553027979,15.412890385190154,12.437820628564907,8.80755740754228,0.63095442594162687,0],"text":["age: 5-14 ans<br />taux:  0.6309544","age: 15-24 ans<br />taux:  8.8075574","age: 25-34 ans<br />taux: 12.4378206","age: 35-54 ans<br />taux: 15.4128904","age: 55-74 ans<br />taux: 16.8051756","age: 75+ ans<br />taux: 25.0161639","age: 75+ ans<br />taux: 25.0161639","age: 75+ ans<br />taux: 25.0161639","age: 55-74 ans<br />taux: 16.8051756","age: 35-54 ans<br />taux: 15.4128904","age: 25-34 ans<br />taux: 12.4378206","age: 15-24 ans<br />taux:  8.8075574","age: 5-14 ans<br />taux:  0.6309544","age: 5-14 ans<br />taux:  0.6309544"],"type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"transparent","dash":"solid"},"fill":"toself","fillcolor":"rgba(255,0,0,0.3)","hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":40.840182648401829,"r":7.3059360730593621,"b":53.878235939644654,"l":37.260273972602747},"paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"title":{"text":"Profil du risque suicidaire par âge","font":{"color":"rgba(0,0,0,1)","family":"","size":17.534246575342465},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,6.5999999999999996],"tickmode":"array","ticktext":["5-14 ans","15-24 ans","25-34 ans","35-54 ans","55-74 ans","75+ ans"],"tickvals":[1,2,3,3.9999999999999996,5,6],"categoryorder":"array","categoryarray":["5-14 ans","15-24 ans","25-34 ans","35-54 ans","55-74 ans","75+ ans"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-45,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0,"zeroline":false,"anchor":"y","title":{"text":"Tranche d'âge","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-1.2508081968080171,26.266972132968359],"tickmode":"array","ticktext":["0","5","10","15","20","25"],"tickvals":[0,5,10,15,20,25],"categoryorder":"array","categoryarray":["0","5","10","15","20","25"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0,"zeroline":false,"anchor":"x","title":{"text":"Taux pour 100k habitants","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","layer":"below","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"16f4354f2304":{"x":{},"y":{},"type":"scatter"},"16f41a996632":{"x":{},"y":{}},"16f44f0a4983":{"x":{},"y":{}}},"cur_data":"16f4354f2304","visdat":{"16f4354f2304":["function (y) ","x"],"16f41a996632":["function (y) ","x"],"16f44f0a4983":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</section><section id="comparaison-avec-groupe-simplifié" class="level3" data-number="1.2.2"><h3 data-number="1.2.2" class="anchored" data-anchor-id="comparaison-avec-groupe-simplifié">
+<span class="header-section-number">1.2.2</span> Comparaison avec groupe simplifié</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="05_analyse_age_files/figure-html/groupes_simplifies-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section></section><section id="analyse-croisée-âge-sexe" class="level2" data-number="1.3"><h2 data-number="1.3" class="anchored" data-anchor-id="analyse-croisée-âge-sexe">
+<span class="header-section-number">1.3</span> Analyse Croisée Âge × Sexe</h2>
+<section id="heatmap-interactive" class="level3" data-number="1.3.1"><h3 data-number="1.3.1" class="anchored" data-anchor-id="heatmap-interactive">
+<span class="header-section-number">1.3.1</span> Heatmap interactive</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="05_analyse_age_files/figure-html/heatmap_age_sex-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section><section id="profils-par-sexe-et-âge" class="level3" data-number="1.3.2"><h3 data-number="1.3.2" class="anchored" data-anchor-id="profils-par-sexe-et-âge">
+<span class="header-section-number">1.3.2</span> Profils par sexe et âge</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="05_analyse_age_files/figure-html/profils_sex_age-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section></section><section id="analyse-par-décennie-et-âge" class="level2" data-number="1.4"><h2 data-number="1.4" class="anchored" data-anchor-id="analyse-par-décennie-et-âge">
+<span class="header-section-number">1.4</span> Analyse par Décennie et Âge</h2>
+<section id="évolution-des-profils-dâge" class="level3" data-number="1.4.1"><h3 data-number="1.4.1" class="anchored" data-anchor-id="évolution-des-profils-dâge">
+<span class="header-section-number">1.4.1</span> Évolution des profils d’âge</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="05_analyse_age_files/figure-html/decennie_age-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section></section><section id="analyse-des-extrêmes-par-âge" class="level2" data-number="1.5"><h2 data-number="1.5" class="anchored" data-anchor-id="analyse-des-extrêmes-par-âge">
+<span class="header-section-number">1.5</span> Analyse des Extrêmes par Âge</h2>
+<section id="top-10-observations-par-tranche-dâge" class="level3" data-number="1.5.1"><h3 data-number="1.5.1" class="anchored" data-anchor-id="top-10-observations-par-tranche-dâge">
+<span class="header-section-number">1.5.1</span> Top 10 observations par tranche d’âge</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Top 3 taux les plus élevés par tranche d’âge</caption>
+<thead><tr class="header">
+<th style="text-align: left;">age</th>
+<th style="text-align: left;">country</th>
+<th style="text-align: right;">year</th>
+<th style="text-align: left;">sex</th>
+<th style="text-align: right;">taux_suicide_100k</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">5-14 ans</td>
+<td style="text-align: left;">Rodrigues</td>
+<td style="text-align: right;">2014</td>
+<td style="text-align: left;">Femme</td>
+<td style="text-align: right;">24.51</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">5-14 ans</td>
+<td style="text-align: left;">Kiribati</td>
+<td style="text-align: right;">1996</td>
+<td style="text-align: left;">Homme</td>
+<td style="text-align: right;">18.92</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">5-14 ans</td>
+<td style="text-align: left;">French Guiana</td>
+<td style="text-align: right;">2003</td>
+<td style="text-align: left;">Homme</td>
+<td style="text-align: right;">18.36</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">15-24 ans</td>
+<td style="text-align: left;">Sri Lanka</td>
+<td style="text-align: right;">1984</td>
+<td style="text-align: left;">Homme</td>
+<td style="text-align: right;">92.35</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">15-24 ans</td>
+<td style="text-align: left;">Sri Lanka</td>
+<td style="text-align: right;">1983</td>
+<td style="text-align: left;">Homme</td>
+<td style="text-align: right;">90.85</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">15-24 ans</td>
+<td style="text-align: left;">Sri Lanka</td>
+<td style="text-align: right;">1982</td>
+<td style="text-align: left;">Homme</td>
+<td style="text-align: right;">86.36</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">25-34 ans</td>
+<td style="text-align: left;">Suriname</td>
+<td style="text-align: right;">1984</td>
+<td style="text-align: left;">Homme</td>
+<td style="text-align: right;">157.23</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">25-34 ans</td>
+<td style="text-align: left;">Rodrigues</td>
+<td style="text-align: right;">2016</td>
+<td style="text-align: left;">Homme</td>
+<td style="text-align: right;">107.10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">25-34 ans</td>
+<td style="text-align: left;">Russian Federation</td>
+<td style="text-align: right;">1994</td>
+<td style="text-align: left;">Homme</td>
+<td style="text-align: right;">94.18</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">35-54 ans</td>
+<td style="text-align: left;">Lithuania</td>
+<td style="text-align: right;">1994</td>
+<td style="text-align: left;">Homme</td>
+<td style="text-align: right;">151.74</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">35-54 ans</td>
+<td style="text-align: left;">Lithuania</td>
+<td style="text-align: right;">1996</td>
+<td style="text-align: left;">Homme</td>
+<td style="text-align: right;">151.33</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">35-54 ans</td>
+<td style="text-align: left;">Lithuania</td>
+<td style="text-align: right;">1995</td>
+<td style="text-align: left;">Homme</td>
+<td style="text-align: right;">144.85</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">55-74 ans</td>
+<td style="text-align: left;">Lithuania</td>
+<td style="text-align: right;">1998</td>
+<td style="text-align: left;">Homme</td>
+<td style="text-align: right;">123.83</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">55-74 ans</td>
+<td style="text-align: left;">Lithuania</td>
+<td style="text-align: right;">1996</td>
+<td style="text-align: left;">Homme</td>
+<td style="text-align: right;">121.81</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">55-74 ans</td>
+<td style="text-align: left;">Lithuania</td>
+<td style="text-align: right;">1994</td>
+<td style="text-align: left;">Homme</td>
+<td style="text-align: right;">120.56</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">75+ ans</td>
+<td style="text-align: left;">San Marino</td>
+<td style="text-align: right;">1997</td>
+<td style="text-align: left;">Homme</td>
+<td style="text-align: right;">300.75</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">75+ ans</td>
+<td style="text-align: left;">French Guiana</td>
+<td style="text-align: right;">1979</td>
+<td style="text-align: left;">Homme</td>
+<td style="text-align: right;">250.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">75+ ans</td>
+<td style="text-align: left;">Aruba</td>
+<td style="text-align: right;">1995</td>
+<td style="text-align: left;">Homme</td>
+<td style="text-align: right;">224.97</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section><section id="pays-à-risque-par-tranche-dâge" class="level3" data-number="1.5.2"><h3 data-number="1.5.2" class="anchored" data-anchor-id="pays-à-risque-par-tranche-dâge">
+<span class="header-section-number">1.5.2</span> Pays à risque par tranche d’âge</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="05_analyse_age_files/figure-html/risk_countries_age-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section></section><section id="conclusions-de-lanalyse-par-âge" class="level2" data-number="1.6"><h2 data-number="1.6" class="anchored" data-anchor-id="conclusions-de-lanalyse-par-âge">
+<span class="header-section-number">1.6</span> Conclusions de l’Analyse par Âge</h2>
+<p><strong>Points clés identifiés :</strong></p>
+<ol type="1">
+<li><p><strong>Groupe le plus à risque</strong> : 75+ ans (taux : 25.15 pour 100k)</p></li>
+<li><p><strong>Groupe le moins à risque</strong> : 5-14 ans (taux : 0.6 pour 100k)</p></li>
+<li><p><strong>Gradient d’âge</strong> : Le risque augmente <strong>progressivement avec l’âge</strong>, atteignant son maximum chez les seniors</p></li>
+<li><p><strong>Seniors (55+ ans)</strong> : Représentent le groupe le plus vulnérable avec des taux significativement supérieurs</p></li>
+<li><p><strong>Jeunes (5-14 ans)</strong> : Taux les plus faibles, mais toute occurrence reste préoccupante</p></li>
+<li><p><strong>Différences H/F</strong> : L’écart entre hommes et femmes s’accentue avec l’âge</p></li>
+</ol>
+<p><strong>Interprétation :</strong> L’âge est un facteur de risque majeur et croissant. Les politiques de prévention doivent être adaptées à chaque groupe d’âge, avec une attention particulière aux seniors qui cumulent vulnérabilités biologiques, sociales et psychologiques.</p>
+
+
+</section></section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/amenijawadi\.github\.io\/analyse_suicide\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/amenijawadi/analyse_suicide/edit/main/qmd/05_analyse_age.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/amenijawadi/analyse_suicide/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

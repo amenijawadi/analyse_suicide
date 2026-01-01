@@ -1,0 +1,286 @@
+/* ==========================================
+   STYLES PERSONNALISÉS - PRÉSENTATION
+   ========================================== */
+
+/* --- CENTRAGE ET COULEUR DES TITRES --- */
+.reveal h1,
+.reveal h2,
+.reveal h3,
+.reveal h4,
+.reveal h5,
+.reveal h6 {
+    text-align: center;
+    color: #003366; /* Bleu marine */
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 1.5rem;
+}
+
+.reveal h1 {
+    font-size: 1em;
+    border-bottom: 4px solid #003366;
+    padding-bottom: 0.5em;
+    margin-bottom: 0.8em;
+}
+
+.reveal h2 {
+    font-size: 1em;
+    border-bottom: 3px solid #0066cc;
+    padding-bottom: 0.4em;
+}
+
+.reveal h3 {
+    font-size: 0.7em;
+    color: #0066cc;
+}
+
+/* --- CONTENU CENTRÉ --- */
+.center-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 100%;
+    padding: 2rem;
+}
+
+/* --- BOÎTES STYLISÉES --- */
+.question-box {
+    background: linear-gradient(135deg, #003366 0%, #0066cc 100%);
+    color: white;
+    padding: 25px 40px;
+    border-radius: 15px;
+    margin: 20px auto;
+    font-size: 0.90em;
+    font-weight: bold;
+    box-shadow: 0 6px 20px rgba(0,51,102,0.3);
+    max-width: 90%;
+    text-align: center;
+}
+
+.alert-box {
+    background: #fff3cd;
+    border-left: 5px solid #ff9800;
+    padding: 20px 25px;
+    margin: 20px auto;
+    border-radius: 8px;
+    max-width: 90%;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+.future-box {
+    background: #e3f2fd;
+    border-left: 5px solid #0066cc;
+    padding: 20px 25px;
+    margin: 20px auto;
+    border-radius: 8px;
+    max-width: 90%;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+.references {
+    font-size: 0.95em;
+    line-height: 2;
+    text-align: left;
+    padding: 1rem;
+}
+
+/* --- STYLE DES BLOCS DE CODE --- */
+.reveal pre {
+    background: #f8f9fa;
+    border-left: 4px solid #003366;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    font-size: 0.5em;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.reveal code {
+    background: #e9ecef;
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #003366;
+    font-family: 'Courier New', monospace;
+}
+
+/* --- STYLE DES TABLEAUX COMPACT --- */
+.reveal table {
+    border-collapse: collapse;
+    width: 80%;        /* moins large que 100% */
+    margin: 5px auto;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    font-size: 0.85em; /* un peu plus petit */
+}
+
+.reveal th {
+    background: linear-gradient(135deg, #003366 0%, #0066cc 100%);
+    color: white;
+    padding: 8px 10px; /* réduit de 15px */
+    font-weight: bold;
+    text-align: center;
+    border: 1px solid #002244;
+}
+
+.reveal td {
+    padding: 6px 8px; /* réduit de 12px */
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+.reveal tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+.reveal tr:hover {
+    background-color: #e3f2fd;
+}
+
+/* --- STYLE DES LISTES --- */
+.reveal .incremental > ul > li,
+.reveal .incremental > ol > li {
+    margin: 18px 0;
+    font-size: 1.15em;
+    line-height: 1.6;
+}
+
+.reveal ul,
+.reveal ol {
+    text-align: left;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 85%;
+}
+
+/* --- COLONNES --- */
+.reveal .columns {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+}
+
+.reveal .column {
+    flex: 1;
+}
+
+/* --- BOUTON DE CODE --- */
+.reveal .code-tools-button {
+    background: #003366 !important;
+    color: white !important;
+    border-radius: 6px !important;
+    padding: 8px 16px !important;
+    font-weight: bold !important;
+}
+
+.reveal .code-tools-button:hover {
+    background: #0066cc !important;
+}
+
+/* --- GRAPHIQUES ET FIGURES --- */
+.reveal figure {
+    margin: 20px auto;
+    text-align: center;
+}
+
+.reveal img {
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* --- PIED DE PAGE --- */
+.reveal .footer {
+    color: #003366;
+    text-align: right;
+    font-size: 0.8em;
+    padding: 10px;
+}
+
+.reveal .footer a {
+    color: #003366;
+    text-decoration: none;
+}
+
+.reveal .footer a:hover {
+    color: #0066cc;
+}
+
+/* --- FRAGMENTS --- */
+.reveal .fragment {
+    opacity: 1;
+}
+
+.reveal .fragment.visible {
+    opacity: 1;
+}
+
+/* --- STYLE DES LIENS --- */
+.reveal a {
+    color: #0066cc;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.reveal a:hover {
+    color: #003366;
+    text-decoration: underline;
+}
+
+/* --- BLOCKQUOTES --- */
+.reveal blockquote {
+    background: #f8f9fa;
+    border-left: 5px solid #003366;
+    padding: 20px 30px;
+    margin: 20px auto;
+    font-style: italic;
+    color: #333;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+/* --- AMÉLIORATION DES GRAPHIQUES PLOTLY --- */
+.reveal .plotly {
+    margin: 20px auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+    .reveal h1 {
+        font-size: 1.8em;
+    }
+    
+    .reveal h2 {
+        font-size: 1.4em;
+    }
+    
+    .reveal .columns {
+        flex-direction: column;
+    }
+    
+    .question-box {
+        font-size: 1em;
+        padding: 15px 20px;
+    }
+}
+
+/* --- SCROLLBAR PERSONNALISÉE --- */
+.reveal pre::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.reveal pre::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.reveal pre::-webkit-scrollbar-thumb {
+    background: #003366;
+    border-radius: 4px;
+}
+
+.reveal pre::-webkit-scrollbar-thumb:hover {
+    background: #0066cc;
+}

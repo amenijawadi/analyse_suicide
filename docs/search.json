@@ -1,0 +1,628 @@
+[
+  {
+    "objectID": "qmd/presentation.html#problématique",
+    "href": "qmd/presentation.html#problématique",
+    "title": "Analyse Mondiale des Suicides",
+    "section": "Problématique",
+    "text": "Problématique\n\n-727 000 décès par suicide chaque année dans le monde.\n-Une mort toutes les 40 secondes.\n\n\n\nQuels sont les facteurs démographiques, temporels et géographiques associés au suicide à l’échelle mondiale ?",
+    "crumbs": [
+      "Presentations",
+      "Présentation Finale"
+    ]
+  },
+  {
+    "objectID": "qmd/presentation.html#objectifs-de-létude",
+    "href": "qmd/presentation.html#objectifs-de-létude",
+    "title": "Analyse Mondiale des Suicides",
+    "section": "Objectifs de l’Étude",
+    "text": "Objectifs de l’Étude\n\n\nAnalyser\n\nTendances temporelles (1980-2015).\nDifférences par sexe.\nProfils par tranche d’âge.\nDisparités géographiques.\n\n\nIdentifier\n\nGroupes à risque.\nPériodes critiques.\nPays les plus touchés.",
+    "crumbs": [
+      "Presentations",
+      "Présentation Finale"
+    ]
+  },
+  {
+    "objectID": "qmd/presentation.html#présentation-du-dataset",
+    "href": "qmd/presentation.html#présentation-du-dataset",
+    "title": "Analyse Mondiale des Suicides",
+    "section": "Présentation du Dataset",
+    "text": "Présentation du Dataset\n\nglimpse(data)\n\nRows: 43,776\nColumns: 6\n$ country     &lt;chr&gt; \"Albania\", \"Albania\", \"Albania\", \"Albania\", \"Albania\", \"Al…\n$ year        &lt;dbl&gt; 1985, 1985, 1985, 1985, 1985, 1985, 1985, 1985, 1985, 1985…\n$ sex         &lt;chr&gt; \"female\", \"female\", \"female\", \"female\", \"female\", \"female\"…\n$ age         &lt;chr&gt; \"15-24 years\", \"25-34 years\", \"35-54 years\", \"5-14 years\",…\n$ suicides_no &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…\n$ population  &lt;dbl&gt; 277900, 246800, 267500, 298300, 138700, 34200, 301400, 264…",
+    "crumbs": [
+      "Presentations",
+      "Présentation Finale"
+    ]
+  },
+  {
+    "objectID": "qmd/presentation.html#statistiques-descriptives-initiales",
+    "href": "qmd/presentation.html#statistiques-descriptives-initiales",
+    "title": "Analyse Mondiale des Suicides",
+    "section": "Statistiques Descriptives Initiales",
+    "text": "Statistiques Descriptives Initiales\n\n\n📊 Afficher le code\n# Résumé des variables\ndata %&gt;% \n  summarise(\n    Observations = n(),\n    Pays = n_distinct(country),\n    Années = paste(min(year), \"-\", max(year)),\n    `Total suicides` = sum(suicides_no, na.rm = TRUE),\n    `NA suicides` = sum(is.na(suicides_no)),\n    `NA population` = sum(is.na(population))\n  ) %&gt;% \n  mutate(across(everything(), as.character)) %&gt;% \n  pivot_longer(\n    everything(),\n    names_to = \"Indicateur\",\n    values_to = \"Valeur\"\n  ) %&gt;% \n  kable(caption = \"Résumé du dataset initial\")\n\n\n\nRésumé du dataset initial\n\n\nIndicateur\nValeur\n\n\n\n\nObservations\n43776\n\n\nPays\n141\n\n\nAnnées\n1979 - 2016\n\n\nTotal suicides\n8026455\n\n\nNA suicides\n2256\n\n\nNA population\n5460",
+    "crumbs": [
+      "Presentations",
+      "Présentation Finale"
+    ]
+  },
+  {
+    "objectID": "qmd/presentation.html#valeurs-manquantes",
+    "href": "qmd/presentation.html#valeurs-manquantes",
+    "title": "Analyse Mondiale des Suicides",
+    "section": "Valeurs Manquantes",
+    "text": "Valeurs Manquantes\n\n\n📊 Afficher le code\n# Visualisation des valeurs manquantes\ndata %&gt;% \n  summarise(across(everything(), ~sum(is.na(.)))) %&gt;% \n  pivot_longer(everything(), names_to = \"Variable\", values_to = \"NA_count\") %&gt;% \n  mutate(Pourcentage = NA_count / nrow(data) * 100) %&gt;% \n  ggplot(aes(x = reorder(Variable, Pourcentage), y = Pourcentage)) +\n  geom_col(fill = \"#F44336\", alpha = 0.8) +\n  geom_text(aes(label = paste0(round(Pourcentage, 2), \"%\")), \n            hjust = -0.2, size = 4) +\n  coord_flip() +\n  labs(title = \"Pourcentage de valeurs manquantes par variable\",\n       x = \"Variable\",\n       y = \"% de valeurs manquantes\") +\n  theme_minimal(base_size = 14)",
+    "crumbs": [
+      "Presentations",
+      "Présentation Finale"
+    ]
+  },
+  {
+    "objectID": "qmd/presentation.html#stratégie-de-nettoyage",
+    "href": "qmd/presentation.html#stratégie-de-nettoyage",
+    "title": "Analyse Mondiale des Suicides",
+    "section": "Stratégie de Nettoyage",
+    "text": "Stratégie de Nettoyage\n\n-Suppression des valeurs manquantes dans suicides_no et population.\n-Élimination des doublons.\n-Conversion des variables catégorielles en facteurs ordonnés.\n-Création de variables dérivées (taux, décennies).\n-Détection des valeurs aberrantes (méthode IQR).",
+    "crumbs": [
+      "Presentations",
+      "Présentation Finale"
+    ]
+  },
+  {
+    "objectID": "qmd/presentation.html#impact-du-nettoyage",
+    "href": "qmd/presentation.html#impact-du-nettoyage",
+    "title": "Analyse Mondiale des Suicides",
+    "section": "Impact du Nettoyage",
+    "text": "Impact du Nettoyage\n\n\n📊 Afficher le code\n# Comparaison avant/après\ntibble(\n  Étape = c(\"Données initiales\", \"Après nettoyage\", \"Supprimées\"),\n  `Nombre de lignes` = c(\n    nrow(data),\n    nrow(data_clean),\n    nrow(data) - nrow(data_clean)\n  ),\n  `Pourcentage` = c(\n    100,\n    round(nrow(data_clean) / nrow(data) * 100, 2),\n    round((nrow(data) - nrow(data_clean)) / nrow(data) * 100, 2)\n  )\n) %&gt;% \n  kable(format.args = list(big.mark = \" \"),\n        caption = \"Impact du nettoyage sur le dataset\")\n\n\n\nImpact du nettoyage sur le dataset\n\n\nÉtape\nNombre de lignes\nPourcentage\n\n\n\n\nDonnées initiales\n43 776\n100.00\n\n\nAprès nettoyage\n36 060\n82.37\n\n\nSupprimées\n7 716\n17.63",
+    "crumbs": [
+      "Presentations",
+      "Présentation Finale"
+    ]
+  },
+  {
+    "objectID": "qmd/presentation.html#évolution-globale-1980-2015",
+    "href": "qmd/presentation.html#évolution-globale-1980-2015",
+    "title": "Analyse Mondiale des Suicides",
+    "section": "Évolution Globale (1980-2015)",
+    "text": "Évolution Globale (1980-2015)\n\n\n📊 Afficher le code\ntrend_yearly &lt;- data_clean %&gt;% \n  group_by(year) %&gt;% \n  summarise(\n    total_suicides = sum(suicides_no),\n    total_population = sum(population),\n    taux_moyen = (total_suicides / total_population) * 100000,\n    .groups = \"drop\"\n  )\n\np &lt;- ggplot(trend_yearly, aes(x = year, y = taux_moyen)) +\n  geom_area(fill = \"#F44336\", alpha = 0.3) +\n  geom_line(color = \"#C62828\", size = 1.5) +\n  geom_point(color = \"#C62828\", size = 3) +\n  scale_x_continuous(breaks = seq(1980, 2015, 5)) +\n  labs(title = \"Évolution du taux de suicide mondial (1980-2015)\",\n       subtitle = \"Pour 100 000 habitants\",\n       x = \"Année\",\n       y = \"Taux pour 100k habitants\") +\n  theme_minimal(base_size = 14) +\n  theme(plot.title = element_text(face = \"bold\", size = 16))\n\nggplotly(p) %&gt;% \n  layout(hovermode = \"x unified\")",
+    "crumbs": [
+      "Presentations",
+      "Présentation Finale"
+    ]
+  },
+  {
+    "objectID": "qmd/presentation.html#variations-annuelles",
+    "href": "qmd/presentation.html#variations-annuelles",
+    "title": "Analyse Mondiale des Suicides",
+    "section": "Variations Annuelles",
+    "text": "Variations Annuelles\n\n\n📊 Afficher le code\ntrend_yearly &lt;- trend_yearly %&gt;% \n  mutate(variation_pct = (total_suicides - lag(total_suicides)) / lag(total_suicides) * 100)\n\nggplot(trend_yearly %&gt;% filter(!is.na(variation_pct)), \n       aes(x = year, y = variation_pct)) +\n  geom_col(aes(fill = variation_pct &gt; 0), alpha = 0.8) +\n  geom_hline(yintercept = 0, linetype = \"dashed\", size = 1) +\n  scale_fill_manual(values = c(\"TRUE\" = \"#F44336\", \"FALSE\" = \"#4CAF50\"),\n                    labels = c(\"Augmentation\", \"Diminution\")) +\n  scale_x_continuous(breaks = seq(1980, 2015, 5)) +\n  labs(title = \"Variation annuelle du nombre de suicides\",\n       subtitle = \"Taux de croissance par rapport à l'année précédente\",\n       x = \"Année\",\n       y = \"Variation (%)\",\n       fill = \"Type\") +\n  theme_minimal(base_size = 14)",
+    "crumbs": [
+      "Presentations",
+      "Présentation Finale"
+    ]
+  },
+  {
+    "objectID": "qmd/presentation.html#comparaison-par-décennie",
+    "href": "qmd/presentation.html#comparaison-par-décennie",
+    "title": "Analyse Mondiale des Suicides",
+    "section": "Comparaison par Décennie",
+    "text": "Comparaison par Décennie\n\n\n📊 Afficher le code\ndata_clean %&gt;% \n  group_by(decennie) %&gt;% \n  summarise(\n    total = sum(suicides_no),\n    taux = (sum(suicides_no) / sum(population)) * 100000,\n    .groups = \"drop\"\n  ) %&gt;% \n  ggplot(aes(x = decennie, y = taux, fill = decennie)) +\n  geom_col(alpha = 0.8, width = 0.7) +\n  geom_text(aes(label = round(taux, 1)), vjust = -0.5, size = 5, fontface = \"bold\") +\n  scale_fill_brewer(palette = \"Set2\") +\n  labs(title = \"Taux de suicide par décennie\",\n       x = \"Décennie\",\n       y = \"Taux pour 100k habitants\") +\n  theme_minimal(base_size = 14) +\n  theme(legend.position = \"none\",\n        plot.title = element_text(face = \"bold\", size = 16))",
+    "crumbs": [
+      "Presentations",
+      "Présentation Finale"
+    ]
+  },
+  {
+    "objectID": "qmd/presentation.html#répartition-globale",
+    "href": "qmd/presentation.html#répartition-globale",
+    "title": "Analyse Mondiale des Suicides",
+    "section": "Répartition Globale",
+    "text": "Répartition Globale\n\n\n📊 Afficher le code\ndata_clean %&gt;% \n  group_by(sex) %&gt;% \n  summarise(total = sum(suicides_no), .groups = \"drop\") %&gt;% \n  mutate(pourcentage = total / sum(total) * 100) %&gt;% \n  ggplot(aes(x = \"\", y = total, fill = sex)) +\n  geom_col(width = 1, color = \"white\", size = 2) +\n  coord_polar(theta = \"y\") +\n  geom_text(aes(label = paste0(round(pourcentage, 1), \"%\\n\", \n                                format(total, big.mark = \" \"))),\n            position = position_stack(vjust = 0.5),\n            size = 7, fontface = \"bold\", color = \"white\") +\n  scale_fill_manual(values = c(\"Homme\" = \"#2196F3\", \"Femme\" = \"#E91E63\")) +\n  labs(title = \"Répartition des suicides par sexe (1980-2015)\",\n       fill = \"Sexe\") +\n  theme_void(base_size = 14) +\n  theme(plot.title = element_text(hjust = 0.5, size = 16, face = \"bold\"),\n        legend.position = \"bottom\")",
+    "crumbs": [
+      "Presentations",
+      "Présentation Finale"
+    ]
+  },
+  {
+    "objectID": "qmd/presentation.html#évolution-par-sexe---interactif",
+    "href": "qmd/presentation.html#évolution-par-sexe---interactif",
+    "title": "Analyse Mondiale des Suicides",
+    "section": "Évolution par Sexe - Interactif",
+    "text": "Évolution par Sexe - Interactif\n\n\n📊 Afficher le code\nsex_trend &lt;- data_clean %&gt;% \n  group_by(year, sex) %&gt;% \n  summarise(\n    total_suicides = sum(suicides_no),\n    total_population = sum(population),\n    taux = (total_suicides / total_population) * 100000,\n    .groups = \"drop\"\n  )\n\np &lt;- ggplot(sex_trend, aes(x = year, y = taux, color = sex)) +\n  geom_line(size = 1.5) +\n  geom_point(size = 3) +\n  scale_color_manual(values = c(\"Homme\" = \"#2196F3\", \"Femme\" = \"#E91E63\")) +\n  scale_x_continuous(breaks = seq(1980, 2015, 5)) +\n  labs(title = \"Évolution du taux de suicide par sexe\",\n       x = \"Année\",\n       y = \"Taux pour 100k habitants\",\n       color = \"Sexe\") +\n  theme_minimal(base_size = 14) +\n  theme(legend.position = \"top\",\n        plot.title = element_text(face = \"bold\", size = 16))\n\nggplotly(p)",
+    "crumbs": [
+      "Presentations",
+      "Présentation Finale"
+    ]
+  },
+  {
+    "objectID": "qmd/presentation.html#ratio-hommefemme",
+    "href": "qmd/presentation.html#ratio-hommefemme",
+    "title": "Analyse Mondiale des Suicides",
+    "section": "Ratio Homme/Femme",
+    "text": "Ratio Homme/Femme\n\n\n📊 Afficher le code\ntrend_sex &lt;- data_clean %&gt;% \n  group_by(year, sex) %&gt;% \n  summarise(total_suicides = sum(suicides_no), .groups = \"drop\")\n\nratio_temporel &lt;- trend_sex %&gt;% \n  pivot_wider(names_from = sex, values_from = total_suicides) %&gt;% \n  mutate(ratio_HF = Homme / Femme)\n\nggplot(ratio_temporel, aes(x = year, y = ratio_HF)) +\n  geom_line(color = \"#9C27B0\", size = 1.5) +\n  geom_point(color = \"#9C27B0\", size = 3) +\n  geom_hline(yintercept = mean(ratio_temporel$ratio_HF), \n             linetype = \"dashed\", color = \"#F44336\", size = 1) +\n  annotate(\"text\", x = 2010, y = mean(ratio_temporel$ratio_HF) + 0.15,\n           label = paste(\"Moyenne:\", round(mean(ratio_temporel$ratio_HF), 2)),\n           color = \"#F44336\", size = 5, fontface = \"bold\") +\n  scale_x_continuous(breaks = seq(1980, 2015, 5)) +\n  labs(title = \"Ratio Homme/Femme dans le temps\",\n       subtitle = \"Nombre de suicides masculins pour 1 suicide féminin\",\n       x = \"Année\",\n       y = \"Ratio H/F\") +\n  theme_minimal(base_size = 14) +\n  theme(plot.title = element_text(face = \"bold\", size = 16))",
+    "crumbs": [
+      "Presentations",
+      "Présentation Finale"
+    ]
+  },
+  {
+    "objectID": "qmd/presentation.html#distribution-par-tranche-dâge",
+    "href": "qmd/presentation.html#distribution-par-tranche-dâge",
+    "title": "Analyse Mondiale des Suicides",
+    "section": "Distribution par Tranche d’Âge",
+    "text": "Distribution par Tranche d’Âge\n\n\n📊 Afficher le code\ndata_clean %&gt;% \n  group_by(age) %&gt;% \n  summarise(total = sum(suicides_no), .groups = \"drop\") %&gt;% \n  mutate(pourcentage = total / sum(total) * 100) %&gt;% \n  ggplot(aes(x = age, y = total, fill = age)) +\n  geom_col(alpha = 0.8) +\n  geom_text(aes(label = paste0(round(pourcentage, 1), \"%\")),\n            vjust = -0.5, size = 5, fontface = \"bold\") +\n  scale_y_continuous(labels = comma) +\n  scale_fill_viridis_d(option = \"plasma\") +\n  labs(title = \"Répartition des suicides par tranche d'âge\",\n       subtitle = \"Total mondial 1980-2015\",\n       x = \"Tranche d'âge\",\n       y = \"Nombre de suicides\") +\n  theme_minimal(base_size = 14) +\n  theme(axis.text.x = element_text(angle = 45, hjust = 1),\n        legend.position = \"none\",\n        plot.title = element_text(face = \"bold\", size = 16))",
+    "crumbs": [
+      "Presentations",
+      "Présentation Finale"
+    ]
+  },
+  {
+    "objectID": "qmd/presentation.html#profil-de-risque-par-âge",
+    "href": "qmd/presentation.html#profil-de-risque-par-âge",
+    "title": "Analyse Mondiale des Suicides",
+    "section": "Profil de Risque par Âge",
+    "text": "Profil de Risque par Âge\n\n\n📊 Afficher le code\ndata_clean %&gt;% \n  group_by(age) %&gt;% \n  summarise(taux = mean(taux_suicide_100k), .groups = \"drop\") %&gt;% \n  ggplot(aes(x = age, y = taux, group = 1)) +\n  geom_line(color = \"#F44336\", size = 2) +\n  geom_point(size = 5, color = \"#F44336\") +\n  geom_area(alpha = 0.3, fill = \"#F44336\") +\n  labs(title = \"Profil du risque suicidaire par âge\",\n       subtitle = \"Taux moyen pour 100 000 habitants\",\n       x = \"Tranche d'âge\",\n       y = \"Taux pour 100k habitants\") +\n  theme_minimal(base_size = 14) +\n  theme(axis.text.x = element_text(angle = 45, hjust = 1),\n        plot.title = element_text(face = \"bold\", size = 16))",
+    "crumbs": [
+      "Presentations",
+      "Présentation Finale"
+    ]
+  },
+  {
+    "objectID": "qmd/presentation.html#interaction-âge-sexe",
+    "href": "qmd/presentation.html#interaction-âge-sexe",
+    "title": "Analyse Mondiale des Suicides",
+    "section": "Interaction Âge × Sexe",
+    "text": "Interaction Âge × Sexe\n\n\n📊 Afficher le code\ndata_clean %&gt;% \n  group_by(age, sex) %&gt;% \n  summarise(taux = mean(taux_suicide_100k), .groups = \"drop\") %&gt;% \n  ggplot(aes(x = sex, y = age, fill = taux)) +\n  geom_tile(color = \"white\", size = 2) +\n  geom_text(aes(label = round(taux, 1)), \n            color = \"white\", fontface = \"bold\", size = 6) +\n  scale_fill_gradient2(low = \"#2196F3\", mid = \"#FFC107\", high = \"#F44336\",\n                       midpoint = 25) +\n  labs(title = \"Taux moyen de suicide : Âge × Sexe\",\n       x = \"Sexe\",\n       y = \"Tranche d'âge\",\n       fill = \"Taux (100k)\") +\n  theme_minimal(base_size = 14) +\n  theme(plot.title = element_text(face = \"bold\", size = 16))",
+    "crumbs": [
+      "Presentations",
+      "Présentation Finale"
+    ]
+  },
+  {
+    "objectID": "qmd/presentation.html#top-15-pays---interactif",
+    "href": "qmd/presentation.html#top-15-pays---interactif",
+    "title": "Analyse Mondiale des Suicides",
+    "section": "Top 15 Pays - Interactif",
+    "text": "Top 15 Pays - Interactif\n\n\n📊 Afficher le code\ntop15_pays &lt;- data_clean %&gt;% \n  group_by(country) %&gt;% \n  summarise(\n    total_suicides = sum(suicides_no),\n    total_population = sum(population),\n    taux_moyen = (total_suicides / total_population) * 100000,\n    .groups = \"drop\"\n  ) %&gt;% \n  arrange(desc(taux_moyen)) %&gt;% \n  head(15)\n\np &lt;- ggplot(top15_pays, aes(x = reorder(country, taux_moyen), y = taux_moyen, \n                            text = paste0(country, \"&lt;br&gt;Taux: \", round(taux_moyen, 1)))) +\n  geom_segment(aes(x = reorder(country, taux_moyen), \n                   xend = reorder(country, taux_moyen),\n                   y = 0, yend = taux_moyen),\n               color = \"grey50\", size = 1.2) +\n  geom_point(size = 5, color = \"#F44336\") +\n  coord_flip() +\n  labs(title = \"Top 15 des pays avec les taux de suicide les plus élevés\",\n       subtitle = \"Taux moyen 1980-2015 pour 100 000 habitants\",\n       x = NULL,\n       y = \"Taux pour 100k habitants\") +\n  theme_minimal(base_size = 14) +\n  theme(plot.title = element_text(face = \"bold\", size = 16))\n\nggplotly(p, tooltip = \"text\")",
+    "crumbs": [
+      "Presentations",
+      "Présentation Finale"
+    ]
+  },
+  {
+    "objectID": "qmd/presentation.html#analyse-par-région",
+    "href": "qmd/presentation.html#analyse-par-région",
+    "title": "Analyse Mondiale des Suicides",
+    "section": "Analyse par Région",
+    "text": "Analyse par Région\n\n\n📊 Afficher le code\ndata_regions &lt;- data_clean %&gt;% \n  mutate(\n    region = case_when(\n      country %in% c(\"France\", \"Germany\", \"United Kingdom\", \"Italy\", \"Spain\", \n                     \"Poland\", \"Netherlands\", \"Belgium\", \"Austria\", \"Switzerland\") ~ \"Europe Ouest\",\n      country %in% c(\"Russia\", \"Ukraine\", \"Belarus\", \"Hungary\", \"Lithuania\") ~ \"Europe Est\",\n      country %in% c(\"United States\", \"Canada\", \"Mexico\") ~ \"Amérique Nord\",\n      country %in% c(\"Brazil\", \"Argentina\", \"Chile\", \"Colombia\") ~ \"Amérique Sud\",\n      country %in% c(\"China\", \"Japan\", \"South Korea\", \"Thailand\") ~ \"Asie\",\n      country %in% c(\"Australia\", \"New Zealand\") ~ \"Océanie\",\n      TRUE ~ \"Autre\"\n    )\n  )\n\ndata_regions %&gt;% \n  group_by(region) %&gt;% \n  summarise(\n    taux_moyen = (sum(suicides_no) / sum(population)) * 100000,\n    .groups = \"drop\"\n  ) %&gt;% \n  ggplot(aes(x = reorder(region, taux_moyen), y = taux_moyen, fill = region)) +\n  geom_col(alpha = 0.8) +\n  geom_text(aes(label = round(taux_moyen, 1)), \n            hjust = -0.2, size = 5, fontface = \"bold\") +\n  coord_flip() +\n  scale_fill_brewer(palette = \"Set3\") +\n  labs(title = \"Taux de suicide moyen par région du monde\",\n       x = NULL,\n       y = \"Taux pour 100k habitants\") +\n  theme_minimal(base_size = 14) +\n  theme(legend.position = \"none\",\n        plot.title = element_text(face = \"bold\", size = 16))",
+    "crumbs": [
+      "Presentations",
+      "Présentation Finale"
+    ]
+  },
+  {
+    "objectID": "qmd/presentation.html#principaux-constats",
+    "href": "qmd/presentation.html#principaux-constats",
+    "title": "Analyse Mondiale des Suicides",
+    "section": "🔹 Principaux Constats",
+    "text": "🔹 Principaux Constats\n\nSexe masculin : 3 à 4 fois plus touché que les femmes.\nÂge avancé : Seniors (55+) à risque élevé.\nDisparités géographiques : Europe de l’Est plus concernée.\nVariations temporelles : Périodes de crise (années 80-90) ; baisse globale post-2000.",
+    "crumbs": [
+      "Presentations",
+      "Présentation Finale"
+    ]
+  },
+  {
+    "objectID": "qmd/presentation.html#implications-pour-la-santé-publique",
+    "href": "qmd/presentation.html#implications-pour-la-santé-publique",
+    "title": "Analyse Mondiale des Suicides",
+    "section": "🔹 Implications pour la Santé Publique",
+    "text": "🔹 Implications pour la Santé Publique\n\nPrévention ciblée : Adapter les stratégies aux groupes à risque.\nSurveillance renforcée : Améliorer la collecte de données.\nPolitiques efficaces : S’inspirer des pays ayant réduit les taux.",
+    "crumbs": [
+      "Presentations",
+      "Présentation Finale"
+    ]
+  },
+  {
+    "objectID": "qmd/presentation.html#limites-et-perspectives",
+    "href": "qmd/presentation.html#limites-et-perspectives",
+    "title": "Analyse Mondiale des Suicides",
+    "section": "🔹 Limites et Perspectives",
+    "text": "🔹 Limites et Perspectives\n\nFacteurs socio-économiques non inclus.\nPerspectives : Analyse des facteurs socio-économiques, impact des politiques, modélisation prédictive.",
+    "crumbs": [
+      "Presentations",
+      "Présentation Finale"
+    ]
+  },
+  {
+    "objectID": "qmd/05_analyse_age.html",
+    "href": "qmd/05_analyse_age.html",
+    "title": "Chapitre 5 : Analyse par Tranche d’Âge",
+    "section": "",
+    "text": "Statistiques par tranche d’âge\n\n\n\n\n\n\n\n\n\n\nage\nNombre total\nPopulation\nTaux moyen (100k)\nTaux médian\nÉcart-type\nObservations\n\n\n\n5-14 ans\n62 320\n10 451 016 008\n0.60\n0.31\n1.12\n6 010\n\n\n15-24 ans\n975 700\n10 587 850 825\n9.22\n5.63\n9.71\n6 010\n\n\n25-34 ans\n1 360 780\n10 180 794 953\n13.37\n7.34\n14.65\n6 010\n\n\n35-54 ans\n2 887 740\n16 822 867 999\n17.17\n9.29\n18.72\n6 010\n\n\n55-74 ans\n1 955 150\n10 250 167 417\n19.07\n10.92\n19.17\n6 010\n\n\n75+ ans\n756 777\n3 009 148 664\n25.15\n13.07\n31.84\n6 010\n\n\n\n\n\nLes statistiques sont calculées à partir des données cumulées de tous les pays sur la période 1980–2015. Le nombre total correspond à la somme des suicides par tranche d’âge, et la population à la somme des populations annuelles. Le taux moyen est donc un taux global sur l’ensemble de la période, exprimé pour 100 000 habitants. Les résultats montrent une augmentation nette du taux de suicide avec l’âge : il est très faible chez les 5–14 ans, augmente chez les jeunes adultes, et atteint son niveau le plus élevé chez les personnes âgées, en particulier dans la tranche 75 ans et plus, où la variabilité est également la plus forte.\n\n\n\n\n\n\n\n\n\nCe graphique représente le nombre total de suicides par tranche d’âge sur l’ensemble de la période étudiée. Les pourcentages indiquent la part de chaque tranche d’âge dans le total mondial des suicides, sans tenir compte de la population.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nTop 3 taux les plus élevés par tranche d’âge\n\nage\ncountry\nyear\nsex\ntaux_suicide_100k\n\n\n\n5-14 ans\nRodrigues\n2014\nFemme\n24.51\n\n\n5-14 ans\nKiribati\n1996\nHomme\n18.92\n\n\n5-14 ans\nFrench Guiana\n2003\nHomme\n18.36\n\n\n15-24 ans\nSri Lanka\n1984\nHomme\n92.35\n\n\n15-24 ans\nSri Lanka\n1983\nHomme\n90.85\n\n\n15-24 ans\nSri Lanka\n1982\nHomme\n86.36\n\n\n25-34 ans\nSuriname\n1984\nHomme\n157.23\n\n\n25-34 ans\nRodrigues\n2016\nHomme\n107.10\n\n\n25-34 ans\nRussian Federation\n1994\nHomme\n94.18\n\n\n35-54 ans\nLithuania\n1994\nHomme\n151.74\n\n\n35-54 ans\nLithuania\n1996\nHomme\n151.33\n\n\n35-54 ans\nLithuania\n1995\nHomme\n144.85\n\n\n55-74 ans\nLithuania\n1998\nHomme\n123.83\n\n\n55-74 ans\nLithuania\n1996\nHomme\n121.81\n\n\n55-74 ans\nLithuania\n1994\nHomme\n120.56\n\n\n75+ ans\nSan Marino\n1997\nHomme\n300.75\n\n\n75+ ans\nFrench Guiana\n1979\nHomme\n250.00\n\n\n75+ ans\nAruba\n1995\nHomme\n224.97\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPoints clés identifiés :\n\nGroupe le plus à risque : 75+ ans (taux : 25.15 pour 100k)\nGroupe le moins à risque : 5-14 ans (taux : 0.6 pour 100k)\nGradient d’âge : Le risque augmente progressivement avec l’âge, atteignant son maximum chez les seniors\nSeniors (55+ ans) : Représentent le groupe le plus vulnérable avec des taux significativement supérieurs\nJeunes (5-14 ans) : Taux les plus faibles, mais toute occurrence reste préoccupante\nDifférences H/F : L’écart entre hommes et femmes s’accentue avec l’âge\n\nInterprétation : L’âge est un facteur de risque majeur et croissant. Les politiques de prévention doivent être adaptées à chaque groupe d’âge, avec une attention particulière aux seniors qui cumulent vulnérabilités biologiques, sociales et psychologiques.",
+    "crumbs": [
+      "Projects",
+      "Analyse par Age"
+    ]
+  },
+  {
+    "objectID": "qmd/05_analyse_age.html#vue-densemble-par-âge",
+    "href": "qmd/05_analyse_age.html#vue-densemble-par-âge",
+    "title": "Chapitre 5 : Analyse par Tranche d’Âge",
+    "section": "",
+    "text": "Statistiques par tranche d’âge\n\n\n\n\n\n\n\n\n\n\nage\nNombre total\nPopulation\nTaux moyen (100k)\nTaux médian\nÉcart-type\nObservations\n\n\n\n5-14 ans\n62 320\n10 451 016 008\n0.60\n0.31\n1.12\n6 010\n\n\n15-24 ans\n975 700\n10 587 850 825\n9.22\n5.63\n9.71\n6 010\n\n\n25-34 ans\n1 360 780\n10 180 794 953\n13.37\n7.34\n14.65\n6 010\n\n\n35-54 ans\n2 887 740\n16 822 867 999\n17.17\n9.29\n18.72\n6 010\n\n\n55-74 ans\n1 955 150\n10 250 167 417\n19.07\n10.92\n19.17\n6 010\n\n\n75+ ans\n756 777\n3 009 148 664\n25.15\n13.07\n31.84\n6 010\n\n\n\n\n\nLes statistiques sont calculées à partir des données cumulées de tous les pays sur la période 1980–2015. Le nombre total correspond à la somme des suicides par tranche d’âge, et la population à la somme des populations annuelles. Le taux moyen est donc un taux global sur l’ensemble de la période, exprimé pour 100 000 habitants. Les résultats montrent une augmentation nette du taux de suicide avec l’âge : il est très faible chez les 5–14 ans, augmente chez les jeunes adultes, et atteint son niveau le plus élevé chez les personnes âgées, en particulier dans la tranche 75 ans et plus, où la variabilité est également la plus forte.\n\n\n\n\n\n\n\n\n\nCe graphique représente le nombre total de suicides par tranche d’âge sur l’ensemble de la période étudiée. Les pourcentages indiquent la part de chaque tranche d’âge dans le total mondial des suicides, sans tenir compte de la population.",
+    "crumbs": [
+      "Projects",
+      "Analyse par Age"
+    ]
+  },
+  {
+    "objectID": "qmd/05_analyse_age.html#analyse-des-extrêmes-par-âge",
+    "href": "qmd/05_analyse_age.html#analyse-des-extrêmes-par-âge",
+    "title": "Chapitre 5 : Analyse par Tranche d’Âge",
+    "section": "",
+    "text": "Top 3 taux les plus élevés par tranche d’âge\n\nage\ncountry\nyear\nsex\ntaux_suicide_100k\n\n\n\n5-14 ans\nRodrigues\n2014\nFemme\n24.51\n\n\n5-14 ans\nKiribati\n1996\nHomme\n18.92\n\n\n5-14 ans\nFrench Guiana\n2003\nHomme\n18.36\n\n\n15-24 ans\nSri Lanka\n1984\nHomme\n92.35\n\n\n15-24 ans\nSri Lanka\n1983\nHomme\n90.85\n\n\n15-24 ans\nSri Lanka\n1982\nHomme\n86.36\n\n\n25-34 ans\nSuriname\n1984\nHomme\n157.23\n\n\n25-34 ans\nRodrigues\n2016\nHomme\n107.10\n\n\n25-34 ans\nRussian Federation\n1994\nHomme\n94.18\n\n\n35-54 ans\nLithuania\n1994\nHomme\n151.74\n\n\n35-54 ans\nLithuania\n1996\nHomme\n151.33\n\n\n35-54 ans\nLithuania\n1995\nHomme\n144.85\n\n\n55-74 ans\nLithuania\n1998\nHomme\n123.83\n\n\n55-74 ans\nLithuania\n1996\nHomme\n121.81\n\n\n55-74 ans\nLithuania\n1994\nHomme\n120.56\n\n\n75+ ans\nSan Marino\n1997\nHomme\n300.75\n\n\n75+ ans\nFrench Guiana\n1979\nHomme\n250.00\n\n\n75+ ans\nAruba\n1995\nHomme\n224.97",
+    "crumbs": [
+      "Projects",
+      "Analyse par Age"
+    ]
+  },
+  {
+    "objectID": "qmd/05_analyse_age.html#conclusions-de-lanalyse-par-âge",
+    "href": "qmd/05_analyse_age.html#conclusions-de-lanalyse-par-âge",
+    "title": "Chapitre 5 : Analyse par Tranche d’Âge",
+    "section": "",
+    "text": "Points clés identifiés :\n\nGroupe le plus à risque : 75+ ans (taux : 25.15 pour 100k)\nGroupe le moins à risque : 5-14 ans (taux : 0.6 pour 100k)\nGradient d’âge : Le risque augmente progressivement avec l’âge, atteignant son maximum chez les seniors\nSeniors (55+ ans) : Représentent le groupe le plus vulnérable avec des taux significativement supérieurs\nJeunes (5-14 ans) : Taux les plus faibles, mais toute occurrence reste préoccupante\nDifférences H/F : L’écart entre hommes et femmes s’accentue avec l’âge\n\nInterprétation : L’âge est un facteur de risque majeur et croissant. Les politiques de prévention doivent être adaptées à chaque groupe d’âge, avec une attention particulière aux seniors qui cumulent vulnérabilités biologiques, sociales et psychologiques.",
+    "crumbs": [
+      "Projects",
+      "Analyse par Age"
+    ]
+  },
+  {
+    "objectID": "qmd/03_analyse_temporelle.html",
+    "href": "qmd/03_analyse_temporelle.html",
+    "title": "Chapitre 3 : Analyse Temporelle",
+    "section": "",
+    "text": "Statistiques par décennie\n\n\n\n\n\n\n\n\n\ndecennie\nNombre de suicides\nPopulation totale\nTaux moyen (100k)\nTaux min\nTaux max\n\n\n\n1980-1989\n1 697 608\n12 308 292 174\n13.79\n0\n219.22\n\n\n1990-1999\n2 344 775\n16 417 314 397\n14.28\n0\n300.75\n\n\n2000-2009\n2 470 449\n19 255 057 032\n12.83\n0\n204.92\n\n\n2010-2015\n1 376 607\n12 345 028 266\n11.15\n0\n187.06\n\n\nNA\n109 028\n976 153 997\n11.17\n0\n250.00\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nAnalyse par périodes :\n🔴 Début des années 1980\nOn observe des augmentations très fortes, avec des pics supérieurs à +50 %.\nCela indique une forte instabilité du phénomène au début de la période (possibles changements sociaux, économiques ou qualité des données).\n🟢 Milieu des années 1980\nUne chute importante (environ -30 %), suivie d’une stabilisation.\nCela suggère une réduction notable du nombre de suicides après les pics initiaux.\n🟢 Années 1990 – début 2000\nLes variations sont faibles, proches de 0 %.\nAlternance de petites hausses et baisses → stabilité relative du phénomène.\n🟢 Années 2005 – 2014\nTendance globalement négative (plus de barres vertes).\nCela traduit une diminution progressive du nombre de suicides.\nConclusion:\nLe phénomène est très instable au début de la période.\nIl devient plus stable à partir des années 1990.\nUne tendance à la baisse est visible dans les années récentes.\n\n\n\n=== TOP 5 HAUSSES ===\n\n\n\n\n| Année| Total suicides| Variation %| Variation absolue|\n|-----:|--------------:|-----------:|-----------------:|\n|  1980|         153400|       65.32|             60610|\n|  1985|         197115|       58.63|             72851|\n|  1981|         177705|       15.84|             24305|\n|  1990|         204043|       10.08|             18687|\n|  1992|         218446|        6.96|             14210|\n\n\n\n=== TOP 5 BAISSES ===\n\n\n\n\n| Année| Total suicides| Variation %| Variation absolue|\n|-----:|--------------:|-----------:|-----------------:|\n|  2016|          16238|      -92.18|           -191389|\n|  1983|         122166|      -33.04|            -60269|\n|  2015|         207627|       -8.63|            -19608|\n|  2004|         244196|       -5.84|            -15140|\n|  1986|         188684|       -4.28|             -8431|\n\n\nLe tableau des top 5 hausses montre les années où le nombre de suicides a connu les plus fortes augmentations . En 1980 et 1985 enregistrent des hausses importantes de +65 % et +58 %, soit respectivement 60 610 et 72 851 suicides . Ces années peuvent correspondre à des événements sociaux, économiques ou politiques ayant pu influencer le taux de suicide.\nLe tableau des top 5 baisses met en évidence les années où le nombre de suicides a le plus diminué. La plus forte baisse est observée en 2016 avec un recul de 92 % (soit 191 389 suicides en moins), suivie de 1983 et 2015. Ces années représentent des périodes critiques où des facteurs protecteurs, des interventions ou des changements démographiques ont pu réduire drastiquement le nombre de suicides.\nEn résumé, l’identification de ces années critiques permet de repérer les tendances exceptionnelles dans la série temporelle et de cibler les périodes nécessitant une analyse plus approfondie.\n\n\n\n\n\nComparaison pré-2000 vs post-2000\n\n\n\n\n\n\n\n\n\nperiode\nNombre total\nPopulation\nTaux moyen (100k)\nNombre d’années\nMoyenne annuelle\n\n\n\n1980-1999\n4 135 173\n29 548 195 678\n13.99\n21\n196 913.0\n\n\n2000-2015\n3 863 294\n31 753 650 188\n12.17\n17\n227 252.6\n\n\n\n\n\n\n**Interprétation :**\n\n\n- Le nombre total de suicides est légèrement plus bas après 2000.\n\n\n- Le taux moyen pour 100k habitants a diminué de 13,99 à 12,17.\n\n\n  → proportionnellement, moins de suicides par population.\n\n\n- La moyenne annuelle est plus élevée après 2000, car la population a augmenté.\n\n\n\n=== Test t de Student ===\n\n\nt = -5.018 \n\n\np-value = 1.6e-05 \n\n\nDifférence significative : OUI ✓ \n\n\nLe t-test compare la moyenne annuelle des taux de suicide par 100k habitants entre les deux périodes pour voir si la différence est statistiquement significative. Résultats du test : t = -5.018 → La statistique t négative signifie que le taux moyen post-2000 est plus bas que le taux pré-2000. p-value = 1.6e-05 → Très petite valeur, bien en dessous de 0.05, ce qui signifie que la différence n’est pas due au hasard. Différence significative : OUI ✓ → On peut conclure qu’il y a une différence statistiquement significative entre les taux de suicide pré-2000 et post-2000.\n\n\n\n\n\n\n\n\n\n\nPoints clés identifiés :\n\nTendance générale : Variation de -82.5% entre 1980 et 2015\nPic historique : Année 2002 avec 259 376 suicides\nPoint bas : Année 2016 avec 16 238 suicides\nÉvolution du taux :\n\n\n1980 : 14.11 pour 100k habitants\n2015 : 10.72 pour 100k habitants\nVariation : -3.4 points\n\n\n\nPériodes critiques :\n\n\nDécennie la plus touchée : 2000-2009",
+    "crumbs": [
+      "Projects",
+      "Analyse Temporelle"
+    ]
+  },
+  {
+    "objectID": "qmd/03_analyse_temporelle.html#tendance-globale-1980-2015",
+    "href": "qmd/03_analyse_temporelle.html#tendance-globale-1980-2015",
+    "title": "Chapitre 3 : Analyse Temporelle",
+    "section": "",
+    "text": "Statistiques par décennie\n\n\n\n\n\n\n\n\n\ndecennie\nNombre de suicides\nPopulation totale\nTaux moyen (100k)\nTaux min\nTaux max\n\n\n\n1980-1989\n1 697 608\n12 308 292 174\n13.79\n0\n219.22\n\n\n1990-1999\n2 344 775\n16 417 314 397\n14.28\n0\n300.75\n\n\n2000-2009\n2 470 449\n19 255 057 032\n12.83\n0\n204.92\n\n\n2010-2015\n1 376 607\n12 345 028 266\n11.15\n0\n187.06\n\n\nNA\n109 028\n976 153 997\n11.17\n0\n250.00",
+    "crumbs": [
+      "Projects",
+      "Analyse Temporelle"
+    ]
+  },
+  {
+    "objectID": "qmd/03_analyse_temporelle.html#analyse-des-variations-annuelles",
+    "href": "qmd/03_analyse_temporelle.html#analyse-des-variations-annuelles",
+    "title": "Chapitre 3 : Analyse Temporelle",
+    "section": "",
+    "text": "Analyse par périodes :\n🔴 Début des années 1980\nOn observe des augmentations très fortes, avec des pics supérieurs à +50 %.\nCela indique une forte instabilité du phénomène au début de la période (possibles changements sociaux, économiques ou qualité des données).\n🟢 Milieu des années 1980\nUne chute importante (environ -30 %), suivie d’une stabilisation.\nCela suggère une réduction notable du nombre de suicides après les pics initiaux.\n🟢 Années 1990 – début 2000\nLes variations sont faibles, proches de 0 %.\nAlternance de petites hausses et baisses → stabilité relative du phénomène.\n🟢 Années 2005 – 2014\nTendance globalement négative (plus de barres vertes).\nCela traduit une diminution progressive du nombre de suicides.\nConclusion:\nLe phénomène est très instable au début de la période.\nIl devient plus stable à partir des années 1990.\nUne tendance à la baisse est visible dans les années récentes.\n\n\n\n=== TOP 5 HAUSSES ===\n\n\n\n\n| Année| Total suicides| Variation %| Variation absolue|\n|-----:|--------------:|-----------:|-----------------:|\n|  1980|         153400|       65.32|             60610|\n|  1985|         197115|       58.63|             72851|\n|  1981|         177705|       15.84|             24305|\n|  1990|         204043|       10.08|             18687|\n|  1992|         218446|        6.96|             14210|\n\n\n\n=== TOP 5 BAISSES ===\n\n\n\n\n| Année| Total suicides| Variation %| Variation absolue|\n|-----:|--------------:|-----------:|-----------------:|\n|  2016|          16238|      -92.18|           -191389|\n|  1983|         122166|      -33.04|            -60269|\n|  2015|         207627|       -8.63|            -19608|\n|  2004|         244196|       -5.84|            -15140|\n|  1986|         188684|       -4.28|             -8431|\n\n\nLe tableau des top 5 hausses montre les années où le nombre de suicides a connu les plus fortes augmentations . En 1980 et 1985 enregistrent des hausses importantes de +65 % et +58 %, soit respectivement 60 610 et 72 851 suicides . Ces années peuvent correspondre à des événements sociaux, économiques ou politiques ayant pu influencer le taux de suicide.\nLe tableau des top 5 baisses met en évidence les années où le nombre de suicides a le plus diminué. La plus forte baisse est observée en 2016 avec un recul de 92 % (soit 191 389 suicides en moins), suivie de 1983 et 2015. Ces années représentent des périodes critiques où des facteurs protecteurs, des interventions ou des changements démographiques ont pu réduire drastiquement le nombre de suicides.\nEn résumé, l’identification de ces années critiques permet de repérer les tendances exceptionnelles dans la série temporelle et de cibler les périodes nécessitant une analyse plus approfondie.",
+    "crumbs": [
+      "Projects",
+      "Analyse Temporelle"
+    ]
+  },
+  {
+    "objectID": "qmd/03_analyse_temporelle.html#comparaison-par-périodes",
+    "href": "qmd/03_analyse_temporelle.html#comparaison-par-périodes",
+    "title": "Chapitre 3 : Analyse Temporelle",
+    "section": "",
+    "text": "Comparaison pré-2000 vs post-2000\n\n\n\n\n\n\n\n\n\nperiode\nNombre total\nPopulation\nTaux moyen (100k)\nNombre d’années\nMoyenne annuelle\n\n\n\n1980-1999\n4 135 173\n29 548 195 678\n13.99\n21\n196 913.0\n\n\n2000-2015\n3 863 294\n31 753 650 188\n12.17\n17\n227 252.6\n\n\n\n\n\n\n**Interprétation :**\n\n\n- Le nombre total de suicides est légèrement plus bas après 2000.\n\n\n- Le taux moyen pour 100k habitants a diminué de 13,99 à 12,17.\n\n\n  → proportionnellement, moins de suicides par population.\n\n\n- La moyenne annuelle est plus élevée après 2000, car la population a augmenté.\n\n\n\n=== Test t de Student ===\n\n\nt = -5.018 \n\n\np-value = 1.6e-05 \n\n\nDifférence significative : OUI ✓ \n\n\nLe t-test compare la moyenne annuelle des taux de suicide par 100k habitants entre les deux périodes pour voir si la différence est statistiquement significative. Résultats du test : t = -5.018 → La statistique t négative signifie que le taux moyen post-2000 est plus bas que le taux pré-2000. p-value = 1.6e-05 → Très petite valeur, bien en dessous de 0.05, ce qui signifie que la différence n’est pas due au hasard. Différence significative : OUI ✓ → On peut conclure qu’il y a une différence statistiquement significative entre les taux de suicide pré-2000 et post-2000.",
+    "crumbs": [
+      "Projects",
+      "Analyse Temporelle"
+    ]
+  },
+  {
+    "objectID": "qmd/03_analyse_temporelle.html#conclusions-de-lanalyse-temporelle",
+    "href": "qmd/03_analyse_temporelle.html#conclusions-de-lanalyse-temporelle",
+    "title": "Chapitre 3 : Analyse Temporelle",
+    "section": "",
+    "text": "Points clés identifiés :\n\nTendance générale : Variation de -82.5% entre 1980 et 2015\nPic historique : Année 2002 avec 259 376 suicides\nPoint bas : Année 2016 avec 16 238 suicides\nÉvolution du taux :\n\n\n1980 : 14.11 pour 100k habitants\n2015 : 10.72 pour 100k habitants\nVariation : -3.4 points\n\n\n\nPériodes critiques :\n\n\nDécennie la plus touchée : 2000-2009",
+    "crumbs": [
+      "Projects",
+      "Analyse Temporelle"
+    ]
+  },
+  {
+    "objectID": "qmd/01_exploration.html",
+    "href": "qmd/01_exploration.html",
+    "title": "Chapitre 1 : Exploration des Données",
+    "section": "",
+    "text": "Rows: 43,776\nColumns: 6\n$ country     &lt;chr&gt; \"Albania\", \"Albania\", \"Albania\", \"Albania\", \"Albania\", \"Al…\n$ year        &lt;dbl&gt; 1985, 1985, 1985, 1985, 1985, 1985, 1985, 1985, 1985, 1985…\n$ sex         &lt;chr&gt; \"female\", \"female\", \"female\", \"female\", \"female\", \"female\"…\n$ age         &lt;chr&gt; \"15-24 years\", \"25-34 years\", \"35-54 years\", \"5-14 years\",…\n$ suicides_no &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…\n$ population  &lt;dbl&gt; 277900, 246800, 267500, 298300, 138700, 34200, 301400, 264…\n\n\n\n\n\n\n\n\n\n\n\n\n\nData summary\n\n\nName\ndata\n\n\nNumber of rows\n43776\n\n\nNumber of columns\n6\n\n\n_______________________\n\n\n\nColumn type frequency:\n\n\n\ncharacter\n3\n\n\nnumeric\n3\n\n\n________________________\n\n\n\nGroup variables\nNone\n\n\n\nVariable type: character\n\n\n\n\n\n\n\n\n\n\n\n\nskim_variable\nn_missing\ncomplete_rate\nmin\nmax\nempty\nn_unique\nwhitespace\n\n\n\ncountry\n0\n1\n4\n34\n0\n141\n0\n\n\nsex\n0\n1\n4\n6\n0\n2\n0\n\n\nage\n0\n1\n9\n11\n0\n6\n0\n\n\n\nVariable type: numeric\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nskim_variable\nn_missing\ncomplete_rate\nmean\nsd\np0\np25\np50\np75\np100\nhist\n\n\n\nyear\n0\n1.00\n1998.50\n10.34\n1979\n1990.00\n1999\n2007\n2016\n▆▆▇▇▇\n\n\nsuicides_no\n2256\n0.95\n193.32\n800.59\n0\n1.00\n14\n91\n22338\n▇▁▁▁▁\n\n\npopulation\n5460\n0.88\n1664091.14\n3647231.23\n259\n85112.75\n380655\n1305698\n43805214\n▇▁▁▁▁\n\n\n\n\n\n\n\n\n\nNombre total de pays : 141 \n\n\n\nTop 10 des pays avec le plus d’observations\n\nPays\nObservations\n\n\n\nAustria\n456\n\n\nHungary\n456\n\n\nIceland\n456\n\n\nIsrael\n456\n\n\nMauritius\n456\n\n\nNetherlands\n456\n\n\nRomania\n456\n\n\nSweden\n456\n\n\nUnited Kingdom\n456\n\n\nUnited States of America\n456\n\n\n\n\n\n\n\n\nPériode : 1979 - 2016 \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nStatistiques sur le nombre de suicides\n\nStatistique\nValeur\n\n\n\nMinimum\n0.00\n\n\nQ1\n1.00\n\n\nMédiane\n14.00\n\n\nMoyenne\n193.32\n\n\nQ3\n91.00\n\n\nMaximum\n22338.00\n\n\nÉcart-type\n800.59\n\n\n\n\n\n\n\n\n\nStatistiques sur la population\n\nStatistique\nValeur\n\n\n\nMinimum\n259\n\n\nQ1\n85 113\n\n\nMédiane\n380 655\n\n\nMoyenne\n1 664 091\n\n\nQ3\n1 305 698\n\n\nMaximum\n43 805 214\n\n\nÉcart-type\n3 647 231\n\n\n\n\n\n\n\n\n\nValeurs manquantes par variable\n\nVariable\nNA_count\nPourcentage\n\n\n\ncountry\n0\n0.00\n\n\nyear\n0\n0.00\n\n\nsex\n0\n0.00\n\n\nage\n0\n0.00\n\n\nsuicides_no\n2256\n5.15\n\n\npopulation\n5460\n12.47\n\n\n\n\n\n\n\n\n\n\n\n\nPoints clés identifiés :\n\n\nVolume : 43 776 observations sur 35 ans\n\nValeurs manquantes : suicides_no (5.15%) et population (12.47%)\n\nDistribution : Données disponibles pour 141 pays\n\nSexe : Répartition équilibrée entre hommes et femmes\n\nPériode : Couverture continue de 1980 à 2015\n\nProchaines étapes : Nettoyage et transformation des données",
+    "crumbs": [
+      "Projects",
+      "Exploration des Données"
+    ]
+  },
+  {
+    "objectID": "qmd/01_exploration.html#importation-des-données",
+    "href": "qmd/01_exploration.html#importation-des-données",
+    "title": "Chapitre 1 : Exploration des Données",
+    "section": "",
+    "text": "Rows: 43,776\nColumns: 6\n$ country     &lt;chr&gt; \"Albania\", \"Albania\", \"Albania\", \"Albania\", \"Albania\", \"Al…\n$ year        &lt;dbl&gt; 1985, 1985, 1985, 1985, 1985, 1985, 1985, 1985, 1985, 1985…\n$ sex         &lt;chr&gt; \"female\", \"female\", \"female\", \"female\", \"female\", \"female\"…\n$ age         &lt;chr&gt; \"15-24 years\", \"25-34 years\", \"35-54 years\", \"5-14 years\",…\n$ suicides_no &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…\n$ population  &lt;dbl&gt; 277900, 246800, 267500, 298300, 138700, 34200, 301400, 264…",
+    "crumbs": [
+      "Projects",
+      "Exploration des Données"
+    ]
+  },
+  {
+    "objectID": "qmd/01_exploration.html#statistiques-descriptives-complètes",
+    "href": "qmd/01_exploration.html#statistiques-descriptives-complètes",
+    "title": "Chapitre 1 : Exploration des Données",
+    "section": "",
+    "text": "Data summary\n\n\nName\ndata\n\n\nNumber of rows\n43776\n\n\nNumber of columns\n6\n\n\n_______________________\n\n\n\nColumn type frequency:\n\n\n\ncharacter\n3\n\n\nnumeric\n3\n\n\n________________________\n\n\n\nGroup variables\nNone\n\n\n\nVariable type: character\n\n\n\n\n\n\n\n\n\n\n\n\nskim_variable\nn_missing\ncomplete_rate\nmin\nmax\nempty\nn_unique\nwhitespace\n\n\n\ncountry\n0\n1\n4\n34\n0\n141\n0\n\n\nsex\n0\n1\n4\n6\n0\n2\n0\n\n\nage\n0\n1\n9\n11\n0\n6\n0\n\n\n\nVariable type: numeric\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nskim_variable\nn_missing\ncomplete_rate\nmean\nsd\np0\np25\np50\np75\np100\nhist\n\n\n\nyear\n0\n1.00\n1998.50\n10.34\n1979\n1990.00\n1999\n2007\n2016\n▆▆▇▇▇\n\n\nsuicides_no\n2256\n0.95\n193.32\n800.59\n0\n1.00\n14\n91\n22338\n▇▁▁▁▁\n\n\npopulation\n5460\n0.88\n1664091.14\n3647231.23\n259\n85112.75\n380655\n1305698\n43805214\n▇▁▁▁▁",
+    "crumbs": [
+      "Projects",
+      "Exploration des Données"
+    ]
+  },
+  {
+    "objectID": "qmd/01_exploration.html#structure-des-variables",
+    "href": "qmd/01_exploration.html#structure-des-variables",
+    "title": "Chapitre 1 : Exploration des Données",
+    "section": "",
+    "text": "Nombre total de pays : 141 \n\n\n\nTop 10 des pays avec le plus d’observations\n\nPays\nObservations\n\n\n\nAustria\n456\n\n\nHungary\n456\n\n\nIceland\n456\n\n\nIsrael\n456\n\n\nMauritius\n456\n\n\nNetherlands\n456\n\n\nRomania\n456\n\n\nSweden\n456\n\n\nUnited Kingdom\n456\n\n\nUnited States of America\n456\n\n\n\n\n\n\n\n\nPériode : 1979 - 2016 \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nStatistiques sur le nombre de suicides\n\nStatistique\nValeur\n\n\n\nMinimum\n0.00\n\n\nQ1\n1.00\n\n\nMédiane\n14.00\n\n\nMoyenne\n193.32\n\n\nQ3\n91.00\n\n\nMaximum\n22338.00\n\n\nÉcart-type\n800.59\n\n\n\n\n\n\n\n\n\nStatistiques sur la population\n\nStatistique\nValeur\n\n\n\nMinimum\n259\n\n\nQ1\n85 113\n\n\nMédiane\n380 655\n\n\nMoyenne\n1 664 091\n\n\nQ3\n1 305 698\n\n\nMaximum\n43 805 214\n\n\nÉcart-type\n3 647 231",
+    "crumbs": [
+      "Projects",
+      "Exploration des Données"
+    ]
+  },
+  {
+    "objectID": "qmd/01_exploration.html#valeurs-manquantes",
+    "href": "qmd/01_exploration.html#valeurs-manquantes",
+    "title": "Chapitre 1 : Exploration des Données",
+    "section": "",
+    "text": "Valeurs manquantes par variable\n\nVariable\nNA_count\nPourcentage\n\n\n\ncountry\n0\n0.00\n\n\nyear\n0\n0.00\n\n\nsex\n0\n0.00\n\n\nage\n0\n0.00\n\n\nsuicides_no\n2256\n5.15\n\n\npopulation\n5460\n12.47",
+    "crumbs": [
+      "Projects",
+      "Exploration des Données"
+    ]
+  },
+  {
+    "objectID": "qmd/01_exploration.html#conclusions-de-lexploration",
+    "href": "qmd/01_exploration.html#conclusions-de-lexploration",
+    "title": "Chapitre 1 : Exploration des Données",
+    "section": "",
+    "text": "Points clés identifiés :\n\n\nVolume : 43 776 observations sur 35 ans\n\nValeurs manquantes : suicides_no (5.15%) et population (12.47%)\n\nDistribution : Données disponibles pour 141 pays\n\nSexe : Répartition équilibrée entre hommes et femmes\n\nPériode : Couverture continue de 1980 à 2015\n\nProchaines étapes : Nettoyage et transformation des données",
+    "crumbs": [
+      "Projects",
+      "Exploration des Données"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Analyse Statistique des Données Mondiales de Suicide (1980-2015)",
+    "section": "",
+    "text": "Jaouadi Amani\nÉtudiante en Data Science et Intelligence Artificielle\nEmail : amani.jaouadi@polytechnicien.tn\nGitHub : https://github.com/amenijawadi/analyse_suicide"
+  },
+  {
+    "objectID": "index.html#objectif-général",
+    "href": "index.html#objectif-général",
+    "title": "Analyse Statistique des Données Mondiales de Suicide (1980-2015)",
+    "section": "3.1 Objectif général",
+    "text": "3.1 Objectif général\nRéaliser une analyse épidémiologique multidimensionnelle des données mondiales de suicide (1980–2015) afin d’identifier les facteurs de risque, les tendances temporelles et les disparités démographiques et géographiques."
+  },
+  {
+    "objectID": "index.html#objectifs-spécifiques",
+    "href": "index.html#objectifs-spécifiques",
+    "title": "Analyse Statistique des Données Mondiales de Suicide (1980-2015)",
+    "section": "3.2 Objectifs spécifiques",
+    "text": "3.2 Objectifs spécifiques\n\n3.2.1 Exploration descriptive et qualité des données\n→ Comprendre la structure du jeu de données et vérifier sa qualité.\n\n\n3.2.2 Analyse temporelle (1980–2015)\n→ Étudier l’évolution des taux de suicide dans le temps.\n\n\n3.2.3 Analyse différentielle par sexe\n→ Comparer les comportements suicidaires entre les hommes et les femmes.\n\n\n3.2.4 Analyse par tranche d’âge\n→ Identifier les groupes d’âge les plus vulnérables.\n\n\n3.2.5 Analyse géographique et clustering\n→ Mettre en évidence les disparités géographiques."
+  },
+  {
+    "objectID": "qmd/02_nettoyage.html",
+    "href": "qmd/02_nettoyage.html",
+    "title": "Chapitre 2 : Nettoyage et Transformation",
+    "section": "",
+    "text": "Observations avec suicides_no manquant : 2256 \n\n\nObservations avec population manquante : 5460 \n\n\nObservations avec les DEUX manquantes  : 0 \n\n\n\n\n\nDonnées initiales : 43776 lignes\n\n\nDonnées nettoyées : 36060 lignes\n\n\nLignes supprimées : 7716 ( 17.63 %)\n\n\n\n\n\n\n\n\nSexe\nFréquence\n\n\n\nHomme\n18030\n\n\nFemme\n18030\n\n\n\n\n\n\n\n\n\n\nTranche d’âge\nFréquence\n\n\n\n5-14 ans\n6010\n\n\n15-24 ans\n6010\n\n\n25-34 ans\n6010\n\n\n35-54 ans\n6010\n\n\n55-74 ans\n6010\n\n\n75+ ans\n6010\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ncountry\nyear\nsex\nage\nsuicides_no\npopulation\ntaux_suicide_100k\ndecennie\n\n\n\nAlbania\n1987\nFemme\n15-24 ans\n14\n289700\n4.83\n1980-1989\n\n\nAlbania\n1987\nFemme\n25-34 ans\n4\n257200\n1.56\n1980-1989\n\n\nAlbania\n1987\nFemme\n35-54 ans\n6\n278800\n2.15\n1980-1989\n\n\nAlbania\n1987\nFemme\n5-14 ans\n0\n311000\n0.00\n1980-1989\n\n\nAlbania\n1987\nFemme\n55-74 ans\n0\n144600\n0.00\n1980-1989\n\n\nAlbania\n1987\nFemme\n75+ ans\n1\n35600\n2.81\n1980-1989\n\n\nAlbania\n1987\nHomme\n15-24 ans\n21\n312900\n6.71\n1980-1989\n\n\nAlbania\n1987\nHomme\n25-34 ans\n9\n274300\n3.28\n1980-1989\n\n\nAlbania\n1987\nHomme\n35-54 ans\n16\n308000\n5.19\n1980-1989\n\n\nAlbania\n1987\nHomme\n5-14 ans\n0\n338200\n0.00\n1980-1989\n\n\n\n\n\n\n\n\n\nSeuil inférieur : -23.56 \n\n\nSeuil supérieur : 41.35 \n\n\nNombre d'outliers : 2704 ( 7.5 %)\n\n\n\n\n\n\n\n\n\n\n\n\nTop 10 des taux de suicide les plus élevés\n\n\n\n\n\n\n\n\n\n\ncountry\nyear\nsex\nage\nsuicides_no\npopulation\ntaux_suicide_100k\n\n\n\nSan Marino\n1997\nHomme\n75+ ans\n2\n665\n300.75\n\n\nFrench Guiana\n1979\nHomme\n75+ ans\n1\n400\n250.00\n\n\nAruba\n1995\nHomme\n75+ ans\n2\n889\n224.97\n\n\nHungary\n1981\nHomme\n75+ ans\n390\n177900\n219.22\n\n\nHungary\n1979\nHomme\n75+ ans\n364\n172400\n211.14\n\n\nHungary\n1982\nHomme\n75+ ans\n378\n180300\n209.65\n\n\nHungary\n1985\nHomme\n75+ ans\n393\n189700\n207.17\n\n\nSeychelles\n2006\nHomme\n75+ ans\n2\n976\n204.92\n\n\nHungary\n1980\nHomme\n75+ ans\n357\n176600\n202.15\n\n\nHungary\n1990\nHomme\n75+ ans\n386\n196496\n196.44\n\n\n\n\n\n\n\n\nValeurs manquantes après nettoyage :\n\n\n          country              year               sex               age \n                0                 0                 0                 0 \n      suicides_no        population taux_suicide_100k          decennie \n                0                 0                 0               648 \n\n\n\n=== RÉSUMÉ DU DATASET NETTOYÉ ===\n\n\nNombre d'observations : 36060 \n\n\nNombre de variables : 8 \n\n\nPays uniques : 118 \n\n\nAnnées couvertes : 1979 - 2016 \n\n\n\n\n\nDonnées nettoyées exportées avec succès !\n\n\n\nTransformations effectuées :\n\nSuppression des valeurs manquantes (7.48% des données)\nSuppression des doublons exacts\nConversion de sex et age en facteurs ordonnés\nCréation du taux de suicide pour 100k habitants\n\nAjout de variables temporelles (décennie)\nDétection des valeurs aberrantes (méthode IQR)\n\nDataset final prêt pour l’analyse !",
+    "crumbs": [
+      "Projects",
+      "Nettoyage des Données"
+    ]
+  },
+  {
+    "objectID": "qmd/02_nettoyage.html#analyse-des-valeurs-manquantes",
+    "href": "qmd/02_nettoyage.html#analyse-des-valeurs-manquantes",
+    "title": "Chapitre 2 : Nettoyage et Transformation",
+    "section": "",
+    "text": "Observations avec suicides_no manquant : 2256 \n\n\nObservations avec population manquante : 5460 \n\n\nObservations avec les DEUX manquantes  : 0",
+    "crumbs": [
+      "Projects",
+      "Nettoyage des Données"
+    ]
+  },
+  {
+    "objectID": "qmd/02_nettoyage.html#stratégie-de-nettoyage",
+    "href": "qmd/02_nettoyage.html#stratégie-de-nettoyage",
+    "title": "Chapitre 2 : Nettoyage et Transformation",
+    "section": "",
+    "text": "Données initiales : 43776 lignes\n\n\nDonnées nettoyées : 36060 lignes\n\n\nLignes supprimées : 7716 ( 17.63 %)",
+    "crumbs": [
+      "Projects",
+      "Nettoyage des Données"
+    ]
+  },
+  {
+    "objectID": "qmd/02_nettoyage.html#transformation-des-variables",
+    "href": "qmd/02_nettoyage.html#transformation-des-variables",
+    "title": "Chapitre 2 : Nettoyage et Transformation",
+    "section": "",
+    "text": "Sexe\nFréquence\n\n\n\nHomme\n18030\n\n\nFemme\n18030\n\n\n\n\n\n\n\n\n\n\nTranche d’âge\nFréquence\n\n\n\n5-14 ans\n6010\n\n\n15-24 ans\n6010\n\n\n25-34 ans\n6010\n\n\n35-54 ans\n6010\n\n\n55-74 ans\n6010\n\n\n75+ ans\n6010\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ncountry\nyear\nsex\nage\nsuicides_no\npopulation\ntaux_suicide_100k\ndecennie\n\n\n\nAlbania\n1987\nFemme\n15-24 ans\n14\n289700\n4.83\n1980-1989\n\n\nAlbania\n1987\nFemme\n25-34 ans\n4\n257200\n1.56\n1980-1989\n\n\nAlbania\n1987\nFemme\n35-54 ans\n6\n278800\n2.15\n1980-1989\n\n\nAlbania\n1987\nFemme\n5-14 ans\n0\n311000\n0.00\n1980-1989\n\n\nAlbania\n1987\nFemme\n55-74 ans\n0\n144600\n0.00\n1980-1989\n\n\nAlbania\n1987\nFemme\n75+ ans\n1\n35600\n2.81\n1980-1989\n\n\nAlbania\n1987\nHomme\n15-24 ans\n21\n312900\n6.71\n1980-1989\n\n\nAlbania\n1987\nHomme\n25-34 ans\n9\n274300\n3.28\n1980-1989\n\n\nAlbania\n1987\nHomme\n35-54 ans\n16\n308000\n5.19\n1980-1989\n\n\nAlbania\n1987\nHomme\n5-14 ans\n0\n338200\n0.00\n1980-1989",
+    "crumbs": [
+      "Projects",
+      "Nettoyage des Données"
+    ]
+  },
+  {
+    "objectID": "qmd/02_nettoyage.html#détection-des-valeurs-aberrantes",
+    "href": "qmd/02_nettoyage.html#détection-des-valeurs-aberrantes",
+    "title": "Chapitre 2 : Nettoyage et Transformation",
+    "section": "",
+    "text": "Seuil inférieur : -23.56 \n\n\nSeuil supérieur : 41.35 \n\n\nNombre d'outliers : 2704 ( 7.5 %)\n\n\n\n\n\n\n\n\n\n\n\n\nTop 10 des taux de suicide les plus élevés\n\n\n\n\n\n\n\n\n\n\ncountry\nyear\nsex\nage\nsuicides_no\npopulation\ntaux_suicide_100k\n\n\n\nSan Marino\n1997\nHomme\n75+ ans\n2\n665\n300.75\n\n\nFrench Guiana\n1979\nHomme\n75+ ans\n1\n400\n250.00\n\n\nAruba\n1995\nHomme\n75+ ans\n2\n889\n224.97\n\n\nHungary\n1981\nHomme\n75+ ans\n390\n177900\n219.22\n\n\nHungary\n1979\nHomme\n75+ ans\n364\n172400\n211.14\n\n\nHungary\n1982\nHomme\n75+ ans\n378\n180300\n209.65\n\n\nHungary\n1985\nHomme\n75+ ans\n393\n189700\n207.17\n\n\nSeychelles\n2006\nHomme\n75+ ans\n2\n976\n204.92\n\n\nHungary\n1980\nHomme\n75+ ans\n357\n176600\n202.15\n\n\nHungary\n1990\nHomme\n75+ ans\n386\n196496\n196.44",
+    "crumbs": [
+      "Projects",
+      "Nettoyage des Données"
+    ]
+  },
+  {
+    "objectID": "qmd/02_nettoyage.html#validation-finale",
+    "href": "qmd/02_nettoyage.html#validation-finale",
+    "title": "Chapitre 2 : Nettoyage et Transformation",
+    "section": "",
+    "text": "Valeurs manquantes après nettoyage :\n\n\n          country              year               sex               age \n                0                 0                 0                 0 \n      suicides_no        population taux_suicide_100k          decennie \n                0                 0                 0               648 \n\n\n\n=== RÉSUMÉ DU DATASET NETTOYÉ ===\n\n\nNombre d'observations : 36060 \n\n\nNombre de variables : 8 \n\n\nPays uniques : 118 \n\n\nAnnées couvertes : 1979 - 2016",
+    "crumbs": [
+      "Projects",
+      "Nettoyage des Données"
+    ]
+  },
+  {
+    "objectID": "qmd/02_nettoyage.html#export-des-données-nettoyées",
+    "href": "qmd/02_nettoyage.html#export-des-données-nettoyées",
+    "title": "Chapitre 2 : Nettoyage et Transformation",
+    "section": "",
+    "text": "Données nettoyées exportées avec succès !",
+    "crumbs": [
+      "Projects",
+      "Nettoyage des Données"
+    ]
+  },
+  {
+    "objectID": "qmd/02_nettoyage.html#conclusions-du-nettoyage",
+    "href": "qmd/02_nettoyage.html#conclusions-du-nettoyage",
+    "title": "Chapitre 2 : Nettoyage et Transformation",
+    "section": "",
+    "text": "Transformations effectuées :\n\nSuppression des valeurs manquantes (7.48% des données)\nSuppression des doublons exacts\nConversion de sex et age en facteurs ordonnés\nCréation du taux de suicide pour 100k habitants\n\nAjout de variables temporelles (décennie)\nDétection des valeurs aberrantes (méthode IQR)\n\nDataset final prêt pour l’analyse !",
+    "crumbs": [
+      "Projects",
+      "Nettoyage des Données"
+    ]
+  },
+  {
+    "objectID": "qmd/04_analyse_sexe.html",
+    "href": "qmd/04_analyse_sexe.html",
+    "title": "Chapitre 4 : Analyse par Sexe",
+    "section": "",
+    "text": "Statistiques par sexe (1980-2015)\n\n\n\n\n\n\n\n\n\n\n\nsex\nNombre total de suicides\nPopulation totale\nTaux moyen (100k)\nTaux médian (100k)\nTaux min\nTaux max\nÉcart-type\n\n\n\nHomme\n6 104 173\n29 929 405 615\n20.40\n13.32\n0\n300.75\n24.78\n\n\nFemme\n1 894 294\n31 372 440 251\n6.04\n3.17\n0\n133.42\n8.22\n\n\n\n\n\n→ Les hommes représentent 76.3 % du total des suicides\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n=== TEST T DE STUDENT ===\n\n\nMoyenne Hommes : 20.63 \n\n\nMoyenne Femmes : 5.74 \n\n\nDifférence : 14.89 \n\n\nt-statistic : 76.589 \n\n\np-value : &lt; 2.22e-16 \n\n\nConclusion : Différence HAUTEMENT significative (p &lt; 0.001) ✓\n\n\n\n\n\n\n\nTop 10 pays avec la plus grande différence Homme-Femme\n\ncountry\nHomme\nFemme\ndiff_HF\nratio_HF\n\n\n\nLithuania\n64.77\n12.83\n51.94\n5.05\n\n\nRussian Federation\n58.25\n12.16\n46.09\n4.79\n\n\nHungary\n60.38\n18.97\n41.42\n3.18\n\n\nLatvia\n52.74\n12.22\n40.52\n4.32\n\n\nBelarus\n49.71\n9.25\n40.46\n5.37\n\n\nSri Lanka\n57.36\n18.20\n39.16\n3.15\n\n\nSlovenia\n49.92\n12.10\n37.82\n4.13\n\n\nEstonia\n49.38\n11.87\n37.51\n4.16\n\n\nKazakhstan\n48.90\n11.54\n37.36\n4.24\n\n\nUkraine\n44.21\n9.09\n35.12\n4.86\n\n\n\n\n\n\nPoints clés identifiés :\n\nRatio global : 3.22 hommes pour 1 femme\nHommes :\n\n\nTotal : 6 104 173 suicides\nTaux moyen : 20.63 pour 100k habitants\n\n\n\nFemmes :\n\n\nTotal : 1 894 294 suicides\nTaux moyen : 5.74",
+    "crumbs": [
+      "Projects",
+      "Analyse par sexe"
+    ]
+  },
+  {
+    "objectID": "qmd/04_analyse_sexe.html#vue-densemble-par-sexe",
+    "href": "qmd/04_analyse_sexe.html#vue-densemble-par-sexe",
+    "title": "Chapitre 4 : Analyse par Sexe",
+    "section": "",
+    "text": "Statistiques par sexe (1980-2015)\n\n\n\n\n\n\n\n\n\n\n\nsex\nNombre total de suicides\nPopulation totale\nTaux moyen (100k)\nTaux médian (100k)\nTaux min\nTaux max\nÉcart-type\n\n\n\nHomme\n6 104 173\n29 929 405 615\n20.40\n13.32\n0\n300.75\n24.78\n\n\nFemme\n1 894 294\n31 372 440 251\n6.04\n3.17\n0\n133.42\n8.22\n\n\n\n\n\n→ Les hommes représentent 76.3 % du total des suicides",
+    "crumbs": [
+      "Projects",
+      "Analyse par sexe"
+    ]
+  },
+  {
+    "objectID": "qmd/04_analyse_sexe.html#tests-statistiques",
+    "href": "qmd/04_analyse_sexe.html#tests-statistiques",
+    "title": "Chapitre 4 : Analyse par Sexe",
+    "section": "",
+    "text": "=== TEST T DE STUDENT ===\n\n\nMoyenne Hommes : 20.63 \n\n\nMoyenne Femmes : 5.74 \n\n\nDifférence : 14.89 \n\n\nt-statistic : 76.589 \n\n\np-value : &lt; 2.22e-16 \n\n\nConclusion : Différence HAUTEMENT significative (p &lt; 0.001) ✓",
+    "crumbs": [
+      "Projects",
+      "Analyse par sexe"
+    ]
+  },
+  {
+    "objectID": "qmd/04_analyse_sexe.html#analyse-géographique-par-sexe",
+    "href": "qmd/04_analyse_sexe.html#analyse-géographique-par-sexe",
+    "title": "Chapitre 4 : Analyse par Sexe",
+    "section": "",
+    "text": "Top 10 pays avec la plus grande différence Homme-Femme\n\ncountry\nHomme\nFemme\ndiff_HF\nratio_HF\n\n\n\nLithuania\n64.77\n12.83\n51.94\n5.05\n\n\nRussian Federation\n58.25\n12.16\n46.09\n4.79\n\n\nHungary\n60.38\n18.97\n41.42\n3.18\n\n\nLatvia\n52.74\n12.22\n40.52\n4.32\n\n\nBelarus\n49.71\n9.25\n40.46\n5.37\n\n\nSri Lanka\n57.36\n18.20\n39.16\n3.15\n\n\nSlovenia\n49.92\n12.10\n37.82\n4.13\n\n\nEstonia\n49.38\n11.87\n37.51\n4.16\n\n\nKazakhstan\n48.90\n11.54\n37.36\n4.24\n\n\nUkraine\n44.21\n9.09\n35.12\n4.86",
+    "crumbs": [
+      "Projects",
+      "Analyse par sexe"
+    ]
+  },
+  {
+    "objectID": "qmd/04_analyse_sexe.html#conclusions-de-lanalyse-par-sexe",
+    "href": "qmd/04_analyse_sexe.html#conclusions-de-lanalyse-par-sexe",
+    "title": "Chapitre 4 : Analyse par Sexe",
+    "section": "",
+    "text": "Points clés identifiés :\n\nRatio global : 3.22 hommes pour 1 femme\nHommes :\n\n\nTotal : 6 104 173 suicides\nTaux moyen : 20.63 pour 100k habitants\n\n\n\nFemmes :\n\n\nTotal : 1 894 294 suicides\nTaux moyen : 5.74",
+    "crumbs": [
+      "Projects",
+      "Analyse par sexe"
+    ]
+  },
+  {
+    "objectID": "qmd/06_analyse_geographique.html",
+    "href": "qmd/06_analyse_geographique.html",
+    "title": "Chapitre 6 : Analyse Géographique",
+    "section": "",
+    "text": "Nombre total de pays analysés : 118 \n\n\n**Observations par pays** :\n\n\n  - Minimum : 12 \n\n\n  - Médiane : 366 \n\n\n  - Moyenne : 305.6 \n\n\n  - Maximum : 456 \n\n\n\n\n\nCouverture temporelle :\n\n\n  - Pays avec couverture complète (36 ans) : 8 \n\n\n  - Pays avec &gt; 80% de couverture : 64 \n\n\n  - Pays avec &lt; 50% de couverture : 29 \n\n\n\n\n\n\n\nTop 20 des pays avec les taux de suicide les plus élevés\n\n\n\n\n\n\n\nPays\nTotal suicides\nPopulation totale\nTaux moyen (100k)\n\n\n\nLithuania\n42 166\n108 421 714\n38.89\n\n\nHungary\n130 018\n368 771 868\n35.26\n\n\nRussian Federation\n1 500 992\n4 607 764 120\n32.58\n\n\nSri Lanka\n80 747\n248 810 626\n32.45\n\n\nLatvia\n24 861\n80 935 340\n30.72\n\n\nEstonia\n12 671\n44 051 596\n28.76\n\n\nBelarus\n74 974\n261 558 592\n28.66\n\n\nSlovenia\n16 805\n58 977 219\n28.49\n\n\nKazakhstan\n123 151\n475 772 169\n25.88\n\n\nUkraine\n365 170\n1 474 109 284\n24.77\n\n\nFinland\n33 677\n141 925 658\n23.73\n\n\nJapan\n937 614\n4 340 184 444\n21.60\n\n\nCroatia\n29 400\n136 763 191\n21.50\n\n\nAustria\n60 179\n280 244 814\n21.47\n\n\nBelgium\n75 948\n358 792 221\n21.17\n\n\nFrance\n395 500\n1 973 574 675\n20.04\n\n\nRepublic of Korea\n261 730\n1 354 944 936\n19.32\n\n\nSerbia\n24 179\n126 140 138\n19.17\n\n\nGuyana\n3 438\n18 136 689\n18.96\n\n\nSuriname\n2 492\n13 222 179\n18.85\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nTop 20 des pays avec les taux de suicide les plus faibles\n\n\n\n\n\n\n\nPays\nTotal suicides\nPopulation totale\nTaux moyen (100k)\n\n\n\nCayman Islands\n0\n29 400\n0.00\n\n\nSaint Kitts and Nevis\n0\n117 300\n0.00\n\n\nEgypt\n1 206\n1 189 403 348\n0.10\n\n\nOman\n33\n8 987 087\n0.37\n\n\nJamaica\n198\n49 182 628\n0.40\n\n\nAntigua and Barbuda\n11\n2 054 919\n0.54\n\n\nMaldives\n20\n2 900 246\n0.69\n\n\nMayotte\n6\n754 088\n0.80\n\n\nSouth Africa\n7 321\n873 130 762\n0.84\n\n\nDominica\n4\n381 700\n1.05\n\n\nBahamas\n107\n7 308 348\n1.46\n\n\nSao Tome and Principe\n4\n265 500\n1.51\n\n\nKuwait\n1 013\n64 721 091\n1.57\n\n\nGrenada\n38\n2 365 726\n1.61\n\n\nUnited Arab Emirates\n622\n36 502 275\n1.70\n\n\nBrunei Darussalam\n123\n6 640 328\n1.85\n\n\nPhilippines\n21 330\n1 065 068 179\n2.00\n\n\nTurkey\n10 131\n482 640 582\n2.10\n\n\nAzerbaijan\n3 366\n152 949 000\n2.20\n\n\nArmenia\n2 422\n97 844 359\n2.48\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nStatistiques par région géographique\n\n\n\n\n\n\n\n\nregion\nnb_pays\ntotal_suicides\npopulation\ntaux_moyen\n\n\n\nEurope de l’Est/Asie Centrale\n8\n634 553\n3 323 470 723\n19.09\n\n\nAutre\n56\n3 197 667\n18 955 490 964\n16.87\n\n\nAsie\n5\n1 181 100\n7 609 210 101\n15.52\n\n\nEurope\n25\n2 057 046\n15 342 057 943\n13.41\n\n\nOcéanie\n2\n96 726\n746 191 816\n12.96\n\n\nAmérique du Nord\n6\n309 154\n4 663 735 504\n6.63\n\n\nAmérique du Sud\n7\n485 272\n8 933 387 484\n5.43\n\n\nMoyen-Orient\n6\n25 468\n816 816 647\n3.12\n\n\nAfrique\n3\n11 481\n911 484 684\n1.26\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nComparaison pays développés vs en développement\n\ndeveloppement\nnb_pays\ntaux_moyen\ntaux_median\necart_type\n\n\n\nDéveloppés\n19\n15.40\n10.34\n17.05\n\n\nEn développement\n99\n12.59\n4.72\n20.56\n\n\n\n\n\n\n\n\n\n\n\n\nPoints clés identifiés :\n\n🌍 Couverture géographique : 118 pays analysés sur tous les continents\n🔴 Pays le plus touché : Lithuania avec un taux moyen de 38.89 pour 100k habitants\n🟢 Pays le moins touché : Cayman Islands avec un taux moyen de 0 pour 100k habitants\n🗺️ Région la plus touchée : Europe de l’Est/Asie Centrale présente les taux moyens les plus élevés\n\n📈 Tendances divergentes :\n\nCertains pays montrent des hausses préoccupantes\nD’autres affichent des baisses encourageantes\nLes politiques nationales jouent un rôle déterminant\n\n\n\n🌐 Facteurs géographiques : Les taux varient considérablement selon :\n\nLe niveau de développement économique\nLes facteurs culturels et religieux\nLes systèmes de santé mentale\nLa qualité des données de surveillance\n\n\n\nInterprétation : L’analyse géographique révèle d’importantes disparités mondiales. Les pays d’Europe de l’Est et certaines régions d’Asie présentent historiquement les taux les plus élevés. Les différences observées reflètent des réalités socio-économiques, culturelles et sanitaires complexes qui nécessitent des approches de prévention adaptées à chaque contexte national.",
+    "crumbs": [
+      "Projects",
+      "Analyse Géographique"
+    ]
+  },
+  {
+    "objectID": "qmd/06_analyse_geographique.html#vue-densemble-mondiale",
+    "href": "qmd/06_analyse_geographique.html#vue-densemble-mondiale",
+    "title": "Chapitre 6 : Analyse Géographique",
+    "section": "",
+    "text": "Nombre total de pays analysés : 118 \n\n\n**Observations par pays** :\n\n\n  - Minimum : 12 \n\n\n  - Médiane : 366 \n\n\n  - Moyenne : 305.6 \n\n\n  - Maximum : 456 \n\n\n\n\n\nCouverture temporelle :\n\n\n  - Pays avec couverture complète (36 ans) : 8 \n\n\n  - Pays avec &gt; 80% de couverture : 64 \n\n\n  - Pays avec &lt; 50% de couverture : 29",
+    "crumbs": [
+      "Projects",
+      "Analyse Géographique"
+    ]
+  },
+  {
+    "objectID": "qmd/06_analyse_geographique.html#classement-des-pays-par-taux-de-suicide",
+    "href": "qmd/06_analyse_geographique.html#classement-des-pays-par-taux-de-suicide",
+    "title": "Chapitre 6 : Analyse Géographique",
+    "section": "",
+    "text": "Top 20 des pays avec les taux de suicide les plus élevés\n\n\n\n\n\n\n\nPays\nTotal suicides\nPopulation totale\nTaux moyen (100k)\n\n\n\nLithuania\n42 166\n108 421 714\n38.89\n\n\nHungary\n130 018\n368 771 868\n35.26\n\n\nRussian Federation\n1 500 992\n4 607 764 120\n32.58\n\n\nSri Lanka\n80 747\n248 810 626\n32.45\n\n\nLatvia\n24 861\n80 935 340\n30.72\n\n\nEstonia\n12 671\n44 051 596\n28.76\n\n\nBelarus\n74 974\n261 558 592\n28.66\n\n\nSlovenia\n16 805\n58 977 219\n28.49\n\n\nKazakhstan\n123 151\n475 772 169\n25.88\n\n\nUkraine\n365 170\n1 474 109 284\n24.77\n\n\nFinland\n33 677\n141 925 658\n23.73\n\n\nJapan\n937 614\n4 340 184 444\n21.60\n\n\nCroatia\n29 400\n136 763 191\n21.50\n\n\nAustria\n60 179\n280 244 814\n21.47\n\n\nBelgium\n75 948\n358 792 221\n21.17\n\n\nFrance\n395 500\n1 973 574 675\n20.04\n\n\nRepublic of Korea\n261 730\n1 354 944 936\n19.32\n\n\nSerbia\n24 179\n126 140 138\n19.17\n\n\nGuyana\n3 438\n18 136 689\n18.96\n\n\nSuriname\n2 492\n13 222 179\n18.85\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nTop 20 des pays avec les taux de suicide les plus faibles\n\n\n\n\n\n\n\nPays\nTotal suicides\nPopulation totale\nTaux moyen (100k)\n\n\n\nCayman Islands\n0\n29 400\n0.00\n\n\nSaint Kitts and Nevis\n0\n117 300\n0.00\n\n\nEgypt\n1 206\n1 189 403 348\n0.10\n\n\nOman\n33\n8 987 087\n0.37\n\n\nJamaica\n198\n49 182 628\n0.40\n\n\nAntigua and Barbuda\n11\n2 054 919\n0.54\n\n\nMaldives\n20\n2 900 246\n0.69\n\n\nMayotte\n6\n754 088\n0.80\n\n\nSouth Africa\n7 321\n873 130 762\n0.84\n\n\nDominica\n4\n381 700\n1.05\n\n\nBahamas\n107\n7 308 348\n1.46\n\n\nSao Tome and Principe\n4\n265 500\n1.51\n\n\nKuwait\n1 013\n64 721 091\n1.57\n\n\nGrenada\n38\n2 365 726\n1.61\n\n\nUnited Arab Emirates\n622\n36 502 275\n1.70\n\n\nBrunei Darussalam\n123\n6 640 328\n1.85\n\n\nPhilippines\n21 330\n1 065 068 179\n2.00\n\n\nTurkey\n10 131\n482 640 582\n2.10\n\n\nAzerbaijan\n3 366\n152 949 000\n2.20\n\n\nArmenia\n2 422\n97 844 359\n2.48",
+    "crumbs": [
+      "Projects",
+      "Analyse Géographique"
+    ]
+  },
+  {
+    "objectID": "qmd/06_analyse_geographique.html#comparaison-par-continentsrégions",
+    "href": "qmd/06_analyse_geographique.html#comparaison-par-continentsrégions",
+    "title": "Chapitre 6 : Analyse Géographique",
+    "section": "",
+    "text": "Statistiques par région géographique\n\n\n\n\n\n\n\n\nregion\nnb_pays\ntotal_suicides\npopulation\ntaux_moyen\n\n\n\nEurope de l’Est/Asie Centrale\n8\n634 553\n3 323 470 723\n19.09\n\n\nAutre\n56\n3 197 667\n18 955 490 964\n16.87\n\n\nAsie\n5\n1 181 100\n7 609 210 101\n15.52\n\n\nEurope\n25\n2 057 046\n15 342 057 943\n13.41\n\n\nOcéanie\n2\n96 726\n746 191 816\n12.96\n\n\nAmérique du Nord\n6\n309 154\n4 663 735 504\n6.63\n\n\nAmérique du Sud\n7\n485 272\n8 933 387 484\n5.43\n\n\nMoyen-Orient\n6\n25 468\n816 816 647\n3.12\n\n\nAfrique\n3\n11 481\n911 484 684\n1.26",
+    "crumbs": [
+      "Projects",
+      "Analyse Géographique"
+    ]
+  },
+  {
+    "objectID": "qmd/06_analyse_geographique.html#analyse-des-disparités-géographiques",
+    "href": "qmd/06_analyse_geographique.html#analyse-des-disparités-géographiques",
+    "title": "Chapitre 6 : Analyse Géographique",
+    "section": "",
+    "text": "Comparaison pays développés vs en développement\n\ndeveloppement\nnb_pays\ntaux_moyen\ntaux_median\necart_type\n\n\n\nDéveloppés\n19\n15.40\n10.34\n17.05\n\n\nEn développement\n99\n12.59\n4.72\n20.56",
+    "crumbs": [
+      "Projects",
+      "Analyse Géographique"
+    ]
+  },
+  {
+    "objectID": "qmd/06_analyse_geographique.html#conclusions-de-lanalyse-géographique",
+    "href": "qmd/06_analyse_geographique.html#conclusions-de-lanalyse-géographique",
+    "title": "Chapitre 6 : Analyse Géographique",
+    "section": "",
+    "text": "Points clés identifiés :\n\n🌍 Couverture géographique : 118 pays analysés sur tous les continents\n🔴 Pays le plus touché : Lithuania avec un taux moyen de 38.89 pour 100k habitants\n🟢 Pays le moins touché : Cayman Islands avec un taux moyen de 0 pour 100k habitants\n🗺️ Région la plus touchée : Europe de l’Est/Asie Centrale présente les taux moyens les plus élevés\n\n📈 Tendances divergentes :\n\nCertains pays montrent des hausses préoccupantes\nD’autres affichent des baisses encourageantes\nLes politiques nationales jouent un rôle déterminant\n\n\n\n🌐 Facteurs géographiques : Les taux varient considérablement selon :\n\nLe niveau de développement économique\nLes facteurs culturels et religieux\nLes systèmes de santé mentale\nLa qualité des données de surveillance\n\n\n\nInterprétation : L’analyse géographique révèle d’importantes disparités mondiales. Les pays d’Europe de l’Est et certaines régions d’Asie présentent historiquement les taux les plus élevés. Les différences observées reflètent des réalités socio-économiques, culturelles et sanitaires complexes qui nécessitent des approches de prévention adaptées à chaque contexte national.",
+    "crumbs": [
+      "Projects",
+      "Analyse Géographique"
+    ]
+  }
+]

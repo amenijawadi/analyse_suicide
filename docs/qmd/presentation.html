@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-html/tabby.min.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.26">
+
+  <meta name="author" content="Jaouadi Amani">
+  <title>Analyse Statistique des Données Mondiales de Suicide  – Analyse Mondiale des Suicides</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/theme/quarto-534cd8e3a96973385dffff3f4709048d.css">
+  <link rel="stylesheet" href="custom.css">
+  <link href="../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="../site_libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+  <link href="../site_libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
+
+  <script src="../site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+
+  <script src="../site_libs/plotly-binding-4.11.0/plotly.js"></script>
+
+  <script src="../site_libs/typedarray-0.1/typedarray.min.js"></script>
+
+  <script src="../site_libs/jquery-3.5.1/jquery.min.js"></script>
+
+  <link href="../site_libs/crosstalk-1.2.2/css/crosstalk.min.css" rel="stylesheet">
+
+  <script src="../site_libs/crosstalk-1.2.2/js/crosstalk.min.js"></script>
+
+  <link href="../site_libs/plotly-htmlwidgets-css-2.11.1/plotly-htmlwidgets.css" rel="stylesheet">
+
+  <script src="../site_libs/plotly-main-2.11.1/plotly-latest.min.js"></script>
+
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">Analyse Mondiale des Suicides</h1>
+  <p class="subtitle">Étude des Tendances et Facteurs de Risque (1980-2015)</p>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Jaouadi Amani 
+</div>
+</div>
+</div>
+
+</section>
+<section id="analyse-mondiale-des-suicides" class="title-slide slide level1 center-content center">
+<h1>Analyse Mondiale des Suicides</h1>
+<p><br></p>
+<blockquote>
+<p><em>“Près de 727.000 personnes meurent par suicide chaque année dans le monde selon l’OMS.”</em></p>
+<p>— Organisation Mondiale de la Santé.</p>
+</blockquote>
+</section>
+
+<section id="problématique" class="slide level2">
+<h2>Problématique</h2>
+<ul>
+<li class="fragment"><strong>-727 000 décès</strong> par suicide chaque année dans le monde.</li>
+<li class="fragment"><strong>-Une mort toutes les 40 secondes</strong>.</li>
+</ul>
+<p><br></p>
+<div class="question-box fragment">
+<p>Quels sont les <strong>facteurs démographiques</strong>, <strong>temporels</strong> et <strong>géographiques</strong> associés au suicide à l’échelle mondiale ?</p>
+</div>
+</section>
+<section id="objectifs-de-létude" class="slide level2">
+<h2>Objectifs de l’Étude</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<h3 id="analyser">Analyser</h3>
+<ul>
+<li>Tendances temporelles (1980-2015).</li>
+<li>Différences par sexe.</li>
+<li>Profils par tranche d’âge.</li>
+<li>Disparités géographiques.</li>
+</ul>
+</div><div class="column" style="width:50%;">
+<h3 id="identifier">Identifier</h3>
+<ul>
+<li>Groupes à risque.</li>
+<li>Périodes critiques.</li>
+<li>Pays les plus touchés.</li>
+</ul>
+</div></div>
+</section>
+<section class="slide level2">
+
+</section>
+<section>
+<section id="données-initiales" class="title-slide slide level1 center">
+<h1>📁 Données Initiales</h1>
+
+</section>
+<section id="présentation-du-dataset" class="slide level2">
+<h2>Présentation du Dataset</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">glimpse</span>(data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 43,776
+Columns: 6
+$ country     &lt;chr&gt; "Albania", "Albania", "Albania", "Albania", "Albania", "Al…
+$ year        &lt;dbl&gt; 1985, 1985, 1985, 1985, 1985, 1985, 1985, 1985, 1985, 1985…
+$ sex         &lt;chr&gt; "female", "female", "female", "female", "female", "female"…
+$ age         &lt;chr&gt; "15-24 years", "25-34 years", "35-54 years", "5-14 years",…
+$ suicides_no &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ population  &lt;dbl&gt; 277900, 246800, 267500, 298300, 138700, 34200, 301400, 264…</code></pre>
+</div>
+</div>
+</section>
+<section id="statistiques-descriptives-initiales" class="slide level2">
+<h2>Statistiques Descriptives Initiales</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>📊 Afficher le code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a><span class="co"># Résumé des variables</span></span>
+<span id="cb3-2"><a></a>data <span class="sc">%&gt;%</span> </span>
+<span id="cb3-3"><a></a>  <span class="fu">summarise</span>(</span>
+<span id="cb3-4"><a></a>    <span class="at">Observations =</span> <span class="fu">n</span>(),</span>
+<span id="cb3-5"><a></a>    <span class="at">Pays =</span> <span class="fu">n_distinct</span>(country),</span>
+<span id="cb3-6"><a></a>    Années <span class="ot">=</span> <span class="fu">paste</span>(<span class="fu">min</span>(year), <span class="st">"-"</span>, <span class="fu">max</span>(year)),</span>
+<span id="cb3-7"><a></a>    <span class="st">`</span><span class="at">Total suicides</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(suicides_no, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb3-8"><a></a>    <span class="st">`</span><span class="at">NA suicides</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(suicides_no)),</span>
+<span id="cb3-9"><a></a>    <span class="st">`</span><span class="at">NA population</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(population))</span>
+<span id="cb3-10"><a></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb3-11"><a></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), as.character)) <span class="sc">%&gt;%</span> </span>
+<span id="cb3-12"><a></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb3-13"><a></a>    <span class="fu">everything</span>(),</span>
+<span id="cb3-14"><a></a>    <span class="at">names_to =</span> <span class="st">"Indicateur"</span>,</span>
+<span id="cb3-15"><a></a>    <span class="at">values_to =</span> <span class="st">"Valeur"</span></span>
+<span id="cb3-16"><a></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb3-17"><a></a>  <span class="fu">kable</span>(<span class="at">caption =</span> <span class="st">"Résumé du dataset initial"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top">
+<caption>Résumé du dataset initial</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Indicateur</th>
+<th style="text-align: left;">Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Observations</td>
+<td style="text-align: left;">43776</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Pays</td>
+<td style="text-align: left;">141</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Années</td>
+<td style="text-align: left;">1979 - 2016</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Total suicides</td>
+<td style="text-align: left;">8026455</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NA suicides</td>
+<td style="text-align: left;">2256</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NA population</td>
+<td style="text-align: left;">5460</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="valeurs-manquantes" class="slide level2">
+<h2>Valeurs Manquantes</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>📊 Afficher le code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a><span class="co"># Visualisation des valeurs manquantes</span></span>
+<span id="cb4-2"><a></a>data <span class="sc">%&gt;%</span> </span>
+<span id="cb4-3"><a></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span><span class="fu">sum</span>(<span class="fu">is.na</span>(.)))) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-4"><a></a>  <span class="fu">pivot_longer</span>(<span class="fu">everything</span>(), <span class="at">names_to =</span> <span class="st">"Variable"</span>, <span class="at">values_to =</span> <span class="st">"NA_count"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-5"><a></a>  <span class="fu">mutate</span>(<span class="at">Pourcentage =</span> NA_count <span class="sc">/</span> <span class="fu">nrow</span>(data) <span class="sc">*</span> <span class="dv">100</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-6"><a></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(Variable, Pourcentage), <span class="at">y =</span> Pourcentage)) <span class="sc">+</span></span>
+<span id="cb4-7"><a></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"#F44336"</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb4-8"><a></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">paste0</span>(<span class="fu">round</span>(Pourcentage, <span class="dv">2</span>), <span class="st">"%"</span>)), </span>
+<span id="cb4-9"><a></a>            <span class="at">hjust =</span> <span class="sc">-</span><span class="fl">0.2</span>, <span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb4-10"><a></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb4-11"><a></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Pourcentage de valeurs manquantes par variable"</span>,</span>
+<span id="cb4-12"><a></a>       <span class="at">x =</span> <span class="st">"Variable"</span>,</span>
+<span id="cb4-13"><a></a>       <span class="at">y =</span> <span class="st">"% de valeurs manquantes"</span>) <span class="sc">+</span></span>
+<span id="cb4-14"><a></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+
+</div>
+<img data-src="presentation_files/figure-revealjs/missing_values_viz-1.png" width="960" class="r-stretch"></section>
+<section class="slide level2">
+
+</section></section>
+<section>
+<section id="nettoyage-des-données" class="title-slide slide level1 center">
+<h1>🧹 Nettoyage des Données</h1>
+
+</section>
+<section id="stratégie-de-nettoyage" class="slide level2 scrollable">
+<h2>Stratégie de Nettoyage</h2>
+<ol type="1">
+<li class="fragment"><strong>-Suppression des valeurs manquantes</strong> dans <code>suicides_no</code> et <code>population</code>.</li>
+<li class="fragment"><strong>-Élimination des doublons</strong>.</li>
+<li class="fragment"><strong>-Conversion des variables</strong> catégorielles en facteurs ordonnés.</li>
+<li class="fragment"><strong>-Création de variables dérivées</strong> (taux, décennies).</li>
+<li class="fragment"><strong>-Détection des valeurs aberrantes</strong> (méthode IQR).</li>
+</ol>
+</section>
+<section id="impact-du-nettoyage" class="slide level2">
+<h2>Impact du Nettoyage</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>📊 Afficher le code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a><span class="co"># Comparaison avant/après</span></span>
+<span id="cb5-2"><a></a><span class="fu">tibble</span>(</span>
+<span id="cb5-3"><a></a>  É<span class="at">tape =</span> <span class="fu">c</span>(<span class="st">"Données initiales"</span>, <span class="st">"Après nettoyage"</span>, <span class="st">"Supprimées"</span>),</span>
+<span id="cb5-4"><a></a>  <span class="st">`</span><span class="at">Nombre de lignes</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
+<span id="cb5-5"><a></a>    <span class="fu">nrow</span>(data),</span>
+<span id="cb5-6"><a></a>    <span class="fu">nrow</span>(data_clean),</span>
+<span id="cb5-7"><a></a>    <span class="fu">nrow</span>(data) <span class="sc">-</span> <span class="fu">nrow</span>(data_clean)</span>
+<span id="cb5-8"><a></a>  ),</span>
+<span id="cb5-9"><a></a>  <span class="st">`</span><span class="at">Pourcentage</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
+<span id="cb5-10"><a></a>    <span class="dv">100</span>,</span>
+<span id="cb5-11"><a></a>    <span class="fu">round</span>(<span class="fu">nrow</span>(data_clean) <span class="sc">/</span> <span class="fu">nrow</span>(data) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">2</span>),</span>
+<span id="cb5-12"><a></a>    <span class="fu">round</span>((<span class="fu">nrow</span>(data) <span class="sc">-</span> <span class="fu">nrow</span>(data_clean)) <span class="sc">/</span> <span class="fu">nrow</span>(data) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">2</span>)</span>
+<span id="cb5-13"><a></a>  )</span>
+<span id="cb5-14"><a></a>) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-15"><a></a>  <span class="fu">kable</span>(<span class="at">format.args =</span> <span class="fu">list</span>(<span class="at">big.mark =</span> <span class="st">" "</span>),</span>
+<span id="cb5-16"><a></a>        <span class="at">caption =</span> <span class="st">"Impact du nettoyage sur le dataset"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top">
+<caption>Impact du nettoyage sur le dataset</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Étape</th>
+<th style="text-align: right;">Nombre de lignes</th>
+<th style="text-align: right;">Pourcentage</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Données initiales</td>
+<td style="text-align: right;">43 776</td>
+<td style="text-align: right;">100.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Après nettoyage</td>
+<td style="text-align: right;">36 060</td>
+<td style="text-align: right;">82.37</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Supprimées</td>
+<td style="text-align: right;">7 716</td>
+<td style="text-align: right;">17.63</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+</section></section>
+<section>
+<section id="analyse-temporelle" class="title-slide slide level1 center">
+<h1>📈 Analyse Temporelle</h1>
+
+</section>
+<section id="évolution-globale-1980-2015" class="slide level2">
+<h2>Évolution Globale (1980-2015)</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>📊 Afficher le code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a>trend_yearly <span class="ot">&lt;-</span> data_clean <span class="sc">%&gt;%</span> </span>
+<span id="cb6-2"><a></a>  <span class="fu">group_by</span>(year) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-3"><a></a>  <span class="fu">summarise</span>(</span>
+<span id="cb6-4"><a></a>    <span class="at">total_suicides =</span> <span class="fu">sum</span>(suicides_no),</span>
+<span id="cb6-5"><a></a>    <span class="at">total_population =</span> <span class="fu">sum</span>(population),</span>
+<span id="cb6-6"><a></a>    <span class="at">taux_moyen =</span> (total_suicides <span class="sc">/</span> total_population) <span class="sc">*</span> <span class="dv">100000</span>,</span>
+<span id="cb6-7"><a></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb6-8"><a></a>  )</span>
+<span id="cb6-9"><a></a></span>
+<span id="cb6-10"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(trend_yearly, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> taux_moyen)) <span class="sc">+</span></span>
+<span id="cb6-11"><a></a>  <span class="fu">geom_area</span>(<span class="at">fill =</span> <span class="st">"#F44336"</span>, <span class="at">alpha =</span> <span class="fl">0.3</span>) <span class="sc">+</span></span>
+<span id="cb6-12"><a></a>  <span class="fu">geom_line</span>(<span class="at">color =</span> <span class="st">"#C62828"</span>, <span class="at">size =</span> <span class="fl">1.5</span>) <span class="sc">+</span></span>
+<span id="cb6-13"><a></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">"#C62828"</span>, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb6-14"><a></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">1980</span>, <span class="dv">2015</span>, <span class="dv">5</span>)) <span class="sc">+</span></span>
+<span id="cb6-15"><a></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Évolution du taux de suicide mondial (1980-2015)"</span>,</span>
+<span id="cb6-16"><a></a>       <span class="at">subtitle =</span> <span class="st">"Pour 100 000 habitants"</span>,</span>
+<span id="cb6-17"><a></a>       <span class="at">x =</span> <span class="st">"Année"</span>,</span>
+<span id="cb6-18"><a></a>       <span class="at">y =</span> <span class="st">"Taux pour 100k habitants"</span>) <span class="sc">+</span></span>
+<span id="cb6-19"><a></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
+<span id="cb6-20"><a></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">16</span>))</span>
+<span id="cb6-21"><a></a></span>
+<span id="cb6-22"><a></a><span class="fu">ggplotly</span>(p) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-23"><a></a>  <span class="fu">layout</span>(<span class="at">hovermode =</span> <span class="st">"x unified"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div class="plotly html-widget html-fill-item" id="htmlwidget-cea4ba797c98f452ef9e" style="width:1152px;height:672px;"></div>
+<script type="application/json" data-for="htmlwidget-cea4ba797c98f452ef9e">{"x":{"data":[{"x":[1979,1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2016,2016,2015,2014,2013,2012,2011,2010,2009,2008,2007,2006,2005,2004,2003,2002,2001,2000,1999,1998,1997,1996,1995,1994,1993,1992,1991,1990,1989,1988,1987,1986,1985,1984,1983,1982,1981,1980,1979,1979],"y":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10.574031603187422,10.719023724203071,10.959547770209724,10.971338650573664,11.462592504512035,11.328409827011479,11.435858203269341,11.791334565972655,12.110409813118462,12.028594891248122,12.166365588060339,12.942976385190997,13.242380771912146,13.363652262830529,13.490989848503459,13.700108795860352,13.654797772596938,14.312337738238689,14.354236759923658,14.020224888054285,14.722724462143907,15.294743265733485,15.063040733555145,14.550293944745805,13.55043356977016,13.445775043675068,13.421014214578882,13.413326379866172,13.454569131505277,13.026479069594288,13.838449684328683,14.819624208703566,12.168092424295908,12.338711988028596,15.377701596484009,15.071691406503982,14.11407988452364,11.280236902043002,0],"text":["year: 1979<br />taux_moyen: 11.28024","year: 1980<br />taux_moyen: 14.11408","year: 1981<br />taux_moyen: 15.07169","year: 1982<br />taux_moyen: 15.37770","year: 1983<br />taux_moyen: 12.33871","year: 1984<br />taux_moyen: 12.16809","year: 1985<br />taux_moyen: 14.81962","year: 1986<br />taux_moyen: 13.83845","year: 1987<br />taux_moyen: 13.02648","year: 1988<br />taux_moyen: 13.45457","year: 1989<br />taux_moyen: 13.41333","year: 1990<br />taux_moyen: 13.42101","year: 1991<br />taux_moyen: 13.44578","year: 1992<br />taux_moyen: 13.55043","year: 1993<br />taux_moyen: 14.55029","year: 1994<br />taux_moyen: 15.06304","year: 1995<br />taux_moyen: 15.29474","year: 1996<br />taux_moyen: 14.72272","year: 1997<br />taux_moyen: 14.02022","year: 1998<br />taux_moyen: 14.35424","year: 1999<br />taux_moyen: 14.31234","year: 2000<br />taux_moyen: 13.65480","year: 2001<br />taux_moyen: 13.70011","year: 2002<br />taux_moyen: 13.49099","year: 2003<br />taux_moyen: 13.36365","year: 2004<br />taux_moyen: 13.24238","year: 2005<br />taux_moyen: 12.94298","year: 2006<br />taux_moyen: 12.16637","year: 2007<br />taux_moyen: 12.02859","year: 2008<br />taux_moyen: 12.11041","year: 2009<br />taux_moyen: 11.79133","year: 2010<br />taux_moyen: 11.43586","year: 2011<br />taux_moyen: 11.32841","year: 2012<br />taux_moyen: 11.46259","year: 2013<br />taux_moyen: 10.97134","year: 2014<br />taux_moyen: 10.95955","year: 2015<br />taux_moyen: 10.71902","year: 2016<br />taux_moyen: 10.57403","year: 2016<br />taux_moyen: 10.57403","year: 2016<br />taux_moyen: 10.57403","year: 2015<br />taux_moyen: 10.71902","year: 2014<br />taux_moyen: 10.95955","year: 2013<br />taux_moyen: 10.97134","year: 2012<br />taux_moyen: 11.46259","year: 2011<br />taux_moyen: 11.32841","year: 2010<br />taux_moyen: 11.43586","year: 2009<br />taux_moyen: 11.79133","year: 2008<br />taux_moyen: 12.11041","year: 2007<br />taux_moyen: 12.02859","year: 2006<br />taux_moyen: 12.16637","year: 2005<br />taux_moyen: 12.94298","year: 2004<br />taux_moyen: 13.24238","year: 2003<br />taux_moyen: 13.36365","year: 2002<br />taux_moyen: 13.49099","year: 2001<br />taux_moyen: 13.70011","year: 2000<br />taux_moyen: 13.65480","year: 1999<br />taux_moyen: 14.31234","year: 1998<br />taux_moyen: 14.35424","year: 1997<br />taux_moyen: 14.02022","year: 1996<br />taux_moyen: 14.72272","year: 1995<br />taux_moyen: 15.29474","year: 1994<br />taux_moyen: 15.06304","year: 1993<br />taux_moyen: 14.55029","year: 1992<br />taux_moyen: 13.55043","year: 1991<br />taux_moyen: 13.44578","year: 1990<br />taux_moyen: 13.42101","year: 1989<br />taux_moyen: 13.41333","year: 1988<br />taux_moyen: 13.45457","year: 1987<br />taux_moyen: 13.02648","year: 1986<br />taux_moyen: 13.83845","year: 1985<br />taux_moyen: 14.81962","year: 1984<br />taux_moyen: 12.16809","year: 1983<br />taux_moyen: 12.33871","year: 1982<br />taux_moyen: 15.37770","year: 1981<br />taux_moyen: 15.07169","year: 1980<br />taux_moyen: 14.11408","year: 1979<br />taux_moyen: 11.28024","year: 1979<br />taux_moyen: 11.28024"],"type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"transparent","dash":"solid"},"fill":"toself","fillcolor":"rgba(244,67,54,0.3)","hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1979,1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016],"y":[11.280236902043002,14.11407988452364,15.071691406503982,15.377701596484009,12.338711988028596,12.168092424295908,14.819624208703566,13.838449684328683,13.026479069594288,13.454569131505277,13.413326379866172,13.421014214578882,13.445775043675068,13.55043356977016,14.550293944745805,15.063040733555145,15.294743265733485,14.722724462143907,14.020224888054285,14.354236759923658,14.312337738238689,13.654797772596938,13.700108795860352,13.490989848503459,13.363652262830529,13.242380771912146,12.942976385190997,12.166365588060339,12.028594891248122,12.110409813118462,11.791334565972655,11.435858203269341,11.328409827011479,11.462592504512035,10.971338650573664,10.959547770209724,10.719023724203071,10.574031603187422],"text":["year: 1979<br />taux_moyen: 11.28024","year: 1980<br />taux_moyen: 14.11408","year: 1981<br />taux_moyen: 15.07169","year: 1982<br />taux_moyen: 15.37770","year: 1983<br />taux_moyen: 12.33871","year: 1984<br />taux_moyen: 12.16809","year: 1985<br />taux_moyen: 14.81962","year: 1986<br />taux_moyen: 13.83845","year: 1987<br />taux_moyen: 13.02648","year: 1988<br />taux_moyen: 13.45457","year: 1989<br />taux_moyen: 13.41333","year: 1990<br />taux_moyen: 13.42101","year: 1991<br />taux_moyen: 13.44578","year: 1992<br />taux_moyen: 13.55043","year: 1993<br />taux_moyen: 14.55029","year: 1994<br />taux_moyen: 15.06304","year: 1995<br />taux_moyen: 15.29474","year: 1996<br />taux_moyen: 14.72272","year: 1997<br />taux_moyen: 14.02022","year: 1998<br />taux_moyen: 14.35424","year: 1999<br />taux_moyen: 14.31234","year: 2000<br />taux_moyen: 13.65480","year: 2001<br />taux_moyen: 13.70011","year: 2002<br />taux_moyen: 13.49099","year: 2003<br />taux_moyen: 13.36365","year: 2004<br />taux_moyen: 13.24238","year: 2005<br />taux_moyen: 12.94298","year: 2006<br />taux_moyen: 12.16637","year: 2007<br />taux_moyen: 12.02859","year: 2008<br />taux_moyen: 12.11041","year: 2009<br />taux_moyen: 11.79133","year: 2010<br />taux_moyen: 11.43586","year: 2011<br />taux_moyen: 11.32841","year: 2012<br />taux_moyen: 11.46259","year: 2013<br />taux_moyen: 10.97134","year: 2014<br />taux_moyen: 10.95955","year: 2015<br />taux_moyen: 10.71902","year: 2016<br />taux_moyen: 10.57403"],"type":"scatter","mode":"lines+markers","line":{"width":5.6692913385826778,"color":"rgba(198,40,40,1)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","marker":{"autocolorscale":false,"color":"rgba(198,40,40,1)","opacity":1,"size":11.338582677165356,"symbol":"circle","line":{"width":1.8897637795275593,"color":"rgba(198,40,40,1)"}},"frame":null}],"layout":{"margin":{"t":46.552096305520962,"r":9.2984640929846432,"b":47.422166874221674,"l":47.422166874221681},"paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":18.596928185969279},"title":{"text":"<b> Évolution du taux de suicide mondial (1980-2015) <\/b>","font":{"color":"rgba(0,0,0,1)","family":"","size":21.253632212536321},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[1977.1500000000001,2017.8499999999999],"tickmode":"array","ticktext":["1980","1985","1990","1995","2000","2005","2010","2015"],"tickvals":[1980,1985,1990,1995,2000,2005,2010,2015],"categoryorder":"array","categoryarray":["1980","1985","1990","1995","2000","2005","2010","2015"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":4.6492320464923198,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":14.87754254877543},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0,"zeroline":false,"anchor":"y","title":{"text":"Année","font":{"color":"rgba(0,0,0,1)","family":"","size":18.596928185969279}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-0.76888507982420051,16.14658667630821],"tickmode":"array","ticktext":["0","5","10","15"],"tickvals":[0,5,10,15],"categoryorder":"array","categoryarray":["0","5","10","15"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":4.6492320464923216,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":14.87754254877543},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0,"zeroline":false,"anchor":"x","title":{"text":"Taux pour 100k habitants","font":{"color":"rgba(0,0,0,1)","family":"","size":18.596928185969279}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","layer":"below","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":14.87754254877543}},"hovermode":"x unified","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"28581be0235c":{"x":{},"y":{},"type":"scatter"},"28587e414ab3":{"x":{},"y":{}},"28587a6b66c6":{"x":{},"y":{}}},"cur_data":"28581be0235c","visdat":{"28581be0235c":["function (y) ","x"],"28587e414ab3":["function (y) ","x"],"28587a6b66c6":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</section>
+<section id="variations-annuelles" class="slide level2">
+<h2>Variations Annuelles</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>📊 Afficher le code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>trend_yearly <span class="ot">&lt;-</span> trend_yearly <span class="sc">%&gt;%</span> </span>
+<span id="cb7-2"><a></a>  <span class="fu">mutate</span>(<span class="at">variation_pct =</span> (total_suicides <span class="sc">-</span> <span class="fu">lag</span>(total_suicides)) <span class="sc">/</span> <span class="fu">lag</span>(total_suicides) <span class="sc">*</span> <span class="dv">100</span>)</span>
+<span id="cb7-3"><a></a></span>
+<span id="cb7-4"><a></a><span class="fu">ggplot</span>(trend_yearly <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(variation_pct)), </span>
+<span id="cb7-5"><a></a>       <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> variation_pct)) <span class="sc">+</span></span>
+<span id="cb7-6"><a></a>  <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">fill =</span> variation_pct <span class="sc">&gt;</span> <span class="dv">0</span>), <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb7-7"><a></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb7-8"><a></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"TRUE"</span> <span class="ot">=</span> <span class="st">"#F44336"</span>, <span class="st">"FALSE"</span> <span class="ot">=</span> <span class="st">"#4CAF50"</span>),</span>
+<span id="cb7-9"><a></a>                    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Augmentation"</span>, <span class="st">"Diminution"</span>)) <span class="sc">+</span></span>
+<span id="cb7-10"><a></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">1980</span>, <span class="dv">2015</span>, <span class="dv">5</span>)) <span class="sc">+</span></span>
+<span id="cb7-11"><a></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Variation annuelle du nombre de suicides"</span>,</span>
+<span id="cb7-12"><a></a>       <span class="at">subtitle =</span> <span class="st">"Taux de croissance par rapport à l'année précédente"</span>,</span>
+<span id="cb7-13"><a></a>       <span class="at">x =</span> <span class="st">"Année"</span>,</span>
+<span id="cb7-14"><a></a>       <span class="at">y =</span> <span class="st">"Variation (%)"</span>,</span>
+<span id="cb7-15"><a></a>       <span class="at">fill =</span> <span class="st">"Type"</span>) <span class="sc">+</span></span>
+<span id="cb7-16"><a></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+
+</div>
+<img data-src="presentation_files/figure-revealjs/annual_variations-1.png" width="1152" class="r-stretch"></section>
+<section id="comparaison-par-décennie" class="slide level2">
+<h2>Comparaison par Décennie</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>📊 Afficher le code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a>data_clean <span class="sc">%&gt;%</span> </span>
+<span id="cb8-2"><a></a>  <span class="fu">group_by</span>(decennie) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-3"><a></a>  <span class="fu">summarise</span>(</span>
+<span id="cb8-4"><a></a>    <span class="at">total =</span> <span class="fu">sum</span>(suicides_no),</span>
+<span id="cb8-5"><a></a>    <span class="at">taux =</span> (<span class="fu">sum</span>(suicides_no) <span class="sc">/</span> <span class="fu">sum</span>(population)) <span class="sc">*</span> <span class="dv">100000</span>,</span>
+<span id="cb8-6"><a></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb8-7"><a></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-8"><a></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> decennie, <span class="at">y =</span> taux, <span class="at">fill =</span> decennie)) <span class="sc">+</span></span>
+<span id="cb8-9"><a></a>  <span class="fu">geom_col</span>(<span class="at">alpha =</span> <span class="fl">0.8</span>, <span class="at">width =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb8-10"><a></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">round</span>(taux, <span class="dv">1</span>)), <span class="at">vjust =</span> <span class="sc">-</span><span class="fl">0.5</span>, <span class="at">size =</span> <span class="dv">5</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>) <span class="sc">+</span></span>
+<span id="cb8-11"><a></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">"Set2"</span>) <span class="sc">+</span></span>
+<span id="cb8-12"><a></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Taux de suicide par décennie"</span>,</span>
+<span id="cb8-13"><a></a>       <span class="at">x =</span> <span class="st">"Décennie"</span>,</span>
+<span id="cb8-14"><a></a>       <span class="at">y =</span> <span class="st">"Taux pour 100k habitants"</span>) <span class="sc">+</span></span>
+<span id="cb8-15"><a></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
+<span id="cb8-16"><a></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>,</span>
+<span id="cb8-17"><a></a>        <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">16</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+
+</div>
+<img data-src="presentation_files/figure-revealjs/decade_comparison-1.png" width="960" class="r-stretch"></section>
+<section class="slide level2">
+
+</section></section>
+<section>
+<section id="analyse-par-sexe" class="title-slide slide level1 center">
+<h1>👥 Analyse par Sexe</h1>
+
+</section>
+<section id="répartition-globale" class="slide level2">
+<h2>Répartition Globale</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>📊 Afficher le code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a>data_clean <span class="sc">%&gt;%</span> </span>
+<span id="cb9-2"><a></a>  <span class="fu">group_by</span>(sex) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-3"><a></a>  <span class="fu">summarise</span>(<span class="at">total =</span> <span class="fu">sum</span>(suicides_no), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-4"><a></a>  <span class="fu">mutate</span>(<span class="at">pourcentage =</span> total <span class="sc">/</span> <span class="fu">sum</span>(total) <span class="sc">*</span> <span class="dv">100</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-5"><a></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="st">""</span>, <span class="at">y =</span> total, <span class="at">fill =</span> sex)) <span class="sc">+</span></span>
+<span id="cb9-6"><a></a>  <span class="fu">geom_col</span>(<span class="at">width =</span> <span class="dv">1</span>, <span class="at">color =</span> <span class="st">"white"</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb9-7"><a></a>  <span class="fu">coord_polar</span>(<span class="at">theta =</span> <span class="st">"y"</span>) <span class="sc">+</span></span>
+<span id="cb9-8"><a></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">paste0</span>(<span class="fu">round</span>(pourcentage, <span class="dv">1</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>, </span>
+<span id="cb9-9"><a></a>                                <span class="fu">format</span>(total, <span class="at">big.mark =</span> <span class="st">" "</span>))),</span>
+<span id="cb9-10"><a></a>            <span class="at">position =</span> <span class="fu">position_stack</span>(<span class="at">vjust =</span> <span class="fl">0.5</span>),</span>
+<span id="cb9-11"><a></a>            <span class="at">size =</span> <span class="dv">7</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>, <span class="at">color =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb9-12"><a></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Homme"</span> <span class="ot">=</span> <span class="st">"#2196F3"</span>, <span class="st">"Femme"</span> <span class="ot">=</span> <span class="st">"#E91E63"</span>)) <span class="sc">+</span></span>
+<span id="cb9-13"><a></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Répartition des suicides par sexe (1980-2015)"</span>,</span>
+<span id="cb9-14"><a></a>       <span class="at">fill =</span> <span class="st">"Sexe"</span>) <span class="sc">+</span></span>
+<span id="cb9-15"><a></a>  <span class="fu">theme_void</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
+<span id="cb9-16"><a></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>, <span class="at">size =</span> <span class="dv">16</span>, <span class="at">face =</span> <span class="st">"bold"</span>),</span>
+<span id="cb9-17"><a></a>        <span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+
+</div>
+<img data-src="presentation_files/figure-revealjs/sex_distribution-1.png" width="960" class="r-stretch"></section>
+<section id="évolution-par-sexe---interactif" class="slide level2">
+<h2>Évolution par Sexe - Interactif</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>📊 Afficher le code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a>sex_trend <span class="ot">&lt;-</span> data_clean <span class="sc">%&gt;%</span> </span>
+<span id="cb10-2"><a></a>  <span class="fu">group_by</span>(year, sex) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-3"><a></a>  <span class="fu">summarise</span>(</span>
+<span id="cb10-4"><a></a>    <span class="at">total_suicides =</span> <span class="fu">sum</span>(suicides_no),</span>
+<span id="cb10-5"><a></a>    <span class="at">total_population =</span> <span class="fu">sum</span>(population),</span>
+<span id="cb10-6"><a></a>    <span class="at">taux =</span> (total_suicides <span class="sc">/</span> total_population) <span class="sc">*</span> <span class="dv">100000</span>,</span>
+<span id="cb10-7"><a></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb10-8"><a></a>  )</span>
+<span id="cb10-9"><a></a></span>
+<span id="cb10-10"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(sex_trend, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> taux, <span class="at">color =</span> sex)) <span class="sc">+</span></span>
+<span id="cb10-11"><a></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="fl">1.5</span>) <span class="sc">+</span></span>
+<span id="cb10-12"><a></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb10-13"><a></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Homme"</span> <span class="ot">=</span> <span class="st">"#2196F3"</span>, <span class="st">"Femme"</span> <span class="ot">=</span> <span class="st">"#E91E63"</span>)) <span class="sc">+</span></span>
+<span id="cb10-14"><a></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">1980</span>, <span class="dv">2015</span>, <span class="dv">5</span>)) <span class="sc">+</span></span>
+<span id="cb10-15"><a></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Évolution du taux de suicide par sexe"</span>,</span>
+<span id="cb10-16"><a></a>       <span class="at">x =</span> <span class="st">"Année"</span>,</span>
+<span id="cb10-17"><a></a>       <span class="at">y =</span> <span class="st">"Taux pour 100k habitants"</span>,</span>
+<span id="cb10-18"><a></a>       <span class="at">color =</span> <span class="st">"Sexe"</span>) <span class="sc">+</span></span>
+<span id="cb10-19"><a></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
+<span id="cb10-20"><a></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>,</span>
+<span id="cb10-21"><a></a>        <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">16</span>))</span>
+<span id="cb10-22"><a></a></span>
+<span id="cb10-23"><a></a><span class="fu">ggplotly</span>(p)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div class="plotly html-widget html-fill-item" id="htmlwidget-465dc3e2f8f54d500f11" style="width:1152px;height:672px;"></div>
+<script type="application/json" data-for="htmlwidget-465dc3e2f8f54d500f11">{"x":{"data":[{"x":[1979,1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016],"y":[15.680874730521772,20.914393340591015,22.758239105600524,23.420706920222138,17.991534376579132,17.854054591282978,22.7013048411008,20.728541405016973,19.554481709957379,20.29192651836599,20.509002954956806,20.449339629312572,20.728183257290194,21.04304364112684,22.961862098012038,24.062276838693251,24.378540301449494,23.530020743373267,22.271285990176487,22.865387539180208,22.900836215169022,21.915540599112038,22.117668104177934,21.624471759371108,21.4186628471024,21.119999700682065,20.589603873787329,19.311782111007833,18.953826914027605,19.050937230659407,18.610663447795222,18.007191758293175,17.796984360600252,18.032596549867069,17.194382402368522,17.169060095053883,16.782511625212596,16.67718261189745],"text":["year: 1979<br />taux: 15.680875<br />sex: Homme","year: 1980<br />taux: 20.914393<br />sex: Homme","year: 1981<br />taux: 22.758239<br />sex: Homme","year: 1982<br />taux: 23.420707<br />sex: Homme","year: 1983<br />taux: 17.991534<br />sex: Homme","year: 1984<br />taux: 17.854055<br />sex: Homme","year: 1985<br />taux: 22.701305<br />sex: Homme","year: 1986<br />taux: 20.728541<br />sex: Homme","year: 1987<br />taux: 19.554482<br />sex: Homme","year: 1988<br />taux: 20.291927<br />sex: Homme","year: 1989<br />taux: 20.509003<br />sex: Homme","year: 1990<br />taux: 20.449340<br />sex: Homme","year: 1991<br />taux: 20.728183<br />sex: Homme","year: 1992<br />taux: 21.043044<br />sex: Homme","year: 1993<br />taux: 22.961862<br />sex: Homme","year: 1994<br />taux: 24.062277<br />sex: Homme","year: 1995<br />taux: 24.378540<br />sex: Homme","year: 1996<br />taux: 23.530021<br />sex: Homme","year: 1997<br />taux: 22.271286<br />sex: Homme","year: 1998<br />taux: 22.865388<br />sex: Homme","year: 1999<br />taux: 22.900836<br />sex: Homme","year: 2000<br />taux: 21.915541<br />sex: Homme","year: 2001<br />taux: 22.117668<br />sex: Homme","year: 2002<br />taux: 21.624472<br />sex: Homme","year: 2003<br />taux: 21.418663<br />sex: Homme","year: 2004<br />taux: 21.120000<br />sex: Homme","year: 2005<br />taux: 20.589604<br />sex: Homme","year: 2006<br />taux: 19.311782<br />sex: Homme","year: 2007<br />taux: 18.953827<br />sex: Homme","year: 2008<br />taux: 19.050937<br />sex: Homme","year: 2009<br />taux: 18.610663<br />sex: Homme","year: 2010<br />taux: 18.007192<br />sex: Homme","year: 2011<br />taux: 17.796984<br />sex: Homme","year: 2012<br />taux: 18.032597<br />sex: Homme","year: 2013<br />taux: 17.194382<br />sex: Homme","year: 2014<br />taux: 17.169060<br />sex: Homme","year: 2015<br />taux: 16.782512<br />sex: Homme","year: 2016<br />taux: 16.677183<br />sex: Homme"],"type":"scatter","mode":"lines+markers","line":{"width":5.6692913385826778,"color":"rgba(33,150,243,1)","dash":"solid"},"hoveron":"points","name":"Homme","legendgroup":"Homme","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","marker":{"autocolorscale":false,"color":"rgba(33,150,243,1)","opacity":1,"size":11.338582677165356,"symbol":"circle","line":{"width":1.8897637795275593,"color":"rgba(33,150,243,1)"}},"frame":null},{"x":[1979,1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016],"y":[7.0301719960088569,7.6503282456344399,7.8204914895406707,7.7910109247486723,6.8927920343112428,6.6862561052571845,7.3591024108423886,7.3242090798755886,6.8384874592949183,6.9934546517731482,6.700688123718086,6.7726992980235536,6.5593304336325327,6.4404181410619739,6.566911163324975,6.5223749325457732,6.6848971912480044,6.354822582988211,6.1597517007173037,6.252042076866128,6.1379826525059,5.7685970900684485,5.6703388711728664,5.7265639726379733,5.6787674783812472,5.7293959384965039,5.6337173015683595,5.3214504092837247,5.3884283095018208,5.4477283041717062,5.2280356181298187,5.1072615694148853,5.1254337702706136,5.1727297967457444,4.9906443627243062,4.9967378584498316,4.8995895755244767,4.6494845007579766],"text":["year: 1979<br />taux:  7.030172<br />sex: Femme","year: 1980<br />taux:  7.650328<br />sex: Femme","year: 1981<br />taux:  7.820491<br />sex: Femme","year: 1982<br />taux:  7.791011<br />sex: Femme","year: 1983<br />taux:  6.892792<br />sex: Femme","year: 1984<br />taux:  6.686256<br />sex: Femme","year: 1985<br />taux:  7.359102<br />sex: Femme","year: 1986<br />taux:  7.324209<br />sex: Femme","year: 1987<br />taux:  6.838487<br />sex: Femme","year: 1988<br />taux:  6.993455<br />sex: Femme","year: 1989<br />taux:  6.700688<br />sex: Femme","year: 1990<br />taux:  6.772699<br />sex: Femme","year: 1991<br />taux:  6.559330<br />sex: Femme","year: 1992<br />taux:  6.440418<br />sex: Femme","year: 1993<br />taux:  6.566911<br />sex: Femme","year: 1994<br />taux:  6.522375<br />sex: Femme","year: 1995<br />taux:  6.684897<br />sex: Femme","year: 1996<br />taux:  6.354823<br />sex: Femme","year: 1997<br />taux:  6.159752<br />sex: Femme","year: 1998<br />taux:  6.252042<br />sex: Femme","year: 1999<br />taux:  6.137983<br />sex: Femme","year: 2000<br />taux:  5.768597<br />sex: Femme","year: 2001<br />taux:  5.670339<br />sex: Femme","year: 2002<br />taux:  5.726564<br />sex: Femme","year: 2003<br />taux:  5.678767<br />sex: Femme","year: 2004<br />taux:  5.729396<br />sex: Femme","year: 2005<br />taux:  5.633717<br />sex: Femme","year: 2006<br />taux:  5.321450<br />sex: Femme","year: 2007<br />taux:  5.388428<br />sex: Femme","year: 2008<br />taux:  5.447728<br />sex: Femme","year: 2009<br />taux:  5.228036<br />sex: Femme","year: 2010<br />taux:  5.107262<br />sex: Femme","year: 2011<br />taux:  5.125434<br />sex: Femme","year: 2012<br />taux:  5.172730<br />sex: Femme","year: 2013<br />taux:  4.990644<br />sex: Femme","year: 2014<br />taux:  4.996738<br />sex: Femme","year: 2015<br />taux:  4.899590<br />sex: Femme","year: 2016<br />taux:  4.649485<br />sex: Femme"],"type":"scatter","mode":"lines+markers","line":{"width":5.6692913385826778,"color":"rgba(233,30,99,1)","dash":"solid"},"hoveron":"points","name":"Femme","legendgroup":"Femme","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","marker":{"autocolorscale":false,"color":"rgba(233,30,99,1)","opacity":1,"size":11.338582677165356,"symbol":"circle","line":{"width":1.8897637795275593,"color":"rgba(233,30,99,1)"}},"frame":null}],"layout":{"margin":{"t":46.552096305520962,"r":9.2984640929846432,"b":47.422166874221674,"l":47.422166874221681},"paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":18.596928185969279},"title":{"text":"<b> Évolution du taux de suicide par sexe <\/b>","font":{"color":"rgba(0,0,0,1)","family":"","size":21.253632212536321},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[1977.1500000000001,2017.8499999999999],"tickmode":"array","ticktext":["1980","1985","1990","1995","2000","2005","2010","2015"],"tickvals":[1980,1985,1990,1995,2000,2005,2010,2015],"categoryorder":"array","categoryarray":["1980","1985","1990","1995","2000","2005","2010","2015"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":4.6492320464923198,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":14.87754254877543},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0,"zeroline":false,"anchor":"y","title":{"text":"Année","font":{"color":"rgba(0,0,0,1)","family":"","size":18.596928185969279}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[3.6630317107234007,25.36499309148407],"tickmode":"array","ticktext":["5","10","15","20","25"],"tickvals":[5,10.000000000000002,15.000000000000002,20,25],"categoryorder":"array","categoryarray":["5","10","15","20","25"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":4.6492320464923216,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":14.87754254877543},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0,"zeroline":false,"anchor":"x","title":{"text":"Taux pour 100k habitants","font":{"color":"rgba(0,0,0,1)","family":"","size":18.596928185969279}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","layer":"below","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":14.87754254877543},"title":{"text":"Sexe","font":{"color":"rgba(0,0,0,1)","family":"","size":18.596928185969279}}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"28587144685":{"x":{},"y":{},"colour":{},"type":"scatter"},"2858643b312e":{"x":{},"y":{},"colour":{}}},"cur_data":"28587144685","visdat":{"28587144685":["function (y) ","x"],"2858643b312e":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</section>
+<section id="ratio-hommefemme" class="slide level2">
+<h2>Ratio Homme/Femme</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>📊 Afficher le code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a>trend_sex <span class="ot">&lt;-</span> data_clean <span class="sc">%&gt;%</span> </span>
+<span id="cb11-2"><a></a>  <span class="fu">group_by</span>(year, sex) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-3"><a></a>  <span class="fu">summarise</span>(<span class="at">total_suicides =</span> <span class="fu">sum</span>(suicides_no), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
+<span id="cb11-4"><a></a></span>
+<span id="cb11-5"><a></a>ratio_temporel <span class="ot">&lt;-</span> trend_sex <span class="sc">%&gt;%</span> </span>
+<span id="cb11-6"><a></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> sex, <span class="at">values_from =</span> total_suicides) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-7"><a></a>  <span class="fu">mutate</span>(<span class="at">ratio_HF =</span> Homme <span class="sc">/</span> Femme)</span>
+<span id="cb11-8"><a></a></span>
+<span id="cb11-9"><a></a><span class="fu">ggplot</span>(ratio_temporel, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> ratio_HF)) <span class="sc">+</span></span>
+<span id="cb11-10"><a></a>  <span class="fu">geom_line</span>(<span class="at">color =</span> <span class="st">"#9C27B0"</span>, <span class="at">size =</span> <span class="fl">1.5</span>) <span class="sc">+</span></span>
+<span id="cb11-11"><a></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">"#9C27B0"</span>, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb11-12"><a></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fu">mean</span>(ratio_temporel<span class="sc">$</span>ratio_HF), </span>
+<span id="cb11-13"><a></a>             <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"#F44336"</span>, <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb11-14"><a></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="dv">2010</span>, <span class="at">y =</span> <span class="fu">mean</span>(ratio_temporel<span class="sc">$</span>ratio_HF) <span class="sc">+</span> <span class="fl">0.15</span>,</span>
+<span id="cb11-15"><a></a>           <span class="at">label =</span> <span class="fu">paste</span>(<span class="st">"Moyenne:"</span>, <span class="fu">round</span>(<span class="fu">mean</span>(ratio_temporel<span class="sc">$</span>ratio_HF), <span class="dv">2</span>)),</span>
+<span id="cb11-16"><a></a>           <span class="at">color =</span> <span class="st">"#F44336"</span>, <span class="at">size =</span> <span class="dv">5</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>) <span class="sc">+</span></span>
+<span id="cb11-17"><a></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">1980</span>, <span class="dv">2015</span>, <span class="dv">5</span>)) <span class="sc">+</span></span>
+<span id="cb11-18"><a></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Ratio Homme/Femme dans le temps"</span>,</span>
+<span id="cb11-19"><a></a>       <span class="at">subtitle =</span> <span class="st">"Nombre de suicides masculins pour 1 suicide féminin"</span>,</span>
+<span id="cb11-20"><a></a>       <span class="at">x =</span> <span class="st">"Année"</span>,</span>
+<span id="cb11-21"><a></a>       <span class="at">y =</span> <span class="st">"Ratio H/F"</span>) <span class="sc">+</span></span>
+<span id="cb11-22"><a></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
+<span id="cb11-23"><a></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">16</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+
+</div>
+<img data-src="presentation_files/figure-revealjs/sex_ratio-1.png" width="1152" class="r-stretch"></section>
+<section class="slide level2">
+
+</section></section>
+<section>
+<section id="analyse-par-âge" class="title-slide slide level1 center">
+<h1>👶👴 Analyse par Âge</h1>
+
+</section>
+<section id="distribution-par-tranche-dâge" class="slide level2">
+<h2>Distribution par Tranche d’Âge</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>📊 Afficher le code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a>data_clean <span class="sc">%&gt;%</span> </span>
+<span id="cb12-2"><a></a>  <span class="fu">group_by</span>(age) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-3"><a></a>  <span class="fu">summarise</span>(<span class="at">total =</span> <span class="fu">sum</span>(suicides_no), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-4"><a></a>  <span class="fu">mutate</span>(<span class="at">pourcentage =</span> total <span class="sc">/</span> <span class="fu">sum</span>(total) <span class="sc">*</span> <span class="dv">100</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-5"><a></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">y =</span> total, <span class="at">fill =</span> age)) <span class="sc">+</span></span>
+<span id="cb12-6"><a></a>  <span class="fu">geom_col</span>(<span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb12-7"><a></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">paste0</span>(<span class="fu">round</span>(pourcentage, <span class="dv">1</span>), <span class="st">"%"</span>)),</span>
+<span id="cb12-8"><a></a>            <span class="at">vjust =</span> <span class="sc">-</span><span class="fl">0.5</span>, <span class="at">size =</span> <span class="dv">5</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>) <span class="sc">+</span></span>
+<span id="cb12-9"><a></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> comma) <span class="sc">+</span></span>
+<span id="cb12-10"><a></a>  <span class="fu">scale_fill_viridis_d</span>(<span class="at">option =</span> <span class="st">"plasma"</span>) <span class="sc">+</span></span>
+<span id="cb12-11"><a></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Répartition des suicides par tranche d'âge"</span>,</span>
+<span id="cb12-12"><a></a>       <span class="at">subtitle =</span> <span class="st">"Total mondial 1980-2015"</span>,</span>
+<span id="cb12-13"><a></a>       <span class="at">x =</span> <span class="st">"Tranche d'âge"</span>,</span>
+<span id="cb12-14"><a></a>       <span class="at">y =</span> <span class="st">"Nombre de suicides"</span>) <span class="sc">+</span></span>
+<span id="cb12-15"><a></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
+<span id="cb12-16"><a></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>),</span>
+<span id="cb12-17"><a></a>        <span class="at">legend.position =</span> <span class="st">"none"</span>,</span>
+<span id="cb12-18"><a></a>        <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">16</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+
+</div>
+<img data-src="presentation_files/figure-revealjs/age_distribution-1.png" width="1152" class="r-stretch"></section>
+<section id="profil-de-risque-par-âge" class="slide level2">
+<h2>Profil de Risque par Âge</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>📊 Afficher le code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a>data_clean <span class="sc">%&gt;%</span> </span>
+<span id="cb13-2"><a></a>  <span class="fu">group_by</span>(age) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-3"><a></a>  <span class="fu">summarise</span>(<span class="at">taux =</span> <span class="fu">mean</span>(taux_suicide_100k), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-4"><a></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">y =</span> taux, <span class="at">group =</span> <span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb13-5"><a></a>  <span class="fu">geom_line</span>(<span class="at">color =</span> <span class="st">"#F44336"</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb13-6"><a></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">5</span>, <span class="at">color =</span> <span class="st">"#F44336"</span>) <span class="sc">+</span></span>
+<span id="cb13-7"><a></a>  <span class="fu">geom_area</span>(<span class="at">alpha =</span> <span class="fl">0.3</span>, <span class="at">fill =</span> <span class="st">"#F44336"</span>) <span class="sc">+</span></span>
+<span id="cb13-8"><a></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Profil du risque suicidaire par âge"</span>,</span>
+<span id="cb13-9"><a></a>       <span class="at">subtitle =</span> <span class="st">"Taux moyen pour 100 000 habitants"</span>,</span>
+<span id="cb13-10"><a></a>       <span class="at">x =</span> <span class="st">"Tranche d'âge"</span>,</span>
+<span id="cb13-11"><a></a>       <span class="at">y =</span> <span class="st">"Taux pour 100k habitants"</span>) <span class="sc">+</span></span>
+<span id="cb13-12"><a></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
+<span id="cb13-13"><a></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>),</span>
+<span id="cb13-14"><a></a>        <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">16</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+
+</div>
+<img data-src="presentation_files/figure-revealjs/age_risk_profile-1.png" width="1152" class="r-stretch"></section>
+<section id="interaction-âge-sexe" class="slide level2">
+<h2>Interaction Âge × Sexe</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>📊 Afficher le code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a>data_clean <span class="sc">%&gt;%</span> </span>
+<span id="cb14-2"><a></a>  <span class="fu">group_by</span>(age, sex) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-3"><a></a>  <span class="fu">summarise</span>(<span class="at">taux =</span> <span class="fu">mean</span>(taux_suicide_100k), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-4"><a></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> sex, <span class="at">y =</span> age, <span class="at">fill =</span> taux)) <span class="sc">+</span></span>
+<span id="cb14-5"><a></a>  <span class="fu">geom_tile</span>(<span class="at">color =</span> <span class="st">"white"</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb14-6"><a></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">round</span>(taux, <span class="dv">1</span>)), </span>
+<span id="cb14-7"><a></a>            <span class="at">color =</span> <span class="st">"white"</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">6</span>) <span class="sc">+</span></span>
+<span id="cb14-8"><a></a>  <span class="fu">scale_fill_gradient2</span>(<span class="at">low =</span> <span class="st">"#2196F3"</span>, <span class="at">mid =</span> <span class="st">"#FFC107"</span>, <span class="at">high =</span> <span class="st">"#F44336"</span>,</span>
+<span id="cb14-9"><a></a>                       <span class="at">midpoint =</span> <span class="dv">25</span>) <span class="sc">+</span></span>
+<span id="cb14-10"><a></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Taux moyen de suicide : Âge × Sexe"</span>,</span>
+<span id="cb14-11"><a></a>       <span class="at">x =</span> <span class="st">"Sexe"</span>,</span>
+<span id="cb14-12"><a></a>       <span class="at">y =</span> <span class="st">"Tranche d'âge"</span>,</span>
+<span id="cb14-13"><a></a>       <span class="at">fill =</span> <span class="st">"Taux (100k)"</span>) <span class="sc">+</span></span>
+<span id="cb14-14"><a></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
+<span id="cb14-15"><a></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">16</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+
+</div>
+<img data-src="presentation_files/figure-revealjs/age_sex_heatmap-1.png" width="960" class="r-stretch"></section>
+<section class="slide level2">
+
+</section></section>
+<section>
+<section id="analyse-géographique" class="title-slide slide level1 center">
+<h1>🌍 Analyse Géographique</h1>
+
+</section>
+<section id="top-15-pays---interactif" class="slide level2">
+<h2>Top 15 Pays - Interactif</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>📊 Afficher le code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a>top15_pays <span class="ot">&lt;-</span> data_clean <span class="sc">%&gt;%</span> </span>
+<span id="cb15-2"><a></a>  <span class="fu">group_by</span>(country) <span class="sc">%&gt;%</span> </span>
+<span id="cb15-3"><a></a>  <span class="fu">summarise</span>(</span>
+<span id="cb15-4"><a></a>    <span class="at">total_suicides =</span> <span class="fu">sum</span>(suicides_no),</span>
+<span id="cb15-5"><a></a>    <span class="at">total_population =</span> <span class="fu">sum</span>(population),</span>
+<span id="cb15-6"><a></a>    <span class="at">taux_moyen =</span> (total_suicides <span class="sc">/</span> total_population) <span class="sc">*</span> <span class="dv">100000</span>,</span>
+<span id="cb15-7"><a></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb15-8"><a></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb15-9"><a></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(taux_moyen)) <span class="sc">%&gt;%</span> </span>
+<span id="cb15-10"><a></a>  <span class="fu">head</span>(<span class="dv">15</span>)</span>
+<span id="cb15-11"><a></a></span>
+<span id="cb15-12"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(top15_pays, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(country, taux_moyen), <span class="at">y =</span> taux_moyen, </span>
+<span id="cb15-13"><a></a>                            <span class="at">text =</span> <span class="fu">paste0</span>(country, <span class="st">"&lt;br&gt;Taux: "</span>, <span class="fu">round</span>(taux_moyen, <span class="dv">1</span>)))) <span class="sc">+</span></span>
+<span id="cb15-14"><a></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(country, taux_moyen), </span>
+<span id="cb15-15"><a></a>                   <span class="at">xend =</span> <span class="fu">reorder</span>(country, taux_moyen),</span>
+<span id="cb15-16"><a></a>                   <span class="at">y =</span> <span class="dv">0</span>, <span class="at">yend =</span> taux_moyen),</span>
+<span id="cb15-17"><a></a>               <span class="at">color =</span> <span class="st">"grey50"</span>, <span class="at">size =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb15-18"><a></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">5</span>, <span class="at">color =</span> <span class="st">"#F44336"</span>) <span class="sc">+</span></span>
+<span id="cb15-19"><a></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb15-20"><a></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Top 15 des pays avec les taux de suicide les plus élevés"</span>,</span>
+<span id="cb15-21"><a></a>       <span class="at">subtitle =</span> <span class="st">"Taux moyen 1980-2015 pour 100 000 habitants"</span>,</span>
+<span id="cb15-22"><a></a>       <span class="at">x =</span> <span class="cn">NULL</span>,</span>
+<span id="cb15-23"><a></a>       <span class="at">y =</span> <span class="st">"Taux pour 100k habitants"</span>) <span class="sc">+</span></span>
+<span id="cb15-24"><a></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
+<span id="cb15-25"><a></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">16</span>))</span>
+<span id="cb15-26"><a></a></span>
+<span id="cb15-27"><a></a><span class="fu">ggplotly</span>(p, <span class="at">tooltip =</span> <span class="st">"text"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div class="plotly html-widget html-fill-item" id="htmlwidget-53963557cb3b89d25212" style="width:1152px;height:768px;"></div>
+<script type="application/json" data-for="htmlwidget-53963557cb3b89d25212">{"x":{"data":[{"x":[0,38.890733640311204,null,0,35.25702779475575,null,0,32.57527861473951,null,0,32.453195949918957,null,0,30.71711319183931,null,0,28.763997563221093,null,0,28.664323135674316,null,0,28.494052932539933,null,0,25.884448066570283,null,0,24.772247482839951,null,0,23.72861995115781,null,0,21.603091115083497,null,0,21.497012306476527,null,0,21.473724755527499,null,0,21.167683008378265],"y":[15,15,null,14,14,null,13,13,null,12,12,null,11,11,null,10,10,null,9,9,null,8,8,null,7,7,null,6,6,null,5,5,null,4,4,null,3,3,null,2,2,null,1,1],"text":["Lithuania<br>Taux: 38.9","Lithuania<br>Taux: 38.9",null,"Hungary<br>Taux: 35.3","Hungary<br>Taux: 35.3",null,"Russian Federation<br>Taux: 32.6","Russian Federation<br>Taux: 32.6",null,"Sri Lanka<br>Taux: 32.5","Sri Lanka<br>Taux: 32.5",null,"Latvia<br>Taux: 30.7","Latvia<br>Taux: 30.7",null,"Estonia<br>Taux: 28.8","Estonia<br>Taux: 28.8",null,"Belarus<br>Taux: 28.7","Belarus<br>Taux: 28.7",null,"Slovenia<br>Taux: 28.5","Slovenia<br>Taux: 28.5",null,"Kazakhstan<br>Taux: 25.9","Kazakhstan<br>Taux: 25.9",null,"Ukraine<br>Taux: 24.8","Ukraine<br>Taux: 24.8",null,"Finland<br>Taux: 23.7","Finland<br>Taux: 23.7",null,"Japan<br>Taux: 21.6","Japan<br>Taux: 21.6",null,"Croatia<br>Taux: 21.5","Croatia<br>Taux: 21.5",null,"Austria<br>Taux: 21.5","Austria<br>Taux: 21.5",null,"Belgium<br>Taux: 21.2","Belgium<br>Taux: 21.2"],"type":"scatter","mode":"lines","line":{"width":4.5354330708661417,"color":"rgba(127,127,127,1)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[38.890733640311204,35.25702779475575,32.57527861473951,32.453195949918957,30.71711319183931,28.763997563221093,28.664323135674316,28.494052932539933,25.884448066570283,24.772247482839951,23.72861995115781,21.603091115083497,21.497012306476527,21.473724755527499,21.167683008378265],"y":[15,14,13,12,11,10,9,8,7,6,5,4,3,2,1],"text":["Lithuania<br>Taux: 38.9","Hungary<br>Taux: 35.3","Russian Federation<br>Taux: 32.6","Sri Lanka<br>Taux: 32.5","Latvia<br>Taux: 30.7","Estonia<br>Taux: 28.8","Belarus<br>Taux: 28.7","Slovenia<br>Taux: 28.5","Kazakhstan<br>Taux: 25.9","Ukraine<br>Taux: 24.8","Finland<br>Taux: 23.7","Japan<br>Taux: 21.6","Croatia<br>Taux: 21.5","Austria<br>Taux: 21.5","Belgium<br>Taux: 21.2"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(244,67,54,1)","opacity":1,"size":18.897637795275593,"symbol":"circle","line":{"width":1.8897637795275593,"color":"rgba(244,67,54,1)"}},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":46.552096305520962,"r":9.2984640929846432,"b":47.422166874221681,"l":147.84557907845584},"paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":18.596928185969286},"title":{"text":"<b> Top 15 des pays avec les taux de suicide les plus élevés <\/b>","font":{"color":"rgba(0,0,0,1)","family":"","size":21.253632212536321},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-1.9445366820155603,40.835270322326764],"tickmode":"array","ticktext":["0","10","20","30","40"],"tickvals":[0,10,19.999999999999996,30.000000000000004,40],"categoryorder":"array","categoryarray":["0","10","20","30","40"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":4.6492320464923216,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":14.87754254877543},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0,"zeroline":false,"anchor":"y","title":{"text":"Taux pour 100k habitants","font":{"color":"rgba(0,0,0,1)","family":"","size":18.596928185969286}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,15.6],"tickmode":"array","ticktext":["Belgium","Austria","Croatia","Japan","Finland","Ukraine","Kazakhstan","Slovenia","Belarus","Estonia","Latvia","Sri Lanka","Russian Federation","Hungary","Lithuania"],"tickvals":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],"categoryorder":"array","categoryarray":["Belgium","Austria","Croatia","Japan","Finland","Ukraine","Kazakhstan","Slovenia","Belarus","Estonia","Latvia","Sri Lanka","Russian Federation","Hungary","Lithuania"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":4.6492320464923216,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":14.87754254877543},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0,"zeroline":false,"anchor":"x","title":{"text":"","font":{"color":"rgba(0,0,0,1)","family":"","size":18.596928185969286}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","layer":"below","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":14.87754254877543}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"28581156394":{"x":{},"y":{},"text":{},"xend":{},"yend":{},"type":"scatter"},"2858173277b7":{"x":{},"y":{},"text":{}}},"cur_data":"28581156394","visdat":{"28581156394":["function (y) ","x"],"2858173277b7":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</section>
+<section id="analyse-par-région" class="slide level2">
+<h2>Analyse par Région</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>📊 Afficher le code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a>data_regions <span class="ot">&lt;-</span> data_clean <span class="sc">%&gt;%</span> </span>
+<span id="cb16-2"><a></a>  <span class="fu">mutate</span>(</span>
+<span id="cb16-3"><a></a>    <span class="at">region =</span> <span class="fu">case_when</span>(</span>
+<span id="cb16-4"><a></a>      country <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"France"</span>, <span class="st">"Germany"</span>, <span class="st">"United Kingdom"</span>, <span class="st">"Italy"</span>, <span class="st">"Spain"</span>, </span>
+<span id="cb16-5"><a></a>                     <span class="st">"Poland"</span>, <span class="st">"Netherlands"</span>, <span class="st">"Belgium"</span>, <span class="st">"Austria"</span>, <span class="st">"Switzerland"</span>) <span class="sc">~</span> <span class="st">"Europe Ouest"</span>,</span>
+<span id="cb16-6"><a></a>      country <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Russia"</span>, <span class="st">"Ukraine"</span>, <span class="st">"Belarus"</span>, <span class="st">"Hungary"</span>, <span class="st">"Lithuania"</span>) <span class="sc">~</span> <span class="st">"Europe Est"</span>,</span>
+<span id="cb16-7"><a></a>      country <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"United States"</span>, <span class="st">"Canada"</span>, <span class="st">"Mexico"</span>) <span class="sc">~</span> <span class="st">"Amérique Nord"</span>,</span>
+<span id="cb16-8"><a></a>      country <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Brazil"</span>, <span class="st">"Argentina"</span>, <span class="st">"Chile"</span>, <span class="st">"Colombia"</span>) <span class="sc">~</span> <span class="st">"Amérique Sud"</span>,</span>
+<span id="cb16-9"><a></a>      country <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"China"</span>, <span class="st">"Japan"</span>, <span class="st">"South Korea"</span>, <span class="st">"Thailand"</span>) <span class="sc">~</span> <span class="st">"Asie"</span>,</span>
+<span id="cb16-10"><a></a>      country <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Australia"</span>, <span class="st">"New Zealand"</span>) <span class="sc">~</span> <span class="st">"Océanie"</span>,</span>
+<span id="cb16-11"><a></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">"Autre"</span></span>
+<span id="cb16-12"><a></a>    )</span>
+<span id="cb16-13"><a></a>  )</span>
+<span id="cb16-14"><a></a></span>
+<span id="cb16-15"><a></a>data_regions <span class="sc">%&gt;%</span> </span>
+<span id="cb16-16"><a></a>  <span class="fu">group_by</span>(region) <span class="sc">%&gt;%</span> </span>
+<span id="cb16-17"><a></a>  <span class="fu">summarise</span>(</span>
+<span id="cb16-18"><a></a>    <span class="at">taux_moyen =</span> (<span class="fu">sum</span>(suicides_no) <span class="sc">/</span> <span class="fu">sum</span>(population)) <span class="sc">*</span> <span class="dv">100000</span>,</span>
+<span id="cb16-19"><a></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb16-20"><a></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb16-21"><a></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(region, taux_moyen), <span class="at">y =</span> taux_moyen, <span class="at">fill =</span> region)) <span class="sc">+</span></span>
+<span id="cb16-22"><a></a>  <span class="fu">geom_col</span>(<span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb16-23"><a></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">round</span>(taux_moyen, <span class="dv">1</span>)), </span>
+<span id="cb16-24"><a></a>            <span class="at">hjust =</span> <span class="sc">-</span><span class="fl">0.2</span>, <span class="at">size =</span> <span class="dv">5</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>) <span class="sc">+</span></span>
+<span id="cb16-25"><a></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb16-26"><a></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">"Set3"</span>) <span class="sc">+</span></span>
+<span id="cb16-27"><a></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Taux de suicide moyen par région du monde"</span>,</span>
+<span id="cb16-28"><a></a>       <span class="at">x =</span> <span class="cn">NULL</span>,</span>
+<span id="cb16-29"><a></a>       <span class="at">y =</span> <span class="st">"Taux pour 100k habitants"</span>) <span class="sc">+</span></span>
+<span id="cb16-30"><a></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
+<span id="cb16-31"><a></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>,</span>
+<span id="cb16-32"><a></a>        <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">16</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+
+</div>
+<img data-src="presentation_files/figure-revealjs/regional_analysis-1.png" width="1152" class="r-stretch"></section>
+<section class="slide level2">
+
+</section></section>
+<section>
+<section id="conclusions-et-synthèse" class="title-slide slide level1 center">
+<h1>💡 Conclusions et Synthèse</h1>
+
+</section>
+<section id="principaux-constats" class="slide level2">
+<h2>🔹 Principaux Constats</h2>
+<ul>
+<li><strong>Sexe masculin</strong> : 3 à 4 fois plus touché que les femmes.</li>
+<li><strong>Âge avancé</strong> : Seniors (55+) à risque élevé.</li>
+<li><strong>Disparités géographiques</strong> : Europe de l’Est plus concernée.</li>
+<li><strong>Variations temporelles</strong> : Périodes de crise (années 80-90) ; baisse globale post-2000.</li>
+</ul>
+</section>
+<section id="implications-pour-la-santé-publique" class="slide level2 scrollable">
+<h2>🔹 Implications pour la Santé Publique</h2>
+<ol type="1">
+<li><strong>Prévention ciblée</strong> : Adapter les stratégies aux groupes à risque.</li>
+<li><strong>Surveillance renforcée</strong> : Améliorer la collecte de données.</li>
+<li><strong>Politiques efficaces</strong> : S’inspirer des pays ayant réduit les taux.</li>
+</ol>
+</section>
+<section id="limites-et-perspectives" class="slide level2">
+<h2>🔹 Limites et Perspectives</h2>
+<ul>
+<li>Facteurs socio-économiques non inclus.</li>
+<li><strong>Perspectives</strong> : Analyse des facteurs socio-économiques, impact des politiques, modélisation prédictive.</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<div class="center-content">
+<p><br></p>
+<p><em>“La prévention du suicide est l’affaire de tous”</em></p>
+<p><br></p>
+<p>📧 Contact : amani.jaouadi@polytechnicien.tn<br>
+🌐 GitHub : https://github.com/amenijawadi</p>
+</div>
+
+
+</section></section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+<p><a href="#/title-slide" style="position: fixed; bottom: 10px; right: 10px; z-index: 1000;"><svg width="24" height="24" viewbox="0 0 24 24" fill="#003366"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path></svg></a></p>
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="../site_libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="../site_libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="../site_libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="../site_libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="../site_libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="../site_libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="../site_libs/revealjs/plugin/search/search.js"></script>
+  <script src="../site_libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="../site_libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'slide',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'fade',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    
+
+    <script>
+
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+
+      // slide changes (different for each slide format).
+
+      (function () {
+
+        // dispatch for htmlwidgets
+
+        function fireSlideEnter() {
+
+          const event = window.document.createEvent("Event");
+
+          event.initEvent("slideenter", true, true);
+
+          window.document.dispatchEvent(event);
+
+        }
+
+    
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+
+          fireSlideEnter();
+
+    
+
+          // dispatch for shiny
+
+          if (window.jQuery) {
+
+            if (previousSlide) {
+
+              window.jQuery(previousSlide).trigger("hidden");
+
+            }
+
+            if (currentSlide) {
+
+              window.jQuery(currentSlide).trigger("shown");
+
+            }
+
+          }
+
+        }
+
+    
+
+        // hookup for slidy
+
+        if (window.w3c_slidy) {
+
+          window.w3c_slidy.add_observer(function (slide_num) {
+
+            // slide_num starts at position 1
+
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+
+          });
+
+        }
+
+    
+
+      })();
+
+    </script>
+
+    
+
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp("https:\/\/amenijawadi\.github\.io\/analyse_suicide\/");
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>

@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.26">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Chapitre 3 : Analyse Temporelle – Analyse Statistique des Données Mondiales de Suicide </title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-30ae6b2e5328ac7375bd033934d6d19c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light"><script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script><link href="../site_libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
+<script src="../site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script><script src="../site_libs/plotly-binding-4.11.0/plotly.js"></script><script src="../site_libs/typedarray-0.1/typedarray.min.js"></script><script src="../site_libs/jquery-3.5.1/jquery.min.js"></script><link href="../site_libs/crosstalk-1.2.2/css/crosstalk.min.css" rel="stylesheet">
+<script src="../site_libs/crosstalk-1.2.2/js/crosstalk.min.js"></script><link href="../site_libs/plotly-htmlwidgets-css-2.11.1/plotly-htmlwidgets.css" rel="stylesheet">
+<script src="../site_libs/plotly-main-2.11.1/plotly-latest.min.js"></script><link rel="stylesheet" href="../thpe.css">
+</head>
+<body class="nav-sidebar docked quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav"><div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../qmd/01_exploration.html">Projects</a></li><li class="breadcrumb-item"><a href="../qmd/03_analyse_temporelle.html">Analyse Temporelle</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Analyse Statistique des Données Mondiales de Suicide</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+<li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Projects</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../qmd/01_exploration.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Exploration des Données</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../qmd/02_nettoyage.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Nettoyage des Données</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../qmd/03_analyse_temporelle.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Analyse Temporelle</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../qmd/04_analyse_sexe.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Analyse par sexe</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../qmd/05_analyse_age.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Analyse par Age</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../qmd/06_analyse_geographique.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Analyse Géographique</span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Presentations</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../qmd/presentation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Présentation Finale</span></a>
+  </div>
+</li>
+      </ul>
+</li>
+    </ul>
+</div>
+</nav><div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">On this page</h2>
+   
+  <ul>
+<li>
+<a href="#%C3%A9volution-temporelle-des-suicides" id="toc-évolution-temporelle-des-suicides" class="nav-link active" data-scroll-target="#%C3%A9volution-temporelle-des-suicides"><span class="header-section-number">1</span> Évolution Temporelle des Suicides</a>
+  <ul class="collapse">
+<li>
+<a href="#tendance-globale-1980-2015" id="toc-tendance-globale-1980-2015" class="nav-link" data-scroll-target="#tendance-globale-1980-2015"><span class="header-section-number">1.1</span> Tendance Globale 1980-2015</a>
+  <ul class="collapse">
+<li><a href="#%C3%A9volution-du-taux-de-suicide-pour-100k-habitants" id="toc-évolution-du-taux-de-suicide-pour-100k-habitants" class="nav-link" data-scroll-target="#%C3%A9volution-du-taux-de-suicide-pour-100k-habitants"><span class="header-section-number">1.1.1</span> Évolution du taux de suicide (pour 100k habitants)</a></li>
+  <li><a href="#statistiques-descriptives-par-d%C3%A9cennie" id="toc-statistiques-descriptives-par-décennie" class="nav-link" data-scroll-target="#statistiques-descriptives-par-d%C3%A9cennie"><span class="header-section-number">1.1.2</span> Statistiques descriptives par décennie</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#analyse-des-variations-annuelles" id="toc-analyse-des-variations-annuelles" class="nav-link" data-scroll-target="#analyse-des-variations-annuelles"><span class="header-section-number">1.2</span> Analyse des Variations Annuelles</a>
+  <ul class="collapse">
+<li><a href="#taux-de-croissance-annuel" id="toc-taux-de-croissance-annuel" class="nav-link" data-scroll-target="#taux-de-croissance-annuel"><span class="header-section-number">1.2.1</span> Taux de croissance annuel</a></li>
+  <li><a href="#identification-des-ann%C3%A9es-critiques" id="toc-identification-des-années-critiques" class="nav-link" data-scroll-target="#identification-des-ann%C3%A9es-critiques"><span class="header-section-number">1.2.2</span> Identification des années critiques</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#comparaison-par-p%C3%A9riodes" id="toc-comparaison-par-périodes" class="nav-link" data-scroll-target="#comparaison-par-p%C3%A9riodes"><span class="header-section-number">1.3</span> Comparaison par Périodes</a>
+  <ul class="collapse">
+<li><a href="#analyse-pr%C3%A9-2000-vs-post-2000" id="toc-analyse-pré-2000-vs-post-2000" class="nav-link" data-scroll-target="#analyse-pr%C3%A9-2000-vs-post-2000"><span class="header-section-number">1.3.1</span> Analyse pré-2000 vs post-2000</a></li>
+  </ul>
+</li>
+  <li><a href="#%C3%A9volution-par-d%C3%A9cennie" id="toc-évolution-par-décennie" class="nav-link" data-scroll-target="#%C3%A9volution-par-d%C3%A9cennie"><span class="header-section-number">1.4</span> Évolution par Décennie</a></li>
+  <li><a href="#conclusions-de-lanalyse-temporelle" id="toc-conclusions-de-lanalyse-temporelle" class="nav-link" data-scroll-target="#conclusions-de-lanalyse-temporelle"><span class="header-section-number">1.5</span> Conclusions de l’Analyse Temporelle</a></li>
+  </ul>
+</li>
+  </ul><div class="toc-actions"><ul><li><a href="https://github.com/amenijawadi/analyse_suicide/edit/main/qmd/03_analyse_temporelle.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/amenijawadi/analyse_suicide/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../qmd/01_exploration.html">Projects</a></li><li class="breadcrumb-item"><a href="../qmd/03_analyse_temporelle.html">Analyse Temporelle</a></li></ol></nav><div class="quarto-title">
+<h1 class="title">Chapitre 3 : Analyse Temporelle</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header><section id="évolution-temporelle-des-suicides" class="level1" data-number="1"><h1 data-number="1">
+<span class="header-section-number">1</span> Évolution Temporelle des Suicides</h1>
+<section id="tendance-globale-1980-2015" class="level2" data-number="1.1"><h2 data-number="1.1" class="anchored" data-anchor-id="tendance-globale-1980-2015">
+<span class="header-section-number">1.1</span> Tendance Globale 1980-2015</h2>
+<section id="évolution-du-taux-de-suicide-pour-100k-habitants" class="level3" data-number="1.1.1"><h3 data-number="1.1.1" class="anchored" data-anchor-id="évolution-du-taux-de-suicide-pour-100k-habitants">
+<span class="header-section-number">1.1.1</span> Évolution du taux de suicide (pour 100k habitants)</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div class="plotly html-widget html-fill-item" id="htmlwidget-936138871ee99c6a1c35" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-936138871ee99c6a1c35">{"x":{"data":[{"x":[1979,1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2016,2016,2015,2014,2013,2012,2011,2010,2009,2008,2007,2006,2005,2004,2003,2002,2001,2000,1999,1998,1997,1996,1995,1994,1993,1992,1991,1990,1989,1988,1987,1986,1985,1984,1983,1982,1981,1980,1979,1979],"y":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10.574031603187422,10.719023724203071,10.959547770209724,10.971338650573664,11.462592504512035,11.328409827011479,11.435858203269341,11.791334565972655,12.110409813118462,12.028594891248122,12.166365588060339,12.942976385190997,13.242380771912146,13.363652262830529,13.490989848503459,13.700108795860352,13.654797772596938,14.312337738238689,14.354236759923658,14.020224888054285,14.722724462143907,15.294743265733485,15.063040733555145,14.550293944745805,13.55043356977016,13.445775043675068,13.421014214578882,13.413326379866172,13.454569131505277,13.026479069594288,13.838449684328683,14.819624208703566,12.168092424295908,12.338711988028596,15.377701596484009,15.071691406503982,14.11407988452364,11.280236902043002,0],"text":["year: 1979<br />taux_moyen: 11.28024","year: 1980<br />taux_moyen: 14.11408","year: 1981<br />taux_moyen: 15.07169","year: 1982<br />taux_moyen: 15.37770","year: 1983<br />taux_moyen: 12.33871","year: 1984<br />taux_moyen: 12.16809","year: 1985<br />taux_moyen: 14.81962","year: 1986<br />taux_moyen: 13.83845","year: 1987<br />taux_moyen: 13.02648","year: 1988<br />taux_moyen: 13.45457","year: 1989<br />taux_moyen: 13.41333","year: 1990<br />taux_moyen: 13.42101","year: 1991<br />taux_moyen: 13.44578","year: 1992<br />taux_moyen: 13.55043","year: 1993<br />taux_moyen: 14.55029","year: 1994<br />taux_moyen: 15.06304","year: 1995<br />taux_moyen: 15.29474","year: 1996<br />taux_moyen: 14.72272","year: 1997<br />taux_moyen: 14.02022","year: 1998<br />taux_moyen: 14.35424","year: 1999<br />taux_moyen: 14.31234","year: 2000<br />taux_moyen: 13.65480","year: 2001<br />taux_moyen: 13.70011","year: 2002<br />taux_moyen: 13.49099","year: 2003<br />taux_moyen: 13.36365","year: 2004<br />taux_moyen: 13.24238","year: 2005<br />taux_moyen: 12.94298","year: 2006<br />taux_moyen: 12.16637","year: 2007<br />taux_moyen: 12.02859","year: 2008<br />taux_moyen: 12.11041","year: 2009<br />taux_moyen: 11.79133","year: 2010<br />taux_moyen: 11.43586","year: 2011<br />taux_moyen: 11.32841","year: 2012<br />taux_moyen: 11.46259","year: 2013<br />taux_moyen: 10.97134","year: 2014<br />taux_moyen: 10.95955","year: 2015<br />taux_moyen: 10.71902","year: 2016<br />taux_moyen: 10.57403","year: 2016<br />taux_moyen: 10.57403","year: 2016<br />taux_moyen: 10.57403","year: 2015<br />taux_moyen: 10.71902","year: 2014<br />taux_moyen: 10.95955","year: 2013<br />taux_moyen: 10.97134","year: 2012<br />taux_moyen: 11.46259","year: 2011<br />taux_moyen: 11.32841","year: 2010<br />taux_moyen: 11.43586","year: 2009<br />taux_moyen: 11.79133","year: 2008<br />taux_moyen: 12.11041","year: 2007<br />taux_moyen: 12.02859","year: 2006<br />taux_moyen: 12.16637","year: 2005<br />taux_moyen: 12.94298","year: 2004<br />taux_moyen: 13.24238","year: 2003<br />taux_moyen: 13.36365","year: 2002<br />taux_moyen: 13.49099","year: 2001<br />taux_moyen: 13.70011","year: 2000<br />taux_moyen: 13.65480","year: 1999<br />taux_moyen: 14.31234","year: 1998<br />taux_moyen: 14.35424","year: 1997<br />taux_moyen: 14.02022","year: 1996<br />taux_moyen: 14.72272","year: 1995<br />taux_moyen: 15.29474","year: 1994<br />taux_moyen: 15.06304","year: 1993<br />taux_moyen: 14.55029","year: 1992<br />taux_moyen: 13.55043","year: 1991<br />taux_moyen: 13.44578","year: 1990<br />taux_moyen: 13.42101","year: 1989<br />taux_moyen: 13.41333","year: 1988<br />taux_moyen: 13.45457","year: 1987<br />taux_moyen: 13.02648","year: 1986<br />taux_moyen: 13.83845","year: 1985<br />taux_moyen: 14.81962","year: 1984<br />taux_moyen: 12.16809","year: 1983<br />taux_moyen: 12.33871","year: 1982<br />taux_moyen: 15.37770","year: 1981<br />taux_moyen: 15.07169","year: 1980<br />taux_moyen: 14.11408","year: 1979<br />taux_moyen: 11.28024","year: 1979<br />taux_moyen: 11.28024"],"type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"transparent","dash":"solid"},"fill":"toself","fillcolor":"rgba(255,127,80,0.3)","hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1979,1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016],"y":[11.280236902043002,14.11407988452364,15.071691406503982,15.377701596484009,12.338711988028596,12.168092424295908,14.819624208703566,13.838449684328683,13.026479069594288,13.454569131505277,13.413326379866172,13.421014214578882,13.445775043675068,13.55043356977016,14.550293944745805,15.063040733555145,15.294743265733485,14.722724462143907,14.020224888054285,14.354236759923658,14.312337738238689,13.654797772596938,13.700108795860352,13.490989848503459,13.363652262830529,13.242380771912146,12.942976385190997,12.166365588060339,12.028594891248122,12.110409813118462,11.791334565972655,11.435858203269341,11.328409827011479,11.462592504512035,10.971338650573664,10.959547770209724,10.719023724203071,10.574031603187422],"text":["year: 1979<br />taux_moyen: 11.28024","year: 1980<br />taux_moyen: 14.11408","year: 1981<br />taux_moyen: 15.07169","year: 1982<br />taux_moyen: 15.37770","year: 1983<br />taux_moyen: 12.33871","year: 1984<br />taux_moyen: 12.16809","year: 1985<br />taux_moyen: 14.81962","year: 1986<br />taux_moyen: 13.83845","year: 1987<br />taux_moyen: 13.02648","year: 1988<br />taux_moyen: 13.45457","year: 1989<br />taux_moyen: 13.41333","year: 1990<br />taux_moyen: 13.42101","year: 1991<br />taux_moyen: 13.44578","year: 1992<br />taux_moyen: 13.55043","year: 1993<br />taux_moyen: 14.55029","year: 1994<br />taux_moyen: 15.06304","year: 1995<br />taux_moyen: 15.29474","year: 1996<br />taux_moyen: 14.72272","year: 1997<br />taux_moyen: 14.02022","year: 1998<br />taux_moyen: 14.35424","year: 1999<br />taux_moyen: 14.31234","year: 2000<br />taux_moyen: 13.65480","year: 2001<br />taux_moyen: 13.70011","year: 2002<br />taux_moyen: 13.49099","year: 2003<br />taux_moyen: 13.36365","year: 2004<br />taux_moyen: 13.24238","year: 2005<br />taux_moyen: 12.94298","year: 2006<br />taux_moyen: 12.16637","year: 2007<br />taux_moyen: 12.02859","year: 2008<br />taux_moyen: 12.11041","year: 2009<br />taux_moyen: 11.79133","year: 2010<br />taux_moyen: 11.43586","year: 2011<br />taux_moyen: 11.32841","year: 2012<br />taux_moyen: 11.46259","year: 2013<br />taux_moyen: 10.97134","year: 2014<br />taux_moyen: 10.95955","year: 2015<br />taux_moyen: 10.71902","year: 2016<br />taux_moyen: 10.57403"],"type":"scatter","mode":"lines+markers","line":{"width":4.5354330708661417,"color":"rgba(139,0,0,1)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","marker":{"autocolorscale":false,"color":"rgba(139,0,0,1)","opacity":1,"size":7.559055118110237,"symbol":"circle","line":{"width":1.8897637795275593,"color":"rgba(139,0,0,1)"}},"frame":null}],"layout":{"margin":{"t":40.840182648401829,"r":7.3059360730593621,"b":37.260273972602747,"l":37.260273972602747},"paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"title":{"text":"Évolution du taux de suicide mondial","font":{"color":"rgba(0,0,0,1)","family":"","size":17.534246575342465},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[1977.1500000000001,2017.8499999999999],"tickmode":"array","ticktext":["1980","1985","1990","1995","2000","2005","2010","2015"],"tickvals":[1980,1985,1990,1995,2000,2005,2010,2015],"categoryorder":"array","categoryarray":["1980","1985","1990","1995","2000","2005","2010","2015"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0,"zeroline":false,"anchor":"y","title":{"text":"Année","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-0.76888507982420051,16.14658667630821],"tickmode":"array","ticktext":["0","5","10","15"],"tickvals":[0,5,10,15],"categoryorder":"array","categoryarray":["0","5","10","15"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0,"zeroline":false,"anchor":"x","title":{"text":"Taux pour 100k habitants","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","layer":"below","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"165835f87aef":{"x":{},"y":{},"type":"scatter"},"16583c825d4f":{"x":{},"y":{}},"165845897b6a":{"x":{},"y":{}}},"cur_data":"165835f87aef","visdat":{"165835f87aef":["function (y) ","x"],"16583c825d4f":["function (y) ","x"],"165845897b6a":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</section><section id="statistiques-descriptives-par-décennie" class="level3" data-number="1.1.2"><h3 data-number="1.1.2" class="anchored" data-anchor-id="statistiques-descriptives-par-décennie">
+<span class="header-section-number">1.1.2</span> Statistiques descriptives par décennie</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Statistiques par décennie</caption>
+<colgroup>
+<col style="width: 12%">
+<col style="width: 22%">
+<col style="width: 21%">
+<col style="width: 21%">
+<col style="width: 10%">
+<col style="width: 10%">
+</colgroup>
+<thead><tr class="header">
+<th style="text-align: left;">decennie</th>
+<th style="text-align: right;">Nombre de suicides</th>
+<th style="text-align: right;">Population totale</th>
+<th style="text-align: right;">Taux moyen (100k)</th>
+<th style="text-align: right;">Taux min</th>
+<th style="text-align: right;">Taux max</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">1980-1989</td>
+<td style="text-align: right;">1 697 608</td>
+<td style="text-align: right;">12 308 292 174</td>
+<td style="text-align: right;">13.79</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">219.22</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1990-1999</td>
+<td style="text-align: right;">2 344 775</td>
+<td style="text-align: right;">16 417 314 397</td>
+<td style="text-align: right;">14.28</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">300.75</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">2000-2009</td>
+<td style="text-align: right;">2 470 449</td>
+<td style="text-align: right;">19 255 057 032</td>
+<td style="text-align: right;">12.83</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">204.92</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2010-2015</td>
+<td style="text-align: right;">1 376 607</td>
+<td style="text-align: right;">12 345 028 266</td>
+<td style="text-align: right;">11.15</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">187.06</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">109 028</td>
+<td style="text-align: right;">976 153 997</td>
+<td style="text-align: right;">11.17</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">250.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section></section><section id="analyse-des-variations-annuelles" class="level2" data-number="1.2"><h2 data-number="1.2" class="anchored" data-anchor-id="analyse-des-variations-annuelles">
+<span class="header-section-number">1.2</span> Analyse des Variations Annuelles</h2>
+<section id="taux-de-croissance-annuel" class="level3" data-number="1.2.1"><h3 data-number="1.2.1" class="anchored" data-anchor-id="taux-de-croissance-annuel">
+<span class="header-section-number">1.2.1</span> Taux de croissance annuel</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="03_analyse_temporelle_files/figure-html/growth_rate-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Analyse par périodes :</strong></p>
+<p>🔴 Début des années 1980</p>
+<p>On observe des augmentations très fortes, avec des pics supérieurs à +50 %.</p>
+<p>Cela indique une forte instabilité du phénomène au début de la période (possibles changements sociaux, économiques ou qualité des données).</p>
+<p>🟢 Milieu des années 1980</p>
+<p>Une chute importante (environ -30 %), suivie d’une stabilisation.</p>
+<p>Cela suggère une réduction notable du nombre de suicides après les pics initiaux.</p>
+<p>🟢 Années 1990 – début 2000</p>
+<p>Les variations sont faibles, proches de 0 %.</p>
+<p>Alternance de petites hausses et baisses → stabilité relative du phénomène.</p>
+<p>🟢 Années 2005 – 2014</p>
+<p>Tendance globalement négative (plus de barres vertes).</p>
+<p>Cela traduit une diminution progressive du nombre de suicides.</p>
+<p><strong>Conclusion:</strong></p>
+<p>Le phénomène est très instable au début de la période.</p>
+<p>Il devient plus stable à partir des années 1990.</p>
+<p>Une tendance à la baisse est visible dans les années récentes.</p>
+</section><section id="identification-des-années-critiques" class="level3" data-number="1.2.2"><h3 data-number="1.2.2" class="anchored" data-anchor-id="identification-des-années-critiques">
+<span class="header-section-number">1.2.2</span> Identification des années critiques</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>=== TOP 5 HAUSSES ===</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+
+| Année| Total suicides| Variation %| Variation absolue|
+|-----:|--------------:|-----------:|-----------------:|
+|  1980|         153400|       65.32|             60610|
+|  1985|         197115|       58.63|             72851|
+|  1981|         177705|       15.84|             24305|
+|  1990|         204043|       10.08|             18687|
+|  1992|         218446|        6.96|             14210|</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+=== TOP 5 BAISSES ===</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+
+| Année| Total suicides| Variation %| Variation absolue|
+|-----:|--------------:|-----------:|-----------------:|
+|  2016|          16238|      -92.18|           -191389|
+|  1983|         122166|      -33.04|            -60269|
+|  2015|         207627|       -8.63|            -19608|
+|  2004|         244196|       -5.84|            -15140|
+|  1986|         188684|       -4.28|             -8431|</code></pre>
+</div>
+</div>
+<p>Le tableau des top 5 hausses montre les années où le nombre de suicides a connu les plus fortes augmentations . En 1980 et 1985 enregistrent des hausses importantes de +65 % et +58 %, soit respectivement 60 610 et 72 851 suicides . Ces années peuvent correspondre à des événements sociaux, économiques ou politiques ayant pu influencer le taux de suicide.</p>
+<p>Le tableau des top 5 baisses met en évidence les années où le nombre de suicides a le plus diminué. La plus forte baisse est observée en 2016 avec un recul de 92 % (soit 191 389 suicides en moins), suivie de 1983 et 2015. Ces années représentent des périodes critiques où des facteurs protecteurs, des interventions ou des changements démographiques ont pu réduire drastiquement le nombre de suicides.</p>
+<p>En résumé, l’identification de ces années critiques permet de repérer les tendances exceptionnelles dans la série temporelle et de cibler les périodes nécessitant une analyse plus approfondie.</p>
+</section></section><section id="comparaison-par-périodes" class="level2" data-number="1.3"><h2 data-number="1.3" class="anchored" data-anchor-id="comparaison-par-périodes">
+<span class="header-section-number">1.3</span> Comparaison par Périodes</h2>
+<section id="analyse-pré-2000-vs-post-2000" class="level3" data-number="1.3.1"><h3 data-number="1.3.1" class="anchored" data-anchor-id="analyse-pré-2000-vs-post-2000">
+<span class="header-section-number">1.3.1</span> Analyse pré-2000 vs post-2000</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Comparaison pré-2000 vs post-2000</caption>
+<colgroup>
+<col style="width: 11%">
+<col style="width: 14%">
+<col style="width: 16%">
+<col style="width: 20%">
+<col style="width: 17%">
+<col style="width: 19%">
+</colgroup>
+<thead><tr class="header">
+<th style="text-align: left;">periode</th>
+<th style="text-align: right;">Nombre total</th>
+<th style="text-align: right;">Population</th>
+<th style="text-align: right;">Taux moyen (100k)</th>
+<th style="text-align: right;">Nombre d’années</th>
+<th style="text-align: right;">Moyenne annuelle</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">1980-1999</td>
+<td style="text-align: right;">4 135 173</td>
+<td style="text-align: right;">29 548 195 678</td>
+<td style="text-align: right;">13.99</td>
+<td style="text-align: right;">21</td>
+<td style="text-align: right;">196 913.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2000-2015</td>
+<td style="text-align: right;">3 863 294</td>
+<td style="text-align: right;">31 753 650 188</td>
+<td style="text-align: right;">12.17</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: right;">227 252.6</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+**Interprétation :**</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>- Le nombre total de suicides est légèrement plus bas après 2000.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>- Le taux moyen pour 100k habitants a diminué de 13,99 à 12,17.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  → proportionnellement, moins de suicides par population.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>- La moyenne annuelle est plus élevée après 2000, car la population a augmenté.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+=== Test t de Student ===</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>t = -5.018 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>p-value = 1.6e-05 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Différence significative : OUI ✓ </code></pre>
+</div>
+</div>
+<p>Le t-test compare la moyenne annuelle des taux de suicide par 100k habitants entre les deux périodes pour voir si la différence est statistiquement significative. Résultats du test : t = -5.018 → La statistique t négative signifie que le taux moyen post-2000 est plus bas que le taux pré-2000. p-value = 1.6e-05 → Très petite valeur, bien en dessous de 0.05, ce qui signifie que la différence n’est pas due au hasard. Différence significative : OUI ✓ → On peut conclure qu’il y a une différence statistiquement significative entre les taux de suicide pré-2000 et post-2000.</p>
+</section></section><section id="évolution-par-décennie" class="level2" data-number="1.4"><h2 data-number="1.4" class="anchored" data-anchor-id="évolution-par-décennie">
+<span class="header-section-number">1.4</span> Évolution par Décennie</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="03_analyse_temporelle_files/figure-html/evolution_decennie-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section><section id="conclusions-de-lanalyse-temporelle" class="level2" data-number="1.5"><h2 data-number="1.5" class="anchored" data-anchor-id="conclusions-de-lanalyse-temporelle">
+<span class="header-section-number">1.5</span> Conclusions de l’Analyse Temporelle</h2>
+<p><strong>Points clés identifiés :</strong></p>
+<ol type="1">
+<li><p><strong>Tendance générale</strong> : Variation de -82.5% entre 1980 et 2015</p></li>
+<li><p><strong>Pic historique</strong> : Année 2002 avec 259 376 suicides</p></li>
+<li><p><strong>Point bas</strong> : Année 2016 avec 16 238 suicides</p></li>
+<li><p><strong>Évolution du taux</strong> :</p></li>
+</ol>
+<ul>
+<li>1980 : 14.11 pour 100k habitants</li>
+<li>2015 : 10.72 pour 100k habitants</li>
+<li>Variation : -3.4 points</li>
+</ul>
+<ol start="5" type="1">
+<li>
+<strong>Périodes critiques</strong> :</li>
+</ol>
+<ul>
+<li>Décennie la plus touchée : 2000-2009</li>
+</ul>
+
+
+</section></section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/amenijawadi\.github\.io\/analyse_suicide\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/amenijawadi/analyse_suicide/edit/main/qmd/03_analyse_temporelle.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/amenijawadi/analyse_suicide/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
