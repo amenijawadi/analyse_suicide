@@ -4,6 +4,7 @@ project:
   render: 
     - "*.qmd"
     - "qmd/*.qmd"
+    - "!qmd/presentation.qmd"
 
 website:
   title: "Analyse Statistique des Données Mondiales de Suicide "
@@ -32,7 +33,7 @@ website:
       - section: Presentations
         contents:
           - text: "Présentation Finale"
-            file: qmd/presentation.qmd
+            href: qmd/presentation.html
 
 format:
   html:

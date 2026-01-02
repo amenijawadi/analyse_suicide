@@ -2,24 +2,28 @@
 title: "Analyse Mondiale des Suicides"
 subtitle: "Étude des Tendances et Facteurs de Risque (1980-2015)"
 author: "Jaouadi Amani"
-format: 
+
+format:
   revealjs:
     theme: default
-    scrollable: true
+    css: custom.css
     transition: slide
     background-transition: fade
     slide-number: true
     show-slide-number: all
-    code-fold: true
-    code-tools: true
-    code-summary: "📊 Afficher le code"
-    footer: '<a href="#/title-slide" style="position: fixed; bottom: 10px; right: 10px; z-index: 1000;"><svg width="24" height="24" viewBox="0 0 24 24" fill="#003366"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg></a>'
-css: custom.css
+    controls: true
+    progress: true
+    center: true
+    hash: true
+    preview-links: true
+
 execute:
   echo: true
   warning: false
   message: false
 ---
+
+
 
 ```{r setup, include=FALSE}
 library(tidyverse)
